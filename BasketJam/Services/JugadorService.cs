@@ -18,8 +18,8 @@ namespace BasketJam.Services
     {
         List<Jugador> ListarJugadores();
         Jugador BuscarJugador(string id);
-        Jugador CrearJugador(Jugador equipo);
-        void ActualizarJugador(string id, Jugador eq);
+        Jugador CrearJugador(Jugador jugador);
+        void ActualizarJugador(string id, Jugador jug);
         void EliminarJugador(string id);
     }
 
@@ -31,7 +31,7 @@ namespace BasketJam.Services
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-             _jugadores=database.GetCollection<Jugador>("jugadores");
+            _jugadores=database.GetCollection<Jugador>("jugadores");
 
         }
         public List<Jugador> ListarJugadores()
@@ -41,7 +41,7 @@ namespace BasketJam.Services
 
         public Jugador BuscarJugador(string id)
         {
-            return _jugadores.Find<Jugador>(jugador => jugador.Id == id).FirstOrDefault();
+            return _jugadores.Find<Jugador>(jugador =>jugador.Id == id).FirstOrDefault();
         }
 
         public Jugador CrearJugador(Jugador jugador)
@@ -50,14 +50,14 @@ namespace BasketJam.Services
             return jugador;
         }
 
-        public void ActualizarJugador(string id, Jugador eq)
+        public void ActualizarJugador(string id, Jugador jug)
         {
-            _jugadores.ReplaceOne(jugador => jugador.Id == id, eq);
+            _jugadores.ReplaceOne(jugador => jugador.Id == id, jug);
         }
 
-        public void EliminarJugador(Jugador eq)
+        public void EliminarJugador(Jugador jug)
         {
-            _jugadores.DeleteOne(jugador => jugador.Id == eq.Id);
+            _jugadores.DeleteOne(jugador => jugador.Id == jug.Id);
         }
 
         public void EliminarJugador(string id)

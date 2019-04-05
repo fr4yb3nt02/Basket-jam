@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class JugadorController : ControllerBase
@@ -36,7 +36,7 @@ namespace WebApi.Controllers
             return jugador;
         }
 
-        [HttpPost]
+        [HttpPost("crearJugador")]
         public ActionResult<Jugador> Create(Jugador jugador)
         {
             _jugadorService.CrearJugador(jugador);

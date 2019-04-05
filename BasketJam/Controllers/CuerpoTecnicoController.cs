@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public ActionResult<List<CuerpoTecnico>> Get()
+        public  ActionResult<List<CuerpoTecnico>> Get()
         {
             return _cuerpoTecnicoService.ListarMiembroCuerpoTecnico();
         }
@@ -37,7 +37,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CuerpoTecnico> Create(CuerpoTecnico miembroCuerpoTecnico)
+        public  ActionResult<CuerpoTecnico> Create(CuerpoTecnico miembroCuerpoTecnico)
         {
             _cuerpoTecnicoService.CrearMiembroCuerpoTecnico(miembroCuerpoTecnico);
 

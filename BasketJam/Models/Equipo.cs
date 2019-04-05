@@ -21,9 +21,17 @@ public class Equipo
 
     [BsonRequired()]
     [BsonElement("ColorCaracteristico")]
-    public string ColorCaracteristico { get; set; }
+    public List<string> ColorCaracteristico { get; set; }
 
     [BsonElement("Categoria")]
     public string Categoria { get; set; }
+
+    [BsonRequired]
+    [BsonElement("CuerpoTecnico")]
+    public List<CuerpoTecnico> CuerpoTecnico { get; set; }
+
+    [BsonRequired()]
+    [BsonElement("Jugadores")]
+    public List<Jugador> Jugadores { get; set; }
 
 }

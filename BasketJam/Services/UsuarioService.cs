@@ -1,4 +1,5 @@
 ﻿using BasketJam.Helper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,12 +17,12 @@ namespace BasketJam.Services
 {
     public interface IUsuarioService
     {
-      //  Usuario Authenticate(string nomUser, string password);
+        Task<Usuario> Autenticar(string nomUser, string password);
         //List<Usuario> GetAll();
-        Usuario Create(Usuario usuario);
-        Usuario Get(string id);
+        Task<Usuario> Create(Usuario usuario);
+        Task<Usuario> Get(string id);
 
-        List<Usuario> Get();
+        Task<List<Usuario>> Get();
         //IEnumerable<Usuario> GetAll();
     }
 
@@ -30,46 +31,78 @@ namespace BasketJam.Services
 
         private readonly IMongoCollection<Usuario> _usuarios;
         
+        private readonly AppSettings _appSettings;
 
-        //private readonly DataContext _dataContext=new DataContext(IConfiguration config);
-
-        private readonly DataContext _dataContext;
-        /*public UsuarioService(DataContext dataContext) {
-        _dataContext = dataContext;
-        }*/
         
 
-        public UsuarioService(IConfiguration config)
+        /*public UsuarioService(IOptions<AppSettings> appSettings)
         {
+            _appSettings = appSettings.Value;
+        }*/
+    public UsuarioService(IOptions<AppSettings> appSettings,IConfiguration config)
+        {
+            _appSettings = appSettings.Value;
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
              _usuarios=database.GetCollection<Usuario>("usuarios");
-
+          /*   _usuarios=database.GetCollection<Usuario>("usuarios")
+                .Indexes
+                .CreateOneAsync(Builders<Usuario>
+                                    .IndexKeys
+                                    .Ascending(item => item.CI));*/
+ /*
+             var notificationLogBuilder = Builders<Usuario>.IndexKeys;
+            var indexModel = new CreateIndexModel<Usuario>(notificationLogBuilder.Ascending(x => x.CI));
+         IMongoCollection.Indexes.CreateOneAsync(indexModel, cancellationToken: cancellationToken).ConfigureAwait(false);    
+ */
         }
-   /*     public UsuarioService(IConfiguration config)
-        {
-               var _dataContext=new DataContext(config);
-               _usuarios=_dataContext.MongoDatabase.GetCollection<Usuario>("usuarios");
-        } */
+        
+        
+        public async Task<Usuario> Autenticar(string username, string password)
+        {            
+            var usuario = await _usuarios.Find<Usuario>(x => x.NomUser == username && x.Password == password).FirstOrDefaultAsync();
 
-       // [Route("buscarEmpleado/{id}")]
+            // Retorno nulo si no encuentro el usuario
+            if (usuario == null)
+                return null;
+
+            // si la autenticación es correcta genero el Token JWT 
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[] 
+                {
+                    new Claim(ClaimTypes.Name, usuario.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            usuario.Token = tokenHandler.WriteToken(token);            
+
+            return usuario;
+        }
   
-        public Usuario Get(string id)
+        public async Task<Usuario> Get(string id)
         {
-            return _usuarios.Find<Usuario>(usuario => usuario.Id == id).FirstOrDefault();
+           var _usuario =await  _usuarios.Find<Usuario>(usuario => usuario.Id == id).FirstOrDefaultAsync();
+
+           return _usuario;
         }
 
-        public List<Usuario> Get()
+        public async Task<List<Usuario>> Get()
         {
-            return _usuarios.Find(usuario => true).ToList();
+            return await _usuarios.Find(usuario => true).ToListAsync();
+            
         }
 
         
-        public Usuario Create(Usuario usuario)
+        public async Task<Usuario> Create(Usuario usuario)
         {
 
             // validation
-            if (string.IsNullOrWhiteSpace(usuario.Password))
+            /*/if (string.IsNullOrWhiteSpace(usuario.Password))
                 throw new AppException("Por favor ingrese una contraseña.");
 
             //var user = _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any();
@@ -78,7 +111,7 @@ namespace BasketJam.Services
             if(_usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
                 throw new AppException("El usuario \"" + usuario.NomUser + "\" ya existe"); 
                 //throw new AppException("User not found");
-            /*/if(_usuarios.Find<Usuario>(x => x.NomUser==usuario.NomUser).First()!=null)
+            if(_usuarios.Find<Usuario>(x => x.NomUser==usuario.NomUser).First()!=null)
               throw new AppException("El usuario \"" + usuario.NomUser + "\" ya existe"); *
             
               
@@ -88,76 +121,29 @@ namespace BasketJam.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt; */
+          if(_usuarios.Find<Usuario>(x => x.NomUser==usuario.NomUser).Any())
+              throw new AppException("El usuario \"" + usuario.NomUser + "\" ya existe"); 
+            
+            if(_usuarios.Find<Usuario>(x => x.CI==usuario.CI).Any())
+                throw new AppException("Ya existe un usuario con la cédula ingresada.");
 
-            _usuarios.InsertOne(usuario);
+            IndexKeysDefinition<Usuario> keys =
+            Builders<Usuario>.IndexKeys.Ascending("CI");            
+            var options = new CreateIndexOptions { Name = "IndexUniqueCI" , Unique=true};            
+            var indexModel = new CreateIndexModel<Usuario>(keys,options);
+            await _usuarios.Indexes.CreateOneAsync(indexModel);
+
+            /*var options = new CreateIndexOptions() { Unique = true };
+            var field = new StringFieldDefinition<Usuario>("CI");
+            var indexDefinition = new IndexKeysDefinitionBuilder<Usuario>().Ascending(field);
+            await _usuarios.Indexes.CreateOneAsync(indexDefinition, options);
+ */
+
+            await _usuarios.InsertOneAsync(usuario);
             //_context.Users.Add(user);
             //_context.SaveChanges();
 
             return usuario;
         }
-
-        /*public Usuario Create(Usuario usuario)
-        {
-          //  _dataContext.MongoDatabase.GetCollection<Usuario>("usuarios").InsertOne(usuario);
-           _usuarios.InsertOne(usuario);
-            return usuario;
-        }*/
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*private List<Usuario> _users = new List<Usuario>
-        {
-            new Usuario { Id = 1, Nombre = "Test", Apellido = "User", NomUser = "test", Password = "test" }
-        };*/
-
-        /*public List<Usuario> GetAll()
-        {
-            return _usuarios.Find(usuario => true).ToList();
-        }
-        private readonly AppSettings _appSettings;
-
-        public UsuarioService(IOptions<AppSettings> appSettings)
-        {
-            _appSettings = appSettings.Value;
-        }
-
-        public Usuario Authenticate(string nomUser, string password)
-        {
-            List<Usuario> users=GetAll();
-            var user = users.SingleOrDefault(x => x.NomUser == nomUser && x.Password == password);
-
-            // devuelve null si no se encuentra el usuario
-            if (user == null)
-                return null;
-
-            // la autenticación fué exitosa , por lo que devuelve un token JWT            
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            user.Token = tokenHandler.WriteToken(token);
-
-            // elimina la contraseña antes de retornar            
-            user.Password = null;
-
-            return user;
-        }*/
-
-     /*   public IEnumerable<Usuario> GetAll()
-        {
-            List<Usuario> users=GetAllUsers();
-            // return users without passwords
-            return users.Select(x => {
-                x.Password = null;
-                return x;
-            });
-        }*/
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class JuezController : ControllerBase
@@ -23,7 +23,7 @@ namespace WebApi.Controllers
             return _juezService.ListarJueces();
         }
 
-        [HttpGet("{id:length(24)}", Name = "ObtenerJugador")]
+        [HttpGet("{id:length(24)}", Name = "ObtenerJuez")]
         public ActionResult<Juez> Get(string id)
         {
             var juez = _juezService.BuscarJuez(id);
@@ -41,7 +41,7 @@ namespace WebApi.Controllers
         {
             _juezService.CrearJuez(juez);
 
-            return CreatedAtRoute("ObtenerJugador", new { id = juez.Id.ToString() }, juez);
+            return CreatedAtRoute("ObtenerJuez", new { id = juez.Id.ToString() }, juez);
         }
 
         [HttpPut("{id:length(24)}")]

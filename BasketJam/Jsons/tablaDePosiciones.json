@@ -1,0 +1,34 @@
+{
+    "Torneo":  {
+                    "_id":"",
+                    "Nombre" : "Super Torneo 2019",
+                    "Anio":2019
+                },
+    "Posiciones":[
+                {
+                "Equipo":{
+                
+                    "_id":"",
+                    "NombreEquipo": "Peñarol"
+                        },
+                    "Puntos":50,
+                    "PJ":16,
+                    "PE":2,
+                    "PP":0,
+                    "Posicion":1
+                    },
+                    {
+                "Equipo":{
+                        
+                    "_id":"",
+                    "NombreEquipo": "Chicabo Bulls"
+                        },
+                    "PJ":15,
+                    "PE":4,
+                    "PP":0,
+                    "Puntos":49,
+                    "Posicion":2
+                        }
+                ]
+              
+}       

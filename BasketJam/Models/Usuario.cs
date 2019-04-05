@@ -13,6 +13,10 @@ public class Usuario
     public string Id { get; set; }
     
     [BsonRequired]
+    [BsonElement("CI")]
+    public string CI { get; set; }
+
+    [BsonRequired]
     [BsonElement("NombreUser")]
     public string NomUser { get; set; }
     
@@ -29,8 +33,7 @@ public class Usuario
 
     [BsonElement("TipoUsuario")]
     public TipoUsuario TipoUsuario { get; set; }
-    
 
     public string Token { get; set; }
-
+    
 }

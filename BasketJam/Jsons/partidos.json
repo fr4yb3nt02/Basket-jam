@@ -1,0 +1,25 @@
+{
+    "fecha":"2019-09-05T20:00",
+    "estadio":  {
+                    "_id":"",
+                    "nombre":"Palacio Peñarol"
+                },
+    "equipos":[
+                {
+                "Equipo":{
+                    "_id":"",
+                    "NombreEquipo" : "Peñarol"
+                },
+                "puntos":123
+                },
+                {
+                "Equipo":{
+                
+                    "_id":"",
+                    "NombreEquipo" : "Chicago Bulls"
+                },
+                "puntos":121
+                }
+              ],
+    "estado":"Finalizado"
+}

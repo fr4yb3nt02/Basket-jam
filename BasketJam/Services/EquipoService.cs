@@ -36,14 +36,24 @@ namespace BasketJam.Services
         }
         public List<Equipo> ListarEquipos()
         {
+            
             return _equipos.Find(equipo => true).ToList();
         }
 
         public Equipo BuscarEquipo(string id)
-        {
+        {    
             return _equipos.Find<Equipo>(equipo => equipo.Id == id).FirstOrDefault();
         }
 
+  /*      public void AgregarJugadorAEquipo(string equipoId,Jugador nuevoJugador)
+{
+    var filter = Builders<Equipo>.Filter.And(
+                 Builders<Equipo>.Filter.Where(x => x.Id == equipoId), 
+                 Builders<Equipo>.Filter.Eq("jugadores.Id", nuevoJugador.Id));
+    var update = Builders<Product>.Update.Push("jugadores.$.SubCategories", newSubCategory);
+    await collection.FindOneAndUpdateAsync(filter, update);
+}
+*/
         public Equipo CrearEquipo(Equipo equipo)
         {
             _equipos.InsertOne(equipo);

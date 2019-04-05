@@ -2,39 +2,69 @@
 using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using MongoDB.Driver;
+using System;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UsuarioController : ControllerBase
     {
         private IUsuarioService _usuarioService;
-
+  
         public UsuarioController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
         }
 
-        [HttpPost("register")]
-        public ActionResult<Usuario> Create(Usuario usuario)
+        
+
+        [AllowAnonymous]
+        [HttpPost("registrar")]
+        public async Task<ActionResult<Usuario>> Create(Usuario usuario)
         {
-            _usuarioService.Create(usuario);
+            try{
+            if (string.IsNullOrWhiteSpace(usuario.Password))
+                return BadRequest("Por favor ingrese una contraseña.");
+
+            //var user = _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any();
+            
+            //if (user != null)
+        //    var usuarios=await _usuarioService.Get();
+            //if(_usuarioService.Get().Find(x => x.NomUser == usuario.NomUser).Any())
+            // return BadRequest("El usuario \"" + usuario.NomUser + "\" ya existe"); 
+//                _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
+
+
+            await _usuarioService.Create(usuario);
 
             return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
+            }
+            catch(AppException ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public ActionResult<List<Usuario>> Get()
+        public async Task<ActionResult<List<Usuario>>> Get()
         {
-            return _usuarioService.Get();
+   
+            
+            return await _usuarioService.Get();
         }
 
         [HttpGet("{id:length(24)}", Name = "GetUsuario")]
-        public ActionResult<Usuario> Get(string id)
+ 
+        public async Task<ActionResult<Usuario>> Get(string id)
         {
-            var usuario = _usuarioService.Get(id);
+            var usuario = await _usuarioService.Get(id);
 
             if (usuario == null)
             {
@@ -45,24 +75,18 @@ namespace WebApi.Controllers
         }
 
 
-    /*    [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]Usuario userParam)
+      [AllowAnonymous]
+        [HttpPost("autenticar")]
+        public async Task<IActionResult> Autenticar([FromBody]Usuario userParam)
         {
-            var user = _usuarioService.Authenticate(userParam.NomUser, userParam.Password);
+            var user = await _usuarioService.Autenticar(userParam.NomUser, userParam.Password);
 
             if (user == null)
-                return BadRequest(new { message = "Nombre de usuario o contraseña incorrecta" });
+                return BadRequest(new {result=false, message = "Nombre de usuario o contraseña incorrecta" });
 
-            return Ok(user);
+            return Ok(new {result=true, user.Token });
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var users = _usuarioService.GetAll();
-            return Ok(users);
-        }*/
+
     }
 }

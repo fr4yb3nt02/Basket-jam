@@ -1,0 +1,98 @@
+[{
+	"NombreEquipo" : "Peñarol",
+    "FechaFundacion":"01/01/1250",
+    "ColorCaracteristico":["Amarillo","Negro"],
+    "Categoria":"Primera división",
+    "Estadio":  {
+                    "Nombre":"Palacio Peñarol",
+                    "Direccion":"Cordon"   
+                },
+    "CuerpoTecnico":   [
+                            { 
+                            "Id": "",
+                            "nombre":"Jose",
+                            "apellido":"Artigas"
+                         },
+                         {
+                         	"Id": "",
+                         	"Nombre":"Paparulo",
+                            "Apellido":"Fagundez"
+                        }
+                    ],  
+    "Jugadores": [ 
+                    {
+                    "Id": "",
+                    "Nombre":"Emiliano",
+                    "Apellido":"Da Silva",
+                    "NumeroCamiseta":10
+                    },
+    
+                {
+                	"Id": "",
+                    "Nombre":"Gabriel",
+                    "Apellido":"Morador",
+                    "NumeroCamiseta":15
+                },
+    
+                {
+                	"Id": "",
+                    "Nombre":"Facundo",
+                    "Apellido":"Naviliat",
+                    "NumeroCamiseta":20
+                }
+                 ]
+},
+{
+    "_id":"",
+    "NombreEquipo" : "Chicabo Bulls",
+    "FechaFundacion":"01/01/1000",
+    "ColorCaracteristico":["Rojo"],
+    "Categoria":"Primera división",
+    "Estadio":  {
+                    "Nombre":"United Center",
+                    "Direccion":"USA"   
+                },
+    "Cuerpo tecnico":   [
+                            {
+                                "_id":"",
+                                "CI" : "84795236",
+                                "Nombre":"Patrick",
+                                "Apellido":"MckDonald",
+                                "Cargo":"DT" 
+                            }
+                            ,
+                            {
+                                "_id":"",
+                                "CI" : "74258965",
+                                "Nombre":"Mister",
+                                "Apellido":"Second",
+                                "Cargo":"Aguatero" 
+                            }
+                    ],  
+    "Jugadores": [ 
+                    {
+                        "_id":"",
+                        "CI" : "58987456",
+                        "Nombre":"Francisco",
+                        "Apellido":"Macachufo",
+                        "NumeroCamiseta":11
+                    }
+                    ,
+                    {
+                        "_id":"",
+                        "CI" : "98547896",
+                        "Nombre":"Tyler",
+                        "Apellido":"Aguirre",
+                        "NumeroCamiseta":16
+                    }
+                    ,
+                    {
+                        "_id":"",
+                        "CI" : "85478962",
+                        "Nombre":"Michael",
+                        "Apellido":"Jordan",
+                        "NumeroCamiseta":10
+                    }
+                 ]
+}
+]
