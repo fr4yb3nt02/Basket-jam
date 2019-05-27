@@ -26,12 +26,15 @@ public class Equipo
     [BsonElement("Categoria")]
     public string Categoria { get; set; }
 
-    [BsonRequired]
+   // [BsonElement("Estadio")]
+    public Estadio Estadio { get; set; }
+
+   /* [BsonRequired]
     [BsonElement("CuerpoTecnico")]
     public List<CuerpoTecnico> CuerpoTecnico { get; set; }
 
     [BsonRequired()]
     [BsonElement("Jugadores")]
-    public List<Jugador> Jugadores { get; set; }
+    public List<Jugador> Jugadores { get; set; }*/
 
 }

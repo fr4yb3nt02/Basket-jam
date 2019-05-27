@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -17,15 +18,15 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public ActionResult<List<Equipo>> Get()
+        public async Task<ActionResult<List<Equipo>>> Get()
         {
-            return _equipoService.ListarEquipos();
+            return await _equipoService.ListarEquipos();
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerEquipo")]
-        public ActionResult<Equipo> Get(string id)
+        public async Task<ActionResult<Equipo>> Get(string id)
         {
-            var equipo = _equipoService.BuscarEquipo(id);
+            var equipo = await _equipoService.BuscarEquipo(id);
 
             if (equipo == null)
             {
@@ -35,10 +36,29 @@ namespace WebApi.Controllers
             return equipo;
         }
 
-        [HttpPost]
-        public ActionResult<Equipo> Create(Equipo equipo)
+        //[Route("listarJugadores")]
+        [HttpGet("listarJugadores/{id:length(24)}")]
+        public async Task<ActionResult<List<Jugador>>> ListarJugadoresEquipo(string id)
         {
-            _equipoService.CrearEquipo(equipo);
+            var jugadores = await _equipoService.ListarJugadoresEquipo(id);
+
+            if (jugadores == null)
+            {
+                return NotFound();
+            }
+
+            return jugadores;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Equipo>> Create(Equipo equipo)
+        {
+           // Estadio e=new Estadio();
+           // e.Nombre=equipo.Estadio.Nombre;
+           // e.Direccion=equipo.Estadio.Direccion;
+           // e.Id=equipo.Estadio.Id;
+            //Estadio estadio=new Estadio(equipo.Estadio.Id,equipo.Estadio.Nombre,equipo.Estadio.Nombre);
+            await _equipoService.CrearEquipo(equipo);
 
             return CreatedAtRoute("ObtenerEquipo", new { id = equipo.Id.ToString() }, equipo);
         }
@@ -68,7 +88,7 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _equipoService.EliminarEquipo(equipo.Id);
+            _equipoService.EliminarEquipo(equipo.Id.ToString());
 
             return NoContent();
         }

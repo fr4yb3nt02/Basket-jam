@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class TorneoController : ControllerBase
@@ -18,15 +19,15 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public ActionResult<List<Torneo>> Get()
+        public async Task<ActionResult<List<Torneo>>> Get()
         {
-            return _torneoService.ListarTorneos();
+            return await _torneoService.ListarTorneos();
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerTorneo")]
-        public ActionResult<Torneo> Get(string id)
+        public async Task<ActionResult<Torneo>> Get(string id)
         {
-            var torneo = _torneoService.BuscarTorneo(id);
+            var torneo = await _torneoService.BuscarTorneo(id);
 
             if (torneo == null)
             {
@@ -37,9 +38,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Torneo> Create(Torneo torneo)
+        public async Task<ActionResult<Torneo>> Create([FromBody]Torneo torneo)
         {
-            _torneoService.CrearTorneo(torneo);
+            await _torneoService.CrearTorneo(torneo);
 
             return CreatedAtRoute("ObtenerTorneo", new { id = torneo.Id.ToString() }, torneo);
         }
@@ -69,7 +70,7 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _torneoService.EliminarTorneo(torneo.Id);
+            _torneoService.EliminarTorneo(torneo.Id.ToString());
 
             return NoContent();
         }

@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System;
 using WebApi.Helpers;
 
+
 namespace WebApi.Controllers
 {
     [Authorize]
@@ -73,7 +74,7 @@ namespace WebApi.Controllers
 
             return usuario;
         }
-
+//[FromBody]
 
       [AllowAnonymous]
         [HttpPost("autenticar")]
@@ -87,6 +88,17 @@ namespace WebApi.Controllers
             return Ok(new {result=true, user.Token });
         }
 
+[AllowAnonymous]
+[AcceptVerbs("Get", "Post")]
+public  IActionResult VerificarCI(string ci)
+{
+    if (!_usuarioService.BuscarUsuarioPorCI(ci))
+    {
+        return Ok($"CI {ci} is already in use.");
+    }
+
+    return Ok(true);
+}
 
     }
 }

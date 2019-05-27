@@ -62,6 +62,8 @@ namespace BasketJam
             services.AddScoped<IJuezService,JuezService>();
             services.AddScoped<IPartidoService,PartidoService>();
             services.AddScoped<ITorneoService,TorneoService>();
+            services.AddScoped<IEstadisticasEquipoPartidoService,EstadisticasEquipoPartidoService>();
+            services.AddScoped<IEstadisticasJugadorPartidoService,EstadisticasJugadorPartidoService>();
             
             //services.AddScoped<DataContext>();
             
@@ -72,14 +74,14 @@ namespace BasketJam
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-           /* if (env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 app.UseHsts();
-            } */
+            } 
 
             // global cors policy
             app.UseCors(x => x

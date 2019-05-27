@@ -19,4 +19,15 @@ public class Jugador : MiembroDeEquipo
     [BsonElement("NumeroCamiseta")]
     public int NumeroCamiseta { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("Altura")]
+    public double Altura { get; set; }
+
+    [BsonRequired()]
+    [BsonElement("Peso")]
+    public double Peso { get; set; }
+
+
+
+
 }

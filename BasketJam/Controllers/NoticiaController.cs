@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
 using System;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -19,22 +20,22 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public ActionResult<List<Noticia>> Get()
+        public async Task<ActionResult<List<Noticia>>> Get()
         {
-            return _noticiaService.ListarNoticias();
+            return await _noticiaService.ListarNoticias();
         }
 
         [HttpGet]
-        public ActionResult<List<Noticia>> Get(DateTime fecha)
+        public async Task<ActionResult<List<Noticia>>> Get(DateTime fecha)
         {
-            return _noticiaService.ListarNoticiasPorFecha(fecha);
+            return await _noticiaService.ListarNoticiasPorFecha(fecha);
         }
 
 
         [HttpPost("crearNoticia")]
-        public ActionResult<Noticia> Create(Noticia noticia)
+        public async Task<ActionResult<Noticia>> Create(Noticia noticia)
         {
-            _noticiaService.CrearNoticia(noticia);
+            await _noticiaService.CrearNoticia(noticia);
 
             return noticia;
         }
@@ -64,7 +65,7 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _noticiaService.EliminarNoticia(noticia.Id);
+            _noticiaService.EliminarNoticia(noticia.Id.ToString());
 
             return NoContent();
         }

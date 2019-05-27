@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -18,15 +19,21 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public ActionResult<List<Jugador>> Get()
+        public async Task<ActionResult<List<Jugador>>> Get()
         {
-            return _jugadorService.ListarJugadores();
+            return await _jugadorService.ListarJugadores();
+        }
+
+        [HttpGet("jugadoresPorEquipo/{id:length(24)}")]
+        public async Task<ActionResult<List<Jugador>>> ListarJugadoresPorEquipo(string idEquipo)
+        {
+            return await _jugadorService.ListarJugadoresPorEquipo(idEquipo);
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerJugador")]
-        public ActionResult<Jugador> Get(string id)
+        public async Task<ActionResult<Jugador>> Get(string id)
         {
-            var jugador = _jugadorService.BuscarJugador(id);
+            var jugador = await _jugadorService.BuscarJugador(id);
 
             if (jugador == null)
             {
@@ -37,9 +44,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("crearJugador")]
-        public ActionResult<Jugador> Create(Jugador jugador)
+        public async Task<ActionResult<Jugador>> Create(Jugador jugador)
         {
-            _jugadorService.CrearJugador(jugador);
+            await _jugadorService.CrearJugador(jugador);
 
             return CreatedAtRoute("ObtenerJugador", new { id = jugador.Id.ToString() }, jugador);
         }
@@ -69,7 +76,7 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _jugadorService.EliminarJugador(jugador.Id);
+            _jugadorService.EliminarJugador(jugador.Id.ToString());
 
             return NoContent();
         }

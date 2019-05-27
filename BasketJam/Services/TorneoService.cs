@@ -16,9 +16,9 @@ namespace BasketJam.Services
 {
     public interface ITorneoService
     {
-        List<Torneo> ListarTorneos();
-        Torneo BuscarTorneo(string id);
-        Torneo CrearTorneo(Torneo equipo);
+        Task<List<Torneo>> ListarTorneos();
+        Task<Torneo> BuscarTorneo(string id);
+        Task<Torneo> CrearTorneo(Torneo equipo);
         void ActualizarTorneo(string id, Torneo tor);
         void EliminarTorneo(string id);
     }
@@ -34,19 +34,19 @@ namespace BasketJam.Services
              _torneos=database.GetCollection<Torneo>("torneos");
 
         }
-        public List<Torneo> ListarTorneos()
+        public async Task<List<Torneo>> ListarTorneos()
         {
-            return _torneos.Find(torneo => true).ToList();
+            return await _torneos.Find(torneo => true).ToListAsync();
         }
 
-        public Torneo BuscarTorneo(string id)
+        public async Task<Torneo> BuscarTorneo(string id)
         {
-            return _torneos.Find<Torneo>(torneo => torneo.Id == id).FirstOrDefault();
+            return await _torneos.Find<Torneo>(torneo => torneo.Id == id).FirstOrDefaultAsync();
         }
 
-        public Torneo CrearTorneo(Torneo torneo)
+        public async Task<Torneo> CrearTorneo(Torneo torneo)
         {
-            _torneos.InsertOne(torneo);
+            await _torneos.InsertOneAsync(torneo);
             return torneo;
         }
 

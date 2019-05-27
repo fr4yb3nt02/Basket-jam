@@ -1,0 +1,11 @@
+
+{
+    "comment" : "This file is used to help set default values when using the dotnet CLI extension Amazon.ElasticBeanstalk.Tools. For more information run \"dotnet eb --help\" from the project root.",
+    "profile" : "fr4yb3nt02",
+    "region"  : "us-east-1",
+    "application" : "BasketJam",
+    "environment" : "Basketjam-env",
+    "iis-website" : "Default Web Site",
+    "app-path"    : "/",
+    "enable-xray" : false
+}

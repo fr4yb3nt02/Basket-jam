@@ -16,9 +16,9 @@ namespace BasketJam.Services
 {
     public interface ICuerpoTecnicoService
     {
-        List<CuerpoTecnico> ListarMiembroCuerpoTecnico();
-        CuerpoTecnico BuscarMiembroCuerpoTecnico(string id);
-        CuerpoTecnico CrearMiembroCuerpoTecnico(CuerpoTecnico equipo);
+        Task<List<CuerpoTecnico>> ListarMiembroCuerpoTecnico();
+        Task<CuerpoTecnico> BuscarMiembroCuerpoTecnico(string id);
+        Task<CuerpoTecnico> CrearMiembroCuerpoTecnico(CuerpoTecnico equipo);
         void ActualizarMiembroCuerpoTecnico(string id, CuerpoTecnico eq);
         void EliminarMiembroCuerpoTecnico(string id);
     }
@@ -34,19 +34,19 @@ namespace BasketJam.Services
              _cuerpoTecnico=database.GetCollection<CuerpoTecnico>("cuerpoTecnico");
 
         }
-        public List<CuerpoTecnico> ListarMiembroCuerpoTecnico()
+        public async Task<List<CuerpoTecnico>> ListarMiembroCuerpoTecnico()
         {
-            return _cuerpoTecnico.Find(cuerpoTecnico => true).ToList();
+            return await _cuerpoTecnico.Find(cuerpoTecnico => true).ToListAsync();
         }
 
-        public CuerpoTecnico BuscarMiembroCuerpoTecnico(string id)
+        public async Task<CuerpoTecnico> BuscarMiembroCuerpoTecnico(string id)
         {
-            return _cuerpoTecnico.Find<CuerpoTecnico>(cuerpoTecnico => cuerpoTecnico.Id == id).FirstOrDefault();
+            return await _cuerpoTecnico.Find<CuerpoTecnico>(cuerpoTecnico => cuerpoTecnico.Id == id).FirstOrDefaultAsync();
         }
 
-        public CuerpoTecnico CrearMiembroCuerpoTecnico(CuerpoTecnico cuerpoTecnico)
+        public async Task<CuerpoTecnico> CrearMiembroCuerpoTecnico(CuerpoTecnico cuerpoTecnico)
         {
-            _cuerpoTecnico.InsertOne(cuerpoTecnico);
+           await  _cuerpoTecnico.InsertOneAsync(cuerpoTecnico);
             return cuerpoTecnico;
         }
 

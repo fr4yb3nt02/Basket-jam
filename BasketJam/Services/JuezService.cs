@@ -16,37 +16,71 @@ namespace BasketJam.Services
 {
     public interface IJuezService
     {
-        List<Juez> ListarJueces();
-        Juez BuscarJuez(string id);
-        Juez CrearJuez(Juez equipo);
+        Task<List<Juez>> ListarJueces();
+        Task<Juez> BuscarJuez(string id);
+        Task<Juez> CrearJuez(Juez equipo);
         void ActualizarJuez(string id, Juez eq);
         void EliminarJuez(string id);
+
+       // Task<List<Juez>> ListarJuecesSinPartidoAsignado(Partido p);
     }
 
     public class JuezService : IJuezService
 {
-        private readonly IMongoCollection<Juez> _jueces;      
+        private readonly IMongoCollection<Juez> _jueces;
+        private readonly IMongoCollection<Partido> _partidos;      
 
         public JuezService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
              _jueces=database.GetCollection<Juez>("jueces");
+             _partidos=database.GetCollection<Partido>("partidos");
 
         }
-        public List<Juez> ListarJueces()
+        public async Task<List<Juez>> ListarJueces()
         {
-            return _jueces.Find(juez => true).ToList();
+            return await _jueces.Find(juez => true).ToListAsync();
         }
 
-        public Juez BuscarJuez(string id)
+        /*public async Task<List<Juez>> ListarJuecesSinPartidoAsignado(Partido p)
         {
-            return _jueces.Find<Juez>(juez => juez.Id == id).FirstOrDefault();
+            return await _jueces.Find(juez => true).ToListAsync();
+
+            List<Partido> juecesPartidosFecha=await _partidos<Partido>.Find(pa => pa.fecha==p.fecha).ToListAsync();*/
+
+             /*var query = from juez in _jueces.AsQueryable()
+                         join partido in _partidos.AsQueryable()
+                             on juez equals ((Juez)partido.jueces).Id
+                into CityExtendedMatchingItems
+                where (travelItem.City not in == cityName)
+                select new
+                {
+                    Action = travelItem.Action,
+                    Name = travelItem.Name,
+                    FirstCityMatched = CityExtendedMatchingItems.First(),
+                }; */
+
+          /*  var query = from partido in _partidos.AsQueryable()
+                        where partido.fecha == p.fecha
+                        select partido;
+
+            foreach(var partido in juecesPartidosFecha)
+            {
+
+            }
+
+   // return await query.Take(10).ToListAsync();
+        }*/
+
+        public async Task<Juez> BuscarJuez(string id)
+        {
+            return await _jueces.Find<Juez>(juez => juez.Id == id).FirstOrDefaultAsync();
         }
 
-        public Juez CrearJuez(Juez juez)
+        public async Task<Juez> CrearJuez(Juez juez)
         {
-            _jueces.InsertOne(juez);
+            await _jueces.InsertOneAsync(juez);
             return juez;
         }
 

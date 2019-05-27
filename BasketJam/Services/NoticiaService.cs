@@ -16,10 +16,10 @@ namespace BasketJam.Services
 {
     public interface INoticiaService
     {
-        List<Noticia> ListarNoticias();
-        List<Noticia> ListarNoticiasPorFecha(DateTime fecha);
-        Noticia BuscarNoticia(string id);
-        Noticia CrearNoticia(Noticia noticia);
+        Task<List<Noticia>> ListarNoticias();
+        Task<List<Noticia>> ListarNoticiasPorFecha(DateTime fecha);
+        Task<Noticia> BuscarNoticia(string id);
+        Task<Noticia> CrearNoticia(Noticia noticia);
         void ActualizarNoticia(string id, Noticia not);
         void EliminarNoticia(string id);
     }
@@ -35,25 +35,25 @@ namespace BasketJam.Services
             _noticias=database.GetCollection<Noticia>("noticias");
 
         }
-        public List<Noticia> ListarNoticias()
+        public async Task<List<Noticia>> ListarNoticias()
         {
-            return _noticias.Find(noticia => true).ToList();
+            return await _noticias.Find(noticia => true).ToListAsync();
         }
 
-        public List<Noticia> ListarNoticiasPorFecha(DateTime fecha)
+        public async Task<List<Noticia>> ListarNoticiasPorFecha(DateTime fecha)
         {
-            return _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToList();            
+            return await _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToListAsync();            
         }
 
-        public Noticia CrearNoticia(Noticia noticia)
+        public async Task<Noticia> CrearNoticia(Noticia noticia)
         {
-            _noticias.InsertOne(noticia);
+            await _noticias.InsertOneAsync(noticia);
             return noticia;
         }
 
-            public Noticia BuscarNoticia(string id)
+        public async Task<Noticia> BuscarNoticia(string id)
         {
-            return _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefault();
+            return await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
         }
         public void ActualizarNoticia(string id, Noticia not)
         {

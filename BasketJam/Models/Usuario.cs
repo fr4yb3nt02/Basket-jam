@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using BasketJam.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 public class Usuario
 {
@@ -13,10 +15,14 @@ public class Usuario
     public string Id { get; set; }
     
     [BsonRequired]
+    //[Required(ErrorMessage = "Por favor ingrese un a cédula")]
     [BsonElement("CI")]
+    [Remote(action: "VerificarCI", controller: "Usuario")]
     public string CI { get; set; }
 
     [BsonRequired]
+    //[Required(ErrorMessage = "Por favor ingrese un nombre de usuario")]
+    [StringLength(20)]
     [BsonElement("NombreUser")]
     public string NomUser { get; set; }
     

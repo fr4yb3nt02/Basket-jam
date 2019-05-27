@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -18,15 +19,15 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public ActionResult<List<Juez>> Get()
+        public async Task<ActionResult<List<Juez>>> Get()
         {
-            return _juezService.ListarJueces();
+            return await _juezService.ListarJueces();
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerJuez")]
-        public ActionResult<Juez> Get(string id)
+        public async Task<ActionResult<Juez>> Get(string id)
         {
-            var juez = _juezService.BuscarJuez(id);
+            var juez = await _juezService.BuscarJuez(id);
 
             if (juez == null)
             {
@@ -37,9 +38,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Juez> Create(Juez juez)
+        public async Task<ActionResult<Juez>> Create(Juez juez)
         {
-            _juezService.CrearJuez(juez);
+            await _juezService.CrearJuez(juez);
 
             return CreatedAtRoute("ObtenerJuez", new { id = juez.Id.ToString() }, juez);
         }
@@ -56,8 +57,10 @@ namespace WebApi.Controllers
 
             _juezService.ActualizarJuez(id,juezIn);
 
-            return NoContent();
+            return Ok();
         }
+
+
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
@@ -69,9 +72,9 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _juezService.EliminarJuez(juez.Id);
+            _juezService.EliminarJuez(juez.Id.ToString());
 
-            return NoContent();
+            return Ok();
         }
     }
 }

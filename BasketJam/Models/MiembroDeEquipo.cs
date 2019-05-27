@@ -22,4 +22,13 @@ public class MiembroDeEquipo
     [BsonRequired()]
     [BsonElement("Apellido")]
     public string Apellido { get; set; }
+
+    [BsonRequired()]
+    [BsonElement("IdEquipo")]
+    public string IdEquipo { get; set; }
+
+    [BsonRequired()]
+    [BsonElement("FechaDeNacimiento")]
+    public DateTime FechaDeNacimiento { get; set; }
+
 }

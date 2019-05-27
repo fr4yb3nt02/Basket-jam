@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "593f23b568b375ae96b4798735be1f96a3299245"
+    "signature": "1e7d7c186410c2c6bb80753caefce027e457f8e5"
   },
   "compilationOptions": {
     "defines": [
@@ -24,10 +24,11 @@
     ".NETCoreApp,Version=v2.1": {
       "BasketJam/1.0.0": {
         "dependencies": {
+          "DnsClient": "1.2.0",
           "Microsoft.AspNetCore.App": "2.1.1",
           "Microsoft.AspNetCore.Razor.Design": "2.1.2",
           "Microsoft.NETCore.App": "2.1.0",
-          "MongoDB.Driver": "2.8.0"
+          "MongoDB.Driver": "2.8.1"
         },
         "runtime": {
           "BasketJam.dll": {}
@@ -58,46 +59,47 @@
           "System.Runtime": "4.3.0"
         }
       },
-      "MongoDB.Bson/2.8.0": {
+      "MongoDB.Bson/2.8.1": {
         "dependencies": {
           "NETStandard.Library": "2.0.3",
           "System.Collections.NonGeneric": "4.3.0",
           "System.Diagnostics.Process": "4.1.0",
           "System.Dynamic.Runtime": "4.3.0",
-          "System.Reflection.Emit.Lightweight": "4.3.0"
+          "System.Reflection.Emit.Lightweight": "4.3.0",
+          "System.Runtime.Serialization.Formatters": "4.3.0"
         },
         "runtime": {
           "lib/netstandard1.5/MongoDB.Bson.dll": {
-            "assemblyVersion": "2.8.0.0",
-            "fileVersion": "2.8.0.0"
+            "assemblyVersion": "2.8.1.0",
+            "fileVersion": "2.8.1.0"
           }
         },
         "compile": {
           "lib/netstandard1.5/MongoDB.Bson.dll": {}
         }
       },
-      "MongoDB.Driver/2.8.0": {
+      "MongoDB.Driver/2.8.1": {
         "dependencies": {
-          "MongoDB.Bson": "2.8.0",
-          "MongoDB.Driver.Core": "2.8.0",
+          "MongoDB.Bson": "2.8.1",
+          "MongoDB.Driver.Core": "2.8.1",
           "NETStandard.Library": "2.0.3",
           "System.ComponentModel.TypeConverter": "4.1.0",
           "System.Linq.Queryable": "4.0.1"
         },
         "runtime": {
           "lib/netstandard1.5/MongoDB.Driver.dll": {
-            "assemblyVersion": "2.8.0.0",
-            "fileVersion": "2.8.0.0"
+            "assemblyVersion": "2.8.1.0",
+            "fileVersion": "2.8.1.0"
           }
         },
         "compile": {
           "lib/netstandard1.5/MongoDB.Driver.dll": {}
         }
       },
-      "MongoDB.Driver.Core/2.8.0": {
+      "MongoDB.Driver.Core/2.8.1": {
         "dependencies": {
           "DnsClient": "1.2.0",
-          "MongoDB.Bson": "2.8.0",
+          "MongoDB.Bson": "2.8.1",
           "NETStandard.Library": "2.0.3",
           "System.Collections.Specialized": "4.3.0",
           "System.Diagnostics.TextWriterTraceListener": "4.0.0",
@@ -108,8 +110,8 @@
         },
         "runtime": {
           "lib/netstandard1.5/MongoDB.Driver.Core.dll": {
-            "assemblyVersion": "2.8.0.0",
-            "fileVersion": "2.8.0.0"
+            "assemblyVersion": "2.8.1.0",
+            "fileVersion": "2.8.1.0"
           }
         },
         "compile": {
@@ -387,6 +389,15 @@
             "rid": "win",
             "assetType": "runtime"
           }
+        }
+      },
+      "System.Runtime.Serialization.Formatters/4.3.0": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0"
         }
       },
       "System.Security.SecureString/4.0.0": {
@@ -3522,26 +3533,26 @@
       "path": "microsoft.win32.primitives/4.3.0",
       "hashPath": "microsoft.win32.primitives.4.3.0.nupkg.sha512"
     },
-    "MongoDB.Bson/2.8.0": {
+    "MongoDB.Bson/2.8.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xNxnOb/MM3+2mNkCt2pxobrvGHmYSgPRgjCAHvdtT36lMP7UPN3H6FcD3jVWQpGqiBhU6b7jcr58DC6OxoeWlA==",
-      "path": "mongodb.bson/2.8.0",
-      "hashPath": "mongodb.bson.2.8.0.nupkg.sha512"
+      "sha512": "sha512-iwy1s+r08Jmwe/RbXNDzCVqPz4MSKMNGnCC26FcsZbqAdgr+tg34FtPsjHJAsYNdFNTPqY9bC2GcWLjPVwQ9Ow==",
+      "path": "mongodb.bson/2.8.1",
+      "hashPath": "mongodb.bson.2.8.1.nupkg.sha512"
     },
-    "MongoDB.Driver/2.8.0": {
+    "MongoDB.Driver/2.8.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-vQiqOB9+KJMLwQb8uCxGN3MOhruxd9M3HLsOvGmRW5gHaI7JFwNc+FpCFyVA+6D3G51zloqmzZNUyReOZGcYqw==",
-      "path": "mongodb.driver/2.8.0",
-      "hashPath": "mongodb.driver.2.8.0.nupkg.sha512"
+      "sha512": "sha512-hJ+i92ceiE97T6kVXofYGrX9KE/tW3S7QlO8bnAnxhAVvwKVpKEzGAcx3wIHUNzUwUJnwy8cnHFxROfCsCa8dA==",
+      "path": "mongodb.driver/2.8.1",
+      "hashPath": "mongodb.driver.2.8.1.nupkg.sha512"
     },
-    "MongoDB.Driver.Core/2.8.0": {
+    "MongoDB.Driver.Core/2.8.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-5pji/fKcbqUa/0aAmV/tj24PW6CWaL13wOZ/6XB9DaMoEIaXKum9l381jHr6Rl/j5ZHAV9UTlYSEvY8KJUU9iQ==",
-      "path": "mongodb.driver.core/2.8.0",
-      "hashPath": "mongodb.driver.core.2.8.0.nupkg.sha512"
+      "sha512": "sha512-Kaea9dYnNBnLK0IexPyo+KSXyrutowWdKtY59txFAddRcHVFSMZTG7Zuy2up2v8PYiosfJsG6J6xWCWS7ZymUQ==",
+      "path": "mongodb.driver.core/2.8.1",
+      "hashPath": "mongodb.driver.core.2.8.1.nupkg.sha512"
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
       "type": "package",
@@ -3682,6 +3693,13 @@
       "sha512": "sha512-SSkQ3Hsy8kvhET4fY8vu+cWkfx2lcZDDUSuzr+3hzRgHM6jtwm3nZXqIPCYcnDl4eL/i/ECmruCXdAiXaIrc4Q==",
       "path": "system.net.security/4.3.2",
       "hashPath": "system.net.security.4.3.2.nupkg.sha512"
+    },
+    "System.Runtime.Serialization.Formatters/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KT591AkTNFOTbhZlaeMVvfax3RqhH1EJlcwF50Wm7sfnBLuHiOeZRRKrr1ns3NESkM20KPZ5Ol/ueMq5vg4QoQ==",
+      "path": "system.runtime.serialization.formatters/4.3.0",
+      "hashPath": "system.runtime.serialization.formatters.4.3.0.nupkg.sha512"
     },
     "System.Security.SecureString/4.0.0": {
       "type": "package",

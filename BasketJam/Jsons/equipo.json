@@ -3,48 +3,57 @@
     "FechaFundacion":"01/01/1250",
     "ColorCaracteristico":["Amarillo","Negro"],
     "Categoria":"Primera división",
-    "Estadio":  {
+        "Estadio":  {
                     "Nombre":"Palacio Peñarol",
-                    "Direccion":"Cordon"   
+                    "Direccion":"Montevideo"   
                 },
     "CuerpoTecnico":   [
-                            { 
-                            "Id": "",
-                            "nombre":"Jose",
-                            "apellido":"Artigas"
-                         },
-                         {
-                         	"Id": "",
-                         	"Nombre":"Paparulo",
-                            "Apellido":"Fagundez"
-                        }
+	 {
+        "cargo": 0,
+        "id": "",
+        "ci": 56980123,
+        "nombre": "Jose",
+        "apellido": "Artigas"
+    },
+    {
+        "cargo": 0,
+        "id": "",
+        "ci": 58948545,
+        "nombre": "Paparulo",
+        "apellido": "Fagundez"
+    }
                     ],  
     "Jugadores": [ 
-                    {
-                    "Id": "",
-                    "Nombre":"Emiliano",
-                    "Apellido":"Da Silva",
-                    "NumeroCamiseta":10
-                    },
-    
-                {
-                	"Id": "",
-                    "Nombre":"Gabriel",
-                    "Apellido":"Morador",
-                    "NumeroCamiseta":15
-                },
-    
-                {
-                	"Id": "",
-                    "Nombre":"Facundo",
-                    "Apellido":"Naviliat",
-                    "NumeroCamiseta":20
-                }
+                     {
+        "capitan": false,
+        "posicion": "Central",
+        "numeroCamiseta": 10,
+        "id": "",
+        "ci": 56980123,
+        "nombre": "Emiliano",
+        "apellido": "Da Silva"
+    },
+    {
+        "capitan": false,
+        "posicion": "Delantero",
+        "numeroCamiseta": 15,
+        "id": "",
+        "ci": 1234567,
+        "nombre": "Gabriel",
+        "apellido": "Morador"
+    },
+    {
+        "capitan": true,
+        "posicion": "Defensa",
+        "numeroCamiseta": 20,
+        "id": "",
+        "ci": 32165489,
+        "nombre": "Facundo",
+        "apellido": "Naviliat"
+    }
                  ]
 },
-{
-    "_id":"",
-    "NombreEquipo" : "Chicabo Bulls",
+{    "NombreEquipo" : "Chicabo Bulls",
     "FechaFundacion":"01/01/1000",
     "ColorCaracteristico":["Rojo"],
     "Categoria":"Primera división",
@@ -53,46 +62,49 @@
                     "Direccion":"USA"   
                 },
     "Cuerpo tecnico":   [
-                            {
-                                "_id":"",
-                                "CI" : "84795236",
-                                "Nombre":"Patrick",
-                                "Apellido":"MckDonald",
-                                "Cargo":"DT" 
-                            }
-                            ,
-                            {
-                                "_id":"",
-                                "CI" : "74258965",
-                                "Nombre":"Mister",
-                                "Apellido":"Second",
-                                "Cargo":"Aguatero" 
-                            }
+    {
+        "cargo": 0,
+        "id": "5ca195f72809f600c8159bec",
+        "ci": 84795236,
+        "nombre": "Patrick",
+        "apellido": "MckDonald"
+    },
+    {
+        "cargo": 1,
+        "id": "5ca195fd2809f600c8159bed",
+        "ci": 74258965,
+        "nombre": "Mister",
+        "apellido": "Second"
+    }
                     ],  
     "Jugadores": [ 
-                    {
-                        "_id":"",
-                        "CI" : "58987456",
-                        "Nombre":"Francisco",
-                        "Apellido":"Macachufo",
-                        "NumeroCamiseta":11
-                    }
-                    ,
-                    {
-                        "_id":"",
-                        "CI" : "98547896",
-                        "Nombre":"Tyler",
-                        "Apellido":"Aguirre",
-                        "NumeroCamiseta":16
-                    }
-                    ,
-                    {
-                        "_id":"",
-                        "CI" : "85478962",
-                        "Nombre":"Michael",
-                        "Apellido":"Jordan",
-                        "NumeroCamiseta":10
-                    }
+                     {
+        "capitan": false,
+        "posicion": "Central",
+        "numeroCamiseta": 11,
+        "id": "5ca194b98e28e027dcc2ed96",
+        "ci": 58987456,
+        "nombre": "Francisco",
+        "apellido": "Macachufo"
+    },
+    {
+        "capitan": false,
+        "posicion": "Delantero",
+        "numeroCamiseta": 16,
+        "id": "5ca194c58e28e027dcc2ed97",
+        "ci": 98547896,
+        "nombre": "Tyler",
+        "apellido": "Aguirre"
+    },
+    {
+        "capitan": true,
+        "posicion": "Defensa",
+        "numeroCamiseta": 10,
+        "id": "5ca194ce8e28e027dcc2ed98",
+        "ci": 85478962,
+        "nombre": "Michael",
+        "apellido": "Jordan"
+    }
                  ]
 }
 ]

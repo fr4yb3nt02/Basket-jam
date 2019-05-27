@@ -16,11 +16,12 @@ namespace BasketJam.Services
 {
     public interface IJugadorService
     {
-        List<Jugador> ListarJugadores();
-        Jugador BuscarJugador(string id);
-        Jugador CrearJugador(Jugador jugador);
+        Task<List<Jugador>> ListarJugadores();
+        Task<Jugador> BuscarJugador(string id);
+        Task<Jugador> CrearJugador(Jugador jugador);
         void ActualizarJugador(string id, Jugador jug);
         void EliminarJugador(string id);
+        Task<List<Jugador>> ListarJugadoresPorEquipo(string idEquipo);
     }
 
     public class JugadorService : IJugadorService
@@ -34,19 +35,24 @@ namespace BasketJam.Services
             _jugadores=database.GetCollection<Jugador>("jugadores");
 
         }
-        public List<Jugador> ListarJugadores()
+        public async Task<List<Jugador>> ListarJugadores()
         {
-            return _jugadores.Find(jugador => true).ToList();
+            return await _jugadores.Find(jugador => true).ToListAsync();
         }
 
-        public Jugador BuscarJugador(string id)
+        public async Task<List<Jugador>> ListarJugadoresPorEquipo(string idEquipo)
         {
-            return _jugadores.Find<Jugador>(jugador =>jugador.Id == id).FirstOrDefault();
+            return await _jugadores.Find(jugador => jugador.IdEquipo==idEquipo).ToListAsync();
         }
 
-        public Jugador CrearJugador(Jugador jugador)
+        public async Task<Jugador> BuscarJugador(string id)
         {
-            _jugadores.InsertOne(jugador);
+            return await _jugadores.Find<Jugador>(jugador =>jugador.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Jugador> CrearJugador(Jugador jugador)
+        {
+            await _jugadores.InsertOneAsync(jugador);
             return jugador;
         }
 

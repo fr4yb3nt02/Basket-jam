@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CuerpoTecnicoController : ControllerBase
@@ -18,15 +19,15 @@ namespace WebApi.Controllers
         }
 
        [HttpGet]
-        public  ActionResult<List<CuerpoTecnico>> Get()
+        public async Task<List<CuerpoTecnico>> Get()
         {
-            return _cuerpoTecnicoService.ListarMiembroCuerpoTecnico();
+            return await _cuerpoTecnicoService.ListarMiembroCuerpoTecnico();
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerMiembroCuerpoTecnico")]
-        public ActionResult<CuerpoTecnico> Get(string id)
+        public async Task<ActionResult<CuerpoTecnico>> Get(string id)
         {
-            var miembroCuerpoTecnico = _cuerpoTecnicoService.BuscarMiembroCuerpoTecnico(id);
+            var miembroCuerpoTecnico = await _cuerpoTecnicoService.BuscarMiembroCuerpoTecnico(id);
 
             if (miembroCuerpoTecnico == null)
             {
@@ -37,9 +38,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public  ActionResult<CuerpoTecnico> Create(CuerpoTecnico miembroCuerpoTecnico)
+        public async Task<ActionResult<CuerpoTecnico>> Create(CuerpoTecnico miembroCuerpoTecnico)
         {
-            _cuerpoTecnicoService.CrearMiembroCuerpoTecnico(miembroCuerpoTecnico);
+            await _cuerpoTecnicoService.CrearMiembroCuerpoTecnico(miembroCuerpoTecnico);
 
             return CreatedAtRoute("ObtenerMiembroCuerpoTecnico", new { id = miembroCuerpoTecnico.Id.ToString() }, miembroCuerpoTecnico);
         }
@@ -69,7 +70,7 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(miembroCuerpoTecnico.Id);
+            _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(miembroCuerpoTecnico.Id.ToString());
 
             return NoContent();
         }

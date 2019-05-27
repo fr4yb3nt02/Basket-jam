@@ -23,6 +23,8 @@ namespace BasketJam.Services
         Task<Usuario> Get(string id);
 
         Task<List<Usuario>> Get();
+
+        bool BuscarUsuarioPorCI(string ci);
         //IEnumerable<Usuario> GetAll();
     }
 
@@ -34,7 +36,7 @@ namespace BasketJam.Services
         private readonly AppSettings _appSettings;
 
         
-
+        string coso;
         /*public UsuarioService(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings.Value;
@@ -44,7 +46,14 @@ namespace BasketJam.Services
             _appSettings = appSettings.Value;
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
+
+//var client = new MongoClient("mongodb+srv://fr4yb3nt02:Emiliano49110131@basketjam-ajrid.azure.mongodb.net/test?retryWrites=true");
+//var database = client.GetDatabase("test");
+
+
              _usuarios=database.GetCollection<Usuario>("usuarios");
+
+
           /*   _usuarios=database.GetCollection<Usuario>("usuarios")
                 .Indexes
                 .CreateOneAsync(Builders<Usuario>
@@ -89,6 +98,21 @@ namespace BasketJam.Services
            var _usuario =await  _usuarios.Find<Usuario>(usuario => usuario.Id == id).FirstOrDefaultAsync();
 
            return _usuario;
+        }
+
+       public bool BuscarUsuarioPorCI(string ci)
+        {
+           var _usuario =  _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
+           // return  _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
+           if(_usuario!=null)
+           {
+           return  true ;
+           }
+           else 
+           {
+           return false;
+           }
+
         }
 
         public async Task<List<Usuario>> Get()
