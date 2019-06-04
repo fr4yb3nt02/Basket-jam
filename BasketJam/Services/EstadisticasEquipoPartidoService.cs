@@ -20,6 +20,8 @@ namespace BasketJam.Services
         Task<Boolean> CargarEstadistica(EstadisticasEquipoPartido eep);
         Task<Boolean> CargarEstadistica(string IdPartido , string IdEquipo , int ptos);
         Task<Boolean> CargarEstadistica(EstadisticasJugadorPartido ejp);
+
+        Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string IdPartido);
     }
 
     public class EstadisticasEquipoPartidoService : IEstadisticasEquipoPartidoService
@@ -45,6 +47,11 @@ namespace BasketJam.Services
                 public EstadisticasEquipoPartido BuscarEstadisticasEquipoPartido(string IdPartido,string IdEquipo)
         {    
             return  _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdEquipo.Equals(IdEquipo)&& a.IdPartido.Equals(IdPartido)).FirstOrDefault();
+        }
+
+        public async Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string IdPartido)
+        {    
+            return await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdPartido.Equals(IdPartido)).ToListAsync();
         }
 
         public  async Task<Boolean> CargarEstadistica(EstadisticasEquipoPartido eep)
@@ -75,6 +82,17 @@ namespace BasketJam.Services
             Partido Partido= await _partidoService.BuscarPartido(ejp.IdPartido);
             if(EstadisticasEquipoPartido==null)
             {
+                double porcentajeTirosLibres=0;
+                if(ejp.TirosLibresIntentados!=0)
+                 porcentajeTirosLibres=100;
+
+                                 double porcentajeCanastas2Puntos=0;
+                if(ejp.DosPuntosIntentados!=0)
+                 porcentajeCanastas2Puntos=100;
+
+                double porcentajeCanastas3Puntos=0;
+                if(ejp.TresPuntosIntentados!=0)
+                 porcentajeCanastas3Puntos=100;
 
                await _estadisticasEquipoPartido.InsertOneAsync(new EstadisticasEquipoPartido{
                    IdPartido=ejp.IdPartido,
@@ -86,13 +104,13 @@ namespace BasketJam.Services
                     PuntosCuartoCuarto=0,
                     TirosLibresExitosos=ejp.TirosLibresConvertidos,
                     TotalTirosLibres=ejp.TirosLibresIntentados,
-                    PorcentajeTirosLibres=ejp.TirosLibresPorcentaje,
+                    PorcentajeTirosLibres=porcentajeTirosLibres,
                     Canasta2PuntosExitosas=ejp.DosPuntosConvertidos,
                     TotalCanastas2Puntos=ejp.DosPuntosIntentados,
-                    PorcentajeCanastas2Puntos=ejp.DosPuntosPorcentaje,
+                    PorcentajeCanastas2Puntos=porcentajeCanastas2Puntos,
                     Canasta3PuntosExitosas=ejp.TresPuntosConvertidos,
                     TotalCanastas3Puntos=ejp.TresPuntosIntentados,
-                    PorcentajeCanastas3Puntos=ejp.TresPuntosPorcentaje,
+                    PorcentajeCanastas3Puntos=porcentajeCanastas3Puntos,
                     RebotesDefensivos=ejp.RebotesDefensivos,
                     RebotesOfensivos=ejp.RebotesOfensivos,
                     Faltas=ejp.FaltasCometidas+ejp.FaltasPersonales,

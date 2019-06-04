@@ -34,5 +34,14 @@ namespace WebApi.Controllers
             await _estadisticasEquipoPartidoService.CargarEstadistica(eep);
             return Ok();
         }
+
+        [AllowAnonymous]
+        [HttpGet("EstadisticasEquipoPorPartido/{id:length(24)}")]
+        public async Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string id)
+        {
+            return await _estadisticasEquipoPartidoService.EstadisticasEquipoPorPartido(id);
+            
+        }
+        
     }
     }

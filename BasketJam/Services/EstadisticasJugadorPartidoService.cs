@@ -92,7 +92,8 @@ namespace BasketJam.Services
                 }
 
                  await _estadisticasJugadorPartido.InsertOneAsync(ejp);
-                 await _estadisticasEquipoPartidoService.CargarEstadistica(ejp.IdPartido,equipo.IdEquipo,ptos);
+                 await _estadisticasEquipoPartidoService.CargarEstadistica(ejp);
+                 //await _estadisticasEquipoPartidoService.CargarEstadistica(ejp.IdPartido,equipo.IdEquipo,ptos);
                  return true;
             }
             else

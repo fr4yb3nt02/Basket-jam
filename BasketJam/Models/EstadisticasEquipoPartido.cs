@@ -24,19 +24,19 @@ public class EstadisticasEquipoPartido
     [BsonElement("Puntos")]
     public int Puntos { get; set; }
 
-       // [BsonRequired]
+   [BsonRequired]
     [BsonElement("PuntosPrimerCuarto")]
     public int PuntosPrimerCuarto { get; set; }
 
-       // [BsonRequired]
+   [BsonRequired]
     [BsonElement("PuntosSegundoCuarto")]
     public int PuntosSegundoCuarto { get; set; }
 
-       // [BsonRequired]
+   [BsonRequired]
     [BsonElement("PuntosTercerCuarto")]
     public int PuntosTercerCuarto { get; set; }
 
-        //[BsonRequired]
+   [BsonRequired]
     [BsonElement("PuntosCuartoCuarto")]
     public int PuntosCuartoCuarto { get; set; }
 
