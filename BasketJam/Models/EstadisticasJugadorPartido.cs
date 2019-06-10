@@ -103,6 +103,10 @@ public class EstadisticasJugadorPartido
         [BsonRequired]
         [BsonElement("FaltasCometidas")]
         public int FaltasCometidas { get; set; }
+
+        [BsonRequired]
+        [BsonElement("CoordenadasAcciones")]
+        public List<Coordenada> CoordenadasAcciones { get; set; }
     
 
 }

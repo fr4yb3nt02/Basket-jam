@@ -53,6 +53,9 @@ namespace BasketJam.Services
             ptos=2;
             if(ejp.TirosLibresConvertidos!=0)
             ptos=1;
+          //   Coordenada unaCoordenada=new Coordenada();
+            // unaCoordenada.X=x;
+            // unaCoordenada.Y=y;
 
 
             var equipo=await _jugadores.Find<Jugador>(a => a.Id.Equals(ejp.IdJugador)).FirstOrDefaultAsync();
@@ -90,6 +93,7 @@ namespace BasketJam.Services
                 {                    
                     ejp.RebotesTotales++;
                 }
+                //ejp.CoordenadasAcciones.Add(unaCoordenada);
 
                  await _estadisticasJugadorPartido.InsertOneAsync(ejp);
                  await _estadisticasEquipoPartidoService.CargarEstadistica(ejp);
@@ -150,10 +154,16 @@ namespace BasketJam.Services
                 .Set(c => c.FaltasCometidas,faltasCometidas)
                 .Set(d => d.Recuperos,recuperos)
                 .Set(e => e.Puntos,puntos)
+                .Push(e => e.CoordenadasAcciones, ejp.CoordenadasAcciones[0])
                 ); 
                 //await _estadisticasJugadorPartido.UpdateOneAsync(a => a.IdEquipo.Equals(eep.IdEquipo)&& a.IdPartido==eep.IdPartido,{$set});
                 await _estadisticasEquipoPartidoService.CargarEstadistica(ejp);
                 return true;
+                /*                 var filter = Builders<Partido>
+                  .Filter.Eq(e => e.Id, id);
+                 var update = Builders<EstadisticasJugadorPartido>.Update
+                        .Push<Coordenada>(e => e.CoordenadasAcciones, unaCoordenada);
+                 await  _estadisticasJugadorPartido.FindOneAndUpdateAsync(filter, update); */
             }
             
             

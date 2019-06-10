@@ -22,5 +22,11 @@
     "Recuperos":3,
     "FaltasPersonales":85,
     "FaltasRecibidas":148,
-    "FaltasCometidas":5 
+    "FaltasCometidas":5,
+    "CoordenadasAcciones":[       
+        {
+            "x":4,
+            "y":3
+        }
+    ]
 }
