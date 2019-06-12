@@ -16,6 +16,10 @@ public class Noticia
     public string Titulo { get; set; }
     
     [BsonRequired]
+    [BsonElement("ContenidoAbreviado")]
+    public string ContenidoAbreviado { get; set; }
+
+    [BsonRequired]
     [BsonElement("Contenido")]
     public string Contenido { get; set; }
 

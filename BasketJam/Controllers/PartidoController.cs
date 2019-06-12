@@ -108,20 +108,22 @@ namespace WebApi.Controllers
  [HttpGet("ConsultarHeaderPartido/{id:length(24)}")]
                 public async Task<ActionResult>  ConsultarHeaderPartido(string id)
         {
-
-          //  List<String> a = await _partidoService.DevuelvoListPartidosAndroid();
             return Ok(await _partidoService.ConsultarHeaderPartido(id));
-    //return Ok(_partidoService.DevuelvoListPartidosAndroid);
 }
 
 [AllowAnonymous]
  [HttpGet("ConsultaDetallesPartido/{id:length(24)}")]
                 public async Task<ActionResult>  ConsultaDetallesPartido(string id)
         {
-
-          //  List<String> a = await _partidoService.DevuelvoListPartidosAndroid();
+          
             return Ok(await _partidoService.ConsultaDetallesPartido(id));
-    //return Ok(_partidoService.DevuelvoListPartidosAndroid);
+}
+
+[AllowAnonymous]
+ [HttpGet("UltimosEventosEquipo/{id:length(24)}")]
+                public async Task<ActionResult>  UltimosEventosEquipo(string id)
+        {    
+            return Ok(await _partidoService.UltimosEventosEquipo(id));
 }
 
 
