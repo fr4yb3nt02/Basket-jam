@@ -89,10 +89,37 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-           await _partidoService.AgregarJuezPartida(id,jueces);
+          Boolean res= await _partidoService.AgregarJuezPartida(id,jueces);
 
+            
+            if(res)
             return Ok();
+            else
+            return BadRequest(new{error="No se ha podido realizar la acción."});
         }
+
+                [HttpPut("AgregarJugadoresAPartido/{id:length(24)}")]
+       // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
+        public async Task<ActionResult<bool>> AgregarJugadoresAPartido(string id,[FromBody]List<EquipoJugador> jugadores)
+        {
+
+            var partido = await _partidoService.BuscarPartido(id);
+
+            if (partido == null)
+            {
+                return NotFound();
+            }
+
+          Boolean res= await _partidoService.AgregarJugadoresAPartido(id,jugadores);
+
+            if(res)
+            return Ok();
+            else
+            return BadRequest(new{error="No se ha podido realizar la acción."});
+            
+        }
+
+        
 
 [AllowAnonymous]
  [HttpGet("Listpart")]
@@ -126,6 +153,13 @@ namespace WebApi.Controllers
             return Ok(await _partidoService.UltimosEventosEquipo(id));
 }
 
+ [AllowAnonymous]
+ [HttpGet("ListarEquiposJugador/{id:length(24)}")]
+                public async Task<ActionResult>  ListarEquiposJugador(string id)
+        {    
+            return Ok(await _partidoService.ListarEquipoJugador(id));
+
+        }
 
     }
 }

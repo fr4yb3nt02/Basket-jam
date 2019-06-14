@@ -131,6 +131,8 @@ namespace BasketJam.Services
                 int faltasRecibidas=EstadisticasJugadorPartido.FaltasRecibidas+ejp.FaltasRecibidas;
                 int faltasCometidas=EstadisticasJugadorPartido.FaltasCometidas+ejp.FaltasCometidas;
 
+                Coordenada unaCoor=ejp.CoordenadasAcciones[0];
+
                 await _estadisticasJugadorPartido.UpdateOneAsync(
                  a => a.IdJugador.Equals(ejp.IdJugador) && a.IdPartido.Equals(ejp.IdPartido),// Filtros para encontrar al jugador y partido correcto
                 Builders<EstadisticasJugadorPartido>.Update
@@ -154,7 +156,7 @@ namespace BasketJam.Services
                 .Set(c => c.FaltasCometidas,faltasCometidas)
                 .Set(d => d.Recuperos,recuperos)
                 .Set(e => e.Puntos,puntos)
-                .Push(e => e.CoordenadasAcciones, ejp.CoordenadasAcciones[0])
+                .Push(e => e.CoordenadasAcciones, unaCoor)
                 ); 
                 //await _estadisticasJugadorPartido.UpdateOneAsync(a => a.IdEquipo.Equals(eep.IdEquipo)&& a.IdPartido==eep.IdPartido,{$set});
                 await _estadisticasEquipoPartidoService.CargarEstadistica(ejp);

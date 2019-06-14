@@ -23,7 +23,11 @@ public class Partido
     [BsonRequired]
     [BsonElement("Equipos")]
     public List<Equipo> equipos { get; set; }
-    
+
+    //[BsonRequired]
+    [BsonElement("EquipoJugador")]
+    public List<EquipoJugador> EquipoJugador { get; set; }
+   
     [BsonRequired]
     [BsonElement("Estadio")]
     public string estadio { get; set; }
