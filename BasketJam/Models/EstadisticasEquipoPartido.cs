@@ -41,6 +41,10 @@ public class EstadisticasEquipoPartido
     public int PuntosCuartoCuarto { get; set; }
 
     [BsonRequired]
+    [BsonElement("PuntosOverTime")]
+    public int PuntosOverTime { get; set; }
+
+    [BsonRequired]
     [BsonElement("TirosLibresExitosos")]
     public int TirosLibresExitosos { get; set; }
     

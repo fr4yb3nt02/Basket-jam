@@ -387,43 +387,72 @@ public async Task<Object> ConsultaDetallesPartido(string idPartido)
 {
     try
     {
-    List<Partido> part = await _partidos.Find<Partido>(x => true).ToListAsync();
-    List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
-    List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
 
-    var detalles= ( from p in part               
-               join e in equi on p.equipos[0].Id equals e.Id
-               join e2 in equi on p.equipos[1].Id equals e2.Id
-               join est1 in estEqPar on e.Id equals est1.IdEquipo
-               join est2 in estEqPar on  e2.Id  equals est2.IdEquipo
-               where  p.Id.Equals(idPartido)
-               select new
-               {
-                   idPartido=p.Id,
-                   estadio=p.estadio,
-                   ptosPrimerCuartoEq1=est1.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq1=est1.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq1=est1.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq1=est1.PuntosCuartoCuarto,
-                   ptosPrimerCuartoEq2=est1.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq2=est1.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq2=est1.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq2=est1.PuntosCuartoCuarto,                   
-                   arbitro1=p.jueces[0].Nombre+p.jueces[0].Apellido,
-                   arbitro2=p.jueces[1].Nombre+p.jueces[1].Apellido,
-                   arbitro3=p.jueces[2].Nombre+p.jueces[2].Apellido,
-                   statuspartido=((EstadoPartido)p.estado).ToString()             
-               }        
-    ).First();
+    Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
 
-    return detalles;
+    var det=new { idPartido=part.Id,
+                   estadio=part.estadio,
+                   ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
+                   ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
+                   ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
+                   ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
+                   ptosOverTimeEq1= estEqPar1.PuntosOverTime,
+                   ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
+                   ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
+                   ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
+                   ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
+                   ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
+                   arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
+                   arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
+                   arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,
+                   statuspartido=((EstadoPartido)part.estado).ToString()   };
+
+
+    return det;
     }
-    catch
+    catch(Exception ex)
 {
-    return new {ERROR="No se encuentran estadísticas para el partido."};
+    return new {ERROR=ex.Message};
 }
 }
 
+/*public async Task<Object> consultarEstadisticasPeriodo(string idPartido , int periodo)
+{
+    try
+    {
+
+    Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
+
+    var det=new { idPartido=part.Id,
+                   estadio=part.estadio,
+                   ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
+                   ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
+                   ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
+                   ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
+                   ptosOverTimeEq1= estEqPar1.PuntosOverTime,
+                   ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
+                   ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
+                   ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
+                   ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
+                   ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
+                   arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
+                   arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
+                   arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,
+                   statuspartido=((EstadoPartido)part.estado).ToString()   };
+
+
+    return det;
+    }
+    catch(Exception ex)
+{
+    return new {ERROR=ex.Message};
+}
+}
+*/
 public async Task<Object> UltimosEventosEquipo(string idPartido)
 {
         try

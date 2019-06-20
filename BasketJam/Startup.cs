@@ -62,6 +62,7 @@ namespace BasketJam
             services.AddScoped<IJuezService,JuezService>();
             services.AddScoped<IPartidoService,PartidoService>();
             services.AddScoped<ITorneoService,TorneoService>();
+            services.AddScoped<IBitacoraService,BitacoraService>();
             services.AddScoped<IEstadisticasEquipoPartidoService,EstadisticasEquipoPartidoService>();
             services.AddScoped<IEstadisticasJugadorPartidoService,EstadisticasJugadorPartidoService>();
             

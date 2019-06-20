@@ -102,6 +102,7 @@ namespace BasketJam.Services
                     PuntosSegundoCuarto=0,
                     PuntosTercerCuarto=0,
                     PuntosCuartoCuarto=0,
+                    PuntosOverTime=0,
                     TirosLibresExitosos=ejp.TirosLibresConvertidos,
                     TotalTirosLibres=ejp.TirosLibresIntentados,
                     PorcentajeTirosLibres=porcentajeTirosLibres,
@@ -143,6 +144,7 @@ namespace BasketJam.Services
                 int puntosSegundoCuarto=0;
                 int puntosTercerCuarto=0;
                 int puntosCuartoCuarto=0;
+                int puntosOverTime=0;
                 if(Partido.cuarto==1)
                     puntosPrimerCuarto=puntos;
                 if(Partido.cuarto==2)
@@ -151,6 +153,8 @@ namespace BasketJam.Services
                     puntosTercerCuarto=puntos;
                 if(Partido.cuarto==4)
                     puntosCuartoCuarto=puntos;
+                if(Partido.cuarto==5)
+                    puntosOverTime=puntos;                    
 
 
                 int tirosLibresExitosos= EstadisticasEquipoPartido.TirosLibresExitosos+ejp.TirosLibresConvertidos;
@@ -193,6 +197,7 @@ namespace BasketJam.Services
                 .Set(d => d.PuntosSegundoCuarto,puntosSegundoCuarto)
                 .Set(b => b.PuntosTercerCuarto,puntosTercerCuarto)
                 .Set(c => c.PuntosCuartoCuarto,puntosCuartoCuarto)
+                .Set(d => d.PuntosOverTime,puntosOverTime)
                 .Set(b => b.Perdidas,perdidas));     
                 //await _estadisticasEquipoPartido.UpdateOneAsync(a => a.IdEquipo.Equals(eep.IdEquipo)&& a.IdPartido==eep.IdPartido,{$set});
                 return true;
