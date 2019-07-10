@@ -89,7 +89,8 @@ namespace WebApi.Controllers
         }
 
 [AllowAnonymous]
-[AcceptVerbs("Get", "Post")]
+[HttpGet("VerifCi")]
+//[AcceptVerbs("Get" , "Post")]
 public  IActionResult VerificarCI(string ci)
 {
     if (!_usuarioService.BuscarUsuarioPorCI(ci))

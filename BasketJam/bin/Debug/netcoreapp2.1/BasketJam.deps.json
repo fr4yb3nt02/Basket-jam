@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "1e7d7c186410c2c6bb80753caefce027e457f8e5"
+    "signature": "086e50c88aee786d1062e61f5e5b59792efb929e"
   },
   "compilationOptions": {
     "defines": [
@@ -28,7 +28,8 @@
           "Microsoft.AspNetCore.App": "2.1.1",
           "Microsoft.AspNetCore.Razor.Design": "2.1.2",
           "Microsoft.NETCore.App": "2.1.0",
-          "MongoDB.Driver": "2.8.1"
+          "MongoDB.Driver": "2.8.1",
+          "MongoDB.Driver.GridFS": "2.8.1"
         },
         "runtime": {
           "BasketJam.dll": {}
@@ -116,6 +117,23 @@
         },
         "compile": {
           "lib/netstandard1.5/MongoDB.Driver.Core.dll": {}
+        }
+      },
+      "MongoDB.Driver.GridFS/2.8.1": {
+        "dependencies": {
+          "MongoDB.Bson": "2.8.1",
+          "MongoDB.Driver": "2.8.1",
+          "MongoDB.Driver.Core": "2.8.1",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {
+            "assemblyVersion": "2.8.1.0",
+            "fileVersion": "2.8.1.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {}
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
@@ -3553,6 +3571,13 @@
       "sha512": "sha512-Kaea9dYnNBnLK0IexPyo+KSXyrutowWdKtY59txFAddRcHVFSMZTG7Zuy2up2v8PYiosfJsG6J6xWCWS7ZymUQ==",
       "path": "mongodb.driver.core/2.8.1",
       "hashPath": "mongodb.driver.core.2.8.1.nupkg.sha512"
+    },
+    "MongoDB.Driver.GridFS/2.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HpBJCD04SCC33MfUhQbwbDQqPW2XR1IXc3IJFxCBSZ3kzMl3qT9hpe+MSXVxnaPe0lcCbyJaDtVlvjXWUj4QSA==",
+      "path": "mongodb.driver.gridfs/2.8.1",
+      "hashPath": "mongodb.driver.gridfs.2.8.1.nupkg.sha512"
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
       "type": "package",

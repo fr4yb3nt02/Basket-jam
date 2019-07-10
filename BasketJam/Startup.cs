@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BasketJam
 {
@@ -35,7 +36,9 @@ namespace BasketJam
 
             // configuración de autenticación JWT
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.TopSecret);
+            //string forToken=appSettings.TopSecret+DateTime.Now;
+            string forToken=appSettings.TopSecret;
+            var key = Encoding.ASCII.GetBytes(forToken);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -65,6 +68,7 @@ namespace BasketJam
             services.AddScoped<IBitacoraService,BitacoraService>();
             services.AddScoped<IEstadisticasEquipoPartidoService,EstadisticasEquipoPartidoService>();
             services.AddScoped<IEstadisticasJugadorPartidoService,EstadisticasJugadorPartidoService>();
+            services.AddScoped<IVotacionPartidoService,VotacionPartidoService>();
             
             //services.AddScoped<DataContext>();
             

@@ -26,6 +26,13 @@ namespace WebApi.Controllers
         {    
             return Ok(new {resultado=await _bitacoraService.GenerarBitacora(bp)});
 }
+
+      [AllowAnonymous]
+ [HttpGet("consultarEstadisticasPeriodo")]
+                public async Task<ActionResult>  consultarEstadisticasPeriodo(string idPartido , int periodo)
+        {    
+            return Ok(await _bitacoraService.consultarEstadisticasPeriodo(idPartido,periodo));
+}  
         
     }
     }

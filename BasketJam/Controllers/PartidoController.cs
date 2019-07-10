@@ -62,6 +62,28 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
+        [HttpPut("ActualizarTiempoPartido/{id:length(24)}")]
+        public IActionResult ActualizarTiempoPartido(string id, string tiempo)
+        {
+            try
+            {
+            var partido = _partidoService.BuscarPartido(id);
+
+            if (partido == null)
+            {
+                return NotFound();
+            }
+
+            _partidoService.ActualizarTiempoPartido(id,tiempo);
+            return Ok();
+            }
+            catch
+            {
+            return NoContent();
+            }
+        }
+        
+
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
@@ -130,6 +152,13 @@ namespace WebApi.Controllers
             return Ok(await _partidoService.DevuelvoListPartidosAndroid());
     //return Ok(_partidoService.DevuelvoListPartidosAndroid);
 }
+
+[AllowAnonymous]
+ [HttpGet("ListPartidosProgOJug")]
+                public async Task<ActionResult>  ListarPartidosProgOJug()
+        {
+            return Ok(await _partidoService.ListarPartidosProgOJug());
+        }
 
 [AllowAnonymous]
  [HttpGet("ConsultarHeaderPartido/{id:length(24)}")]

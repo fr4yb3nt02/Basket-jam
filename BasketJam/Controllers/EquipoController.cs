@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.IO;
 
 namespace WebApi.Controllers
 {
@@ -92,5 +95,28 @@ namespace WebApi.Controllers
 
             return NoContent();
         }
+
+        [AllowAnonymous]
+        [HttpPost("subirFoto")]
+[HttpPost]  
+  public async Task<IActionResult> subirFoto(IFormFile file)  
+  {  
+      if (file == null || file.Length == 0)  
+          return Content("No se ha adjuntado imágen.");  
+  
+
+         var filePath = Path.GetTempFileName();
+
+      var path = Path.Combine(  
+                  Directory.GetCurrentDirectory(), "wwwroot",   
+                  file.FileName);  
+  
+      using (var stream = new FileStream(path, FileMode.Create))  
+      {  
+          await file.CopyToAsync(stream);  
+      }  
+  
+      return RedirectToAction("Files");  
+  } 
     }
 }

@@ -3,9 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -28,17 +30,40 @@ namespace BasketJam.Services
     public class EquipoService : IEquipoService
 {
         private readonly IMongoCollection<Equipo> _equipos;
-        private readonly IMongoCollection<Jugador> _jugadores;        
+        private readonly IMongoCollection<Jugador> _jugadores;
+      
+        private readonly  IGridFSBucket _bucket;
+
         //private readonly IMongoCollection<Estadio> _estadios;
         public EquipoService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
+            var bucket = new GridFSBucket(database);
+            _bucket=bucket;
              _equipos=database.GetCollection<Equipo>("equipos");
              _jugadores=database.GetCollection<Jugador>("jugadores");
             // _estadios=database.GetCollection<Estadio>("estadios");
 
+
         }
+
+
+        public void subirImagen(string imagePath)
+        {
+            byte[] imagenToBytes=null;
+            FileStream fileStream=new FileStream(imagePath,FileMode.Open,FileAccess.Read);
+            using (BinaryReader reader = new BinaryReader(fileStream))
+            {
+                imagenToBytes=new byte[reader.BaseStream.Length];
+                for(int i =0; i < reader.BaseStream.Length;i++)
+                    imagenToBytes[i]=reader.ReadByte();
+            }
+
+            var id = _bucket.UploadFromBytes("filename", imagenToBytes);
+
+        }
+
         public async Task<List<Equipo>> ListarEquipos()
         {
             

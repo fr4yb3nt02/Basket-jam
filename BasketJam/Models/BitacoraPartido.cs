@@ -37,6 +37,8 @@ public class BitacoraPartido
     //[BsonRequired()]
     //[BsonElement("Tiempo")]
     public string Tiempo { get; set; }
+
+    public Coordenada CoordenadasAcciones { get; set; }
 }
 
 }

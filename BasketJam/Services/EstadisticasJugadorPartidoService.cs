@@ -18,6 +18,7 @@ namespace BasketJam.Services
     {
         Task<ReplaceOneResult> Save(EstadisticasJugadorPartido eep);
         Task<Boolean> CargarEstadistica(EstadisticasJugadorPartido eep);
+        EstadisticasJugadorPartido BuscarEstadisticasJugadorPartido(string IdPartido,string IdJugador);
     }
 
     public class EstadisticasJugadorPartidoService : IEstadisticasJugadorPartidoService
@@ -53,6 +54,7 @@ namespace BasketJam.Services
             ptos=2;
             if(ejp.TirosLibresConvertidos!=0)
             ptos=1;
+            List<Coordenada> coors=new List<Coordenada>();
           //   Coordenada unaCoordenada=new Coordenada();
             // unaCoordenada.X=x;
             // unaCoordenada.Y=y;
@@ -61,6 +63,10 @@ namespace BasketJam.Services
             var equipo=await _jugadores.Find<Jugador>(a => a.Id.Equals(ejp.IdJugador)).FirstOrDefaultAsync();
             if(EstadisticasJugadorPartido==null)
             {
+                if(ejp.CoordenadasAcciones==null)
+                {
+                    ejp.CoordenadasAcciones=coors;
+                }
                 if(ejp.TresPuntosConvertidos!=0 && ejp.TresPuntosIntentados!=0)
                 {
                     ejp.TresPuntosPorcentaje=100;
@@ -156,8 +162,13 @@ namespace BasketJam.Services
                 .Set(c => c.FaltasCometidas,faltasCometidas)
                 .Set(d => d.Recuperos,recuperos)
                 .Set(e => e.Puntos,puntos)
-                .Push(e => e.CoordenadasAcciones, unaCoor)
-                ); 
+               
+                );
+
+                if(unaCoor!=null) 
+               { await _estadisticasJugadorPartido.UpdateOneAsync(
+                 a => a.IdJugador.Equals(ejp.IdJugador) && a.IdPartido.Equals(ejp.IdPartido),// Filtros para encontrar al jugador y partido correcto
+                Builders<EstadisticasJugadorPartido>.Update .Push(e => e.CoordenadasAcciones, unaCoor));}
                 //await _estadisticasJugadorPartido.UpdateOneAsync(a => a.IdEquipo.Equals(eep.IdEquipo)&& a.IdPartido==eep.IdPartido,{$set});
                 await _estadisticasEquipoPartidoService.CargarEstadistica(ejp);
                 return true;

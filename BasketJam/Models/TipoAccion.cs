@@ -15,5 +15,8 @@ public enum TipoAccion
   FaltaPersonal,
   FaltaRecibida,
   FaltaCometida,
+  PasaATitular,
+  PasaASuplente,
+  TiempoMuerto
 
 }

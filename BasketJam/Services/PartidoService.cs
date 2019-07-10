@@ -41,24 +41,36 @@ namespace BasketJam.Services
 
        Task<Object> UltimosEventosEquipo(string idPartido);
 
-       Task<List<EquipoJugador>> ListarEquipoJugador(string idPartido);
+       Task<List<Object>> ListarEquipoJugador(string idPartido);
 
        Task<Boolean> AgregarJugadoresAPartido(string id,List<EquipoJugador> jugadores);
+
+       Task<List<Object>> ListarPartidosProgOJug();
+
+       void ActualizarTiempoPartido(string id, string tiempo);
     }
 
     public class PartidoService : IPartidoService
 {
         private readonly IMongoCollection<Partido> _partidos;
         private readonly IMongoCollection<Equipo> _equipos;
+        private readonly IMongoCollection<CuerpoTecnico> _cuerpoTecnico;
+        private readonly IMongoCollection<Jugador> _jugadores;
         private readonly IMongoCollection<EstadisticasEquipoPartido> _estadisticasEquipoPartido;
+        private IVotacionPartidoService _votacionPartidoService;
 
-            public PartidoService(IConfiguration config)
+            public PartidoService(IConfiguration config,IVotacionPartidoService votacionPartidoService)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
              _partidos=database.GetCollection<Partido>("partidos");
-             _equipos=database.GetCollection<Equipo>("equipos");             
+             _equipos=database.GetCollection<Equipo>("equipos");        
+             _jugadores=database.GetCollection<Jugador>("jugadores");       
+             _cuerpoTecnico=database.GetCollection<CuerpoTecnico>("cuerpoTecnico"); 
              _estadisticasEquipoPartido=database.GetCollection<EstadisticasEquipoPartido>("EstadisticasEquipoPartido");
+             _votacionPartidoService=votacionPartidoService;
+
+             
 
         }
         public async Task<List<Partido>> ListarPartidos()
@@ -66,55 +78,85 @@ namespace BasketJam.Services
             return await _partidos.Find(partido => true).ToListAsync();
         }
 
-        public async Task<List<EquipoJugador>> ListarEquipoJugador(string idPartido)
+        public async Task<List<Object>> ListarEquipoJugador(string idPartido)
         {
         /*    try
     { */
-    List<Partido> part = await _partidos.Find<Partido>(x => true).ToListAsync();
-    List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
-    List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
+    //List<Partido> part = await _partidos.Find<Partido>(x => true).ToListAsync();
+    //List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
+    //List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
 
     Partido p = await _partidos.Find<Partido>(partido => partido.Id==idPartido).FirstOrDefaultAsync();
 
     List<EquipoJugador> equiposJugadores=new List<EquipoJugador>();
+    List<Object> jugadores= new List<Object>();
+    List<Object> jugEq= new List<Object>();
+    Jugador j ;
+    CuerpoTecnico tecnico;
 
+        foreach(Equipo e in p.equipos)
+    {
+        string id="0";
+        if(id!=e.Id)
+        {
+            id=e.Id;
+            jugadores= new List<Object>();
     foreach(EquipoJugador ej in p.EquipoJugador)
     {
-        equiposJugadores.Add(ej);
-    }
-
-    return equiposJugadores;
-
-// select p.EquipoJugador).ToList();
-  /*  var jugadoresEquipo= ( from p in part               
-                    where  p.Id.Equals(idPartido)
-                    select new              
-               {
-                   equipo1=p.EquipoJugador[0].idEquipo,
-                   equipo2=p.EquipoJugador[1].idEquipo
-
-               }        
-    ).ToList(); 
-
-    List<Object> dev=new List<Object>();
-
-   foreach (var par in jugadoresEquipo)
-   {
     
-       dev.Add(par);
-   }
+        
+        j=await _jugadores.Find<Jugador>(x => x.Id==ej.jugadorEquipo[0].idJugador && x.IdEquipo==id).FirstOrDefaultAsync();
+        if(j!=null){
+        jugadores.Add(new{Nombre = j.Nombre , Apellido = j.Apellido , Posicion = j.Posicion , Camiseta = ej.jugadorEquipo[0].nroCamiseta});
+        }
+        //equiposJugadores.Add(ej);
+    }
+    tecnico=await _cuerpoTecnico.Find<CuerpoTecnico>(x => x.IdEquipo==e.Id && x.Cargo==(CargoCuerpoTecnico)0).FirstOrDefaultAsync();
+        jugEq.Add(new{Equipo = e.Id , Entrenado = tecnico.Nombre +" "+ tecnico.Apellido , jugadores});
+        }
+    }
+    return jugEq;
 
-   return dev;    */
-  /*   }
-    catch
-{
-    return new {ERROR="No se encuentran jugadores para el partido."};
-}*/
         }
 
         public async Task<List<Partido>> ListarPartidosPorFecha(DateTime fecha)
         {
             return await _partidos.Find(partido => partido.fecha==fecha).ToListAsync();
+        }
+
+        public async Task<List<Object>> ListarPartidosProgOJug()
+    
+            //return await _partidos.Find(partido => partido.estado!=(EstadoPartido)3).Project(p =>p.Id).ToListAsync(); try
+    {
+try
+{
+    List<Object> dev=new List<Object>();
+    List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado!=(EstadoPartido)3).ToListAsync(); 
+    foreach(Partido p in parts)
+    {
+    Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
+    Equipo Eq2 =await _equipos.Find<Equipo>(x => x.Id == p.equipos[1].Id).FirstOrDefaultAsync();
+
+    dev.Add(new { idPartido=p.Id,
+                   estadio=p.estadio,
+                   categoria=Eq1.Categoria,
+                   equipo1=Eq1.NombreEquipo,
+                   equipo2=Eq2.NombreEquipo,
+                      fecha=p.fecha.ToString("dd/MM/yyyy"),
+                   hora=p.fecha.ToShortTimeString(),
+                   });
+    //dev.Add(det);
+ };
+
+
+    return dev;
+    }
+    catch(Exception ex)
+{
+    List<Object> dev=new List<Object>();
+    dev.Add(new{Error = ex.Message});
+    return  dev;
+}
         }
 
         public async Task<Partido> BuscarPartido(string id)
@@ -130,12 +172,39 @@ namespace BasketJam.Services
             partido.EquipoJugador=new List<EquipoJugador>();
             partido.jueces=new List<Juez>();
             await _partidos.InsertOneAsync(partido);
+
+            VotacionPartido vp = new VotacionPartido();
+            vp.Contenido_Votacion=new List<VotacionPartido.ContenidoVotacion>();
+            vp.IdPartido=partido.Id;
+            List<String> usuarios=new List<string>();
+            vp.Usuarios=usuarios;
+            VotacionPartido.ContenidoVotacion cv1 = new VotacionPartido.ContenidoVotacion();
+            VotacionPartido.ContenidoVotacion cv2 = new VotacionPartido.ContenidoVotacion();
+            cv1.idEquipo=partido.equipos[0].Id;
+            cv1.votos=0;
+            cv2.idEquipo=partido.equipos[1].Id;
+            cv2.votos=0;
+            
+            vp.Contenido_Votacion.Add(cv1);
+            vp.Contenido_Votacion.Add(cv2);
+
+           await _votacionPartidoService.votarEquipoPartido(vp);
+
             return partido;
         }
 
         public void ActualizarPartido(string id, Partido pa)
         {
             _partidos.ReplaceOne(partido => partido.Id == id, pa);
+        }
+        public async void ActualizarTiempoPartido(string id, string tiempo)
+        {
+
+             await _partidos.UpdateOneAsync(
+                 a => a.Id.Equals(id),// Filtros para encontrar al jugador y partido correcto
+                Builders<Partido>.Update
+                .Set(b => b.Tiempo,tiempo));
+
         }
 
         public async Task<Boolean> AgregarJuezPartida(string id,List<Juez> jueces)
@@ -209,171 +278,75 @@ public async Task<List<Object>> DevuelvoListPartidosAndroid()
     List<Partido> part = await _partidos.Find<Partido>(x => true).ToListAsync();
     List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
     List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
-var res1= ( from p in part
-               join est in estEqPar on p.Id equals est.IdPartido
-               join e in equi on est.IdEquipo equals e.Id
-               where p.equipos[0].Id.Equals(est.IdEquipo)
-               && p.estado != 0
-               select new
-               {
+    List<Object> devv=new List<Object>();
+
+foreach(Partido p in part)
+{
+    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido==p.Id && x.IdEquipo==p.equipos[0].Id).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido==p.Id && x.IdEquipo==p.equipos[1].Id).FirstOrDefaultAsync();
+    int puntosEq1=0,puntosEq2=0;
+    if(estEqPar1!=null)
+        puntosEq1=estEqPar1.Puntos;
+    if(estEqPar2!=null)
+        puntosEq2=estEqPar2.Puntos;
+
+
+   devv.Add( new
+              {
                    idPartido=p.Id,
-                   equipo= e.NombreEquipo,
+                   equipo1= p.equipos[0].NombreEquipo,
+                   equipo2= p.equipos[1].NombreEquipo,
                    estadio=p.estadio,
-                   puntos=est.Puntos,
+                   puntosEq1=puntosEq1,
+                   puntosEq2=puntosEq2,
                    fecha=p.fecha.ToString("dd/MM/yyyy"),
                    hora=p.fecha.ToShortTimeString(),
-                   estado=((EstadoPartido)p.estado).ToString()
-                   //equipo2= p.equipos[1].NombreEquipo,                
-               }         
-    );
+                   estado=((EstadoPartido)p.estado).ToString(),
+                   cuarto=p.cuarto,
+                   tiempo=p.Tiempo,
+              });
+}
 
-var res2=(from p in part
-               join est in estEqPar on p.Id equals est.IdPartido
-               join e in equi on est.IdEquipo equals e.Id
-               where p.equipos[1].Id.Equals(est.IdEquipo)
-               && p.estado != 0
-               select new
-               {
-                   idPartido=p.Id,
-                   equipo= e.NombreEquipo,
-                   estadio=p.estadio,
-                   puntos=est.Puntos,
-                   fecha=p.fecha.ToString("dd/MM/yyyy"),
-                   hora=p.fecha.ToShortTimeString(),                
-                   estado=((EstadoPartido)p.estado).ToString()
-                   
-               } );
+   return devv;
 
-   var res3= ( from p in part
-               join e in equi on p.equipos[0].Id equals e.Id
-               where p.estado == 0
-               select new
-               {
-                   idPartido=p.Id,
-                   equipo= e.NombreEquipo,
-                   estadio=p.estadio,
-                   puntos=0,
-                   fecha=p.fecha.ToString("dd/MM/yyyy"),
-                   hora=p.fecha.ToShortTimeString(),
-                   estado=((EstadoPartido)p.estado).ToString()
-                   //equipo2= p.equipos[1].NombreEquipo,                
-               }         
-    );
-
-var res4=(from p in part
-               join e in equi on p.equipos[1].Id equals e.Id
-               where p.estado == 0
-               select new
-               {
-                   idPartido=p.Id,
-                   equipo= e.NombreEquipo,
-                   estadio=p.estadio,
-                   puntos=0,
-                   fecha=p.fecha.ToString("dd/MM/yyyy"),
-                   hora=p.fecha.ToShortTimeString(),                
-                   estado=((EstadoPartido)p.estado).ToString()
-                   
-               } );
-
-    var res= (from eq1 in res1
-              join eq2 in res2 on eq1.idPartido equals eq2.idPartido
-              select new
-              {
-                   idPartido=eq1.idPartido,
-                   equipo1= eq1.equipo,
-                   equipo2= eq2.equipo,
-                   estadio=eq1.estadio,
-                   puntosEq1=eq1.puntos,
-                   puntosEq2=eq2.puntos,
-                   fecha=eq1.fecha,
-                   hora=eq1.hora,
-                   estado=eq1.estado
-              } ).Union(from eq1 in res3
-              join eq2 in res4 on eq1.idPartido equals eq2.idPartido
-              select new
-              {
-                   idPartido=eq1.idPartido,
-                   equipo1= eq1.equipo,
-                   equipo2= eq2.equipo,
-                   estadio=eq1.estadio,
-                   puntosEq1=eq1.puntos,
-                   puntosEq2=eq2.puntos,
-                   fecha=eq1.fecha,
-                   hora=eq1.hora,
-                   estado=eq1.estado
-              } );
-
-    var resu=res1.Union(res2);
-    
-    List<Object> dev=new List<Object>();
-
-   foreach (var par in res)
-   {
-    
-       dev.Add(par);
-   }
-
-   return dev;
-
-    
 }
 
 public async Task<Object> ConsultarHeaderPartido(string idPartido)
 {
     try
     {
-    List<Partido> part = await _partidos.Find<Partido>(x => true).ToListAsync();
-    List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
-    List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
+    Partido p = await _partidos.Find<Partido>(x => x.Id==idPartido).FirstOrDefaultAsync();
+  //  List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
+   // List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
+    Object devv = new Object();
 
+/*foreach(Partido p in part)
+{*/
+    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido==p.Id && x.IdEquipo==p.equipos[0].Id).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido==p.Id && x.IdEquipo==p.equipos[1].Id).FirstOrDefaultAsync();
+    int puntosEq1=0,puntosEq2=0;
+    if(estEqPar1!=null)
+        puntosEq1=estEqPar1.Puntos;
+    if(estEqPar2!=null)
+        puntosEq2=estEqPar2.Puntos;
 
-Partido unPartido=await BuscarPartido(idPartido);
-
-if(unPartido.estado!=0)
-{
- var partido= ( from p in part               
-               join e in equi on p.equipos[0].Id equals e.Id
-               join e2 in equi on p.equipos[1].Id equals e2.Id
-               join est1 in estEqPar on e.Id equals est1.IdEquipo
-               join est2 in estEqPar on  e2.Id  equals est2.IdEquipo
-               where  p.Id.Equals(idPartido)
-               select new
-               {
-                   idPartido=p.Id,
-                   idEquipo1=e.Id,
-                   idEquipo2=e.Id,
-                   equipo1= e.NombreEquipo,
-                   equipo2= e2.NombreEquipo,
-                   ptosequipo1=est1.Puntos,
-                   ptosequipo2=est2.Puntos,                   
+   devv=(new
+              {
+                  idPartido=p.Id,
+                   idEquipo1=p.equipos[0].Id,
+                   idEquipo2=p.equipos[1].Id,
+                   equipo1= p.equipos[0].NombreEquipo,
+                   equipo2= p.equipos[1].NombreEquipo,
+                   ptosequipo1=puntosEq1,
+                   ptosequipo2=puntosEq2,                 
                    cuartoenjuego=p.cuarto,
-                   statuspartido=((EstadoPartido)p.estado).ToString()            
-               }        
-    ).First();
-    return  partido;
-}
-else
-{
-    var partido= ( from p in part               
-               join e in equi on p.equipos[0].Id equals e.Id
-               join e2 in equi on p.equipos[1].Id equals e2.Id
-               where  p.Id.Equals(idPartido)
-               select new
-               {
-                   idPartido=p.Id,
-                   idEquipo1=e.Id,
-                   idEquipo2=e.Id,
-                   equipo1= e.NombreEquipo,
-                   equipo2= e2.NombreEquipo,
-                   ptosequipo1=0,
-                   ptosequipo2=0,
-                   cuartoenjuego=p.cuarto,
-                   statuspartido=((EstadoPartido)p.estado).ToString()          
-               }        
-    ).First();
-    return  partido;
-}
-    
+                   tiempoDeJuego=p.Tiempo,
+                   Estadio=p.estadio,
+                   fecha=p.fecha.ToString("dd/MM/yyyy"),
+                   statuspartido=((EstadoPartido)p.estado).ToString()   
+              });
+
+  return devv;  
 
 }
 catch
@@ -418,41 +391,6 @@ public async Task<Object> ConsultaDetallesPartido(string idPartido)
 }
 }
 
-/*public async Task<Object> consultarEstadisticasPeriodo(string idPartido , int periodo)
-{
-    try
-    {
-
-    Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
-    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
-    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
-
-    var det=new { idPartido=part.Id,
-                   estadio=part.estadio,
-                   ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
-                   ptosOverTimeEq1= estEqPar1.PuntosOverTime,
-                   ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
-                   ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
-                   arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
-                   arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
-                   arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,
-                   statuspartido=((EstadoPartido)part.estado).ToString()   };
-
-
-    return det;
-    }
-    catch(Exception ex)
-{
-    return new {ERROR=ex.Message};
-}
-}
-*/
 public async Task<Object> UltimosEventosEquipo(string idPartido)
 {
         try
@@ -495,6 +433,41 @@ public async Task<Object> UltimosEventosEquipo(string idPartido)
     return new {ERROR="No se encuentran estadísticas para el partido."};
 }
 }
+
+/*public async Task<Object> ConsultaDetallesPartido(string idPartido)
+{
+    try
+    {
+
+    Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
+    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
+
+    var det=new { idPartido=part.Id,
+                   estadio=part.estadio,
+                   ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
+                   ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
+                   ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
+                   ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
+                   ptosOverTimeEq1= estEqPar1.PuntosOverTime,
+                   ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
+                   ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
+                   ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
+                   ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
+                   ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
+                   arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
+                   arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
+                   arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,
+                   statuspartido=((EstadoPartido)part.estado).ToString()   };
+
+
+    return det;
+    }
+    catch(Exception ex)
+{
+    return new {ERROR=ex.Message};
+}
+} */
 
     }
 }

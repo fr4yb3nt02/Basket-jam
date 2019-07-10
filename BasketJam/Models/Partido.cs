@@ -37,6 +37,10 @@ public class Partido
     public int cuarto { get; set; }
 
     [BsonRequired]
+    [BsonElement("Tiempo")]
+    public string Tiempo { get; set; }
+
+    [BsonRequired]
     [BsonElement("Jueces")]
     public List<Juez> jueces { get; set; }
 }
