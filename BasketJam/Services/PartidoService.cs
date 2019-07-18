@@ -112,7 +112,7 @@ namespace BasketJam.Services
         //equiposJugadores.Add(ej);
     }
     tecnico=await _cuerpoTecnico.Find<CuerpoTecnico>(x => x.IdEquipo==e.Id && x.Cargo==(CargoCuerpoTecnico)0).FirstOrDefaultAsync();
-        jugEq.Add(new{Equipo = e.Id , Entrenado = tecnico.Nombre +" "+ tecnico.Apellido , jugadores});
+        jugEq.Add(new{Equipo = e.Id , Entrenador = tecnico.Nombre +" "+ tecnico.Apellido , jugadores});
         }
     }
     return jugEq;

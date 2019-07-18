@@ -1,5 +1,5 @@
 {
-  "FilePath": "c:\\Users\\emikp\\OneDrive\\Documentos\\GitHub\\LRBS-Project\\BasketJam\\BasketJam.csproj",
+  "FilePath": "c:\\Users\\emikp\\OneDrive\\Documentos\\GitHub\\BasketJam\\BasketJam\\BasketJam.csproj",
   "Configuration": {
     "ConfigurationName": "MVC-2.1",
     "LanguageVersion": "2.1",
@@ -2857,5 +2857,6 @@
     "CSharpLanguageVersion": 703
   },
   "RootNamespace": "BasketJam",
-  "Documents": []
+  "Documents": [],
+  "SerializationFormat": "0.1"
 }
