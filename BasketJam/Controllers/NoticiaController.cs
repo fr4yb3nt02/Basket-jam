@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 
-namespace WebApi.Controllers
+namespace BasketJam.Controllers
 {
     //[Authorize]
     [ApiController]

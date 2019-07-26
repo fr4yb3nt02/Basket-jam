@@ -1,24 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Cristian\\Desktop\\BasketJam\\BasketJam\\BasketJam.csproj": {}
+    "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Cristian\\Desktop\\BasketJam\\BasketJam\\BasketJam.csproj": {
+    "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cristian\\Desktop\\BasketJam\\BasketJam\\BasketJam.csproj",
+        "projectUniqueName": "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj",
         "projectName": "BasketJam",
-        "projectPath": "C:\\Users\\Cristian\\Desktop\\BasketJam\\BasketJam\\BasketJam.csproj",
-        "packagesPath": "C:\\Users\\Cristian\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cristian\\Desktop\\BasketJam\\BasketJam\\obj\\",
+        "projectPath": "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "packagesPath": "C:\\Users\\Emiliano\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Cristian\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Emiliano\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"
@@ -57,7 +59,6 @@
               "version": "[2.1.2, )"
             },
             "Microsoft.NETCore.App": {
-              "suppressParent": "All",
               "target": "Package",
               "version": "[2.1.0, )",
               "autoReferenced": true

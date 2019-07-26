@@ -8,7 +8,7 @@ using System;
 using WebApi.Helpers;
 
 
-namespace WebApi.Controllers
+namespace BasketJam.Controllers
 {
     [Authorize]
     [ApiController]

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using System;
 
-namespace WebApi.Controllers
+namespace BasketJam.Controllers
 {
     [ApiController]
     [Route("[controller]")]

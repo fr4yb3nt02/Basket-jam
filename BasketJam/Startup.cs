@@ -69,9 +69,10 @@ namespace BasketJam
             services.AddScoped<IEstadisticasEquipoPartidoService,EstadisticasEquipoPartidoService>();
             services.AddScoped<IEstadisticasJugadorPartidoService,EstadisticasJugadorPartidoService>();
             services.AddScoped<IVotacionPartidoService,VotacionPartidoService>();
-            
+            services.AddScoped<ITablaDePosicionesService, TablaDePosicionesService>();
+
             //services.AddScoped<DataContext>();
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

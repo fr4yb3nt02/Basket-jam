@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.IO;
 
-namespace WebApi.Controllers
+namespace BasketJam.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -20,8 +20,27 @@ public class TablaDePosiciones
     public Torneo Torneo { get; set; }
 
     [BsonRequired]
-    [BsonElement("EquipoTablaPosicion")]
-    public EquipoTablaPosicion EquipoTablaPosicion { get; set; }
-   
+    [BsonElement("EquiposTablaPosicion")]
+    public List<EquipoTablaPosicion> EquiposTablaPosicion { get; set; }
+
+    public class EquipoTablaPosicion
+
+    {
+
+        public string idEquipo { get; set; }
+
+        public int Puntos { get; set; }
+
+        public int Posicion { get; set; }
+
+        public int PG { get; set; }
+
+        public int PE { get; set; }
+
+        public int PP { get; set; }
+
+        public int DIF { get; set; }
+    }
+
 
 }
