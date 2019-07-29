@@ -48,6 +48,8 @@ namespace BasketJam.Services
        Task<List<Object>> ListarPartidosProgOJug();
 
        void ActualizarTiempoPartido(string id, string tiempo);
+
+       // void ActualizarEstadoPartido(string id);
     }
 
     public class PartidoService : IPartidoService
@@ -211,16 +213,21 @@ try
         {
             try
             {
-            //_partidos.ReplaceOne(partido => partido.Id == id, pa);
+                //_partidos.ReplaceOne(partido => partido.Id == id, pa);
+                Partido p = await _partidos.Find<Partido>(pa => pa.Id == id).FirstOrDefaultAsync();
 
             var filter = Builders<Partido>
              .Filter.Eq(e => e.Id, id);
 
             foreach(Juez j in jueces)
-            {
-            var update = Builders<Partido>.Update
+                {
+                    Boolean yaExisteJuez = p.jueces.Any(ju => ju == j);
+                    if (yaExisteJuez == false)
+                    {
+                        var update = Builders<Partido>.Update
                         .Push<Juez>(e => e.jueces, j);
-            await  _partidos.FindOneAndUpdateAsync(filter, update);
+                        await _partidos.FindOneAndUpdateAsync(filter, update);
+                    }
             }
            
            return true;
@@ -236,23 +243,52 @@ try
             try
             {
             Partido partido =await BuscarPartido(id);
-            var filter = Builders<Partido>
+                //List<Equipo> equi = new List<Equipo>();
+                Equipo equipoDeJugador;
+                Jugador jugador;
+                var filter = Builders<Partido>
              .Filter.Eq(e => e.Id, id);
-            //EquipoJugador existe ;
+                //EquipoJugador existe ;
+               
 
-            foreach(EquipoJugador j in jugadores)
+            foreach (EquipoJugador j in jugadores)
             {
-                //for(int x;x < partido.EquipoJugador.Length )
-            //existe= await _partidos.Find(e => e.EquipoJugador.);
-            var update = Builders<Partido>.Update
-                        .Push<EquipoJugador>(e => e.EquipoJugador, j);
-            await  _partidos.FindOneAndUpdateAsync(filter, update);
+                    //jugador = await _jugadores.Find<Jugador>(ju => ju.Id == j.jugadorEquipo).FirstOrDefaultAsync();
+                    equipoDeJugador = await _equipos.Find<Equipo>(e => e.Id == j.idEquipo).FirstOrDefaultAsync();
+                    //for(int x;x < partido.EquipoJugador.Length )
+                    //existe= await _partidos.Find(e => e.EquipoJugador.);
 
-              /*  await _partidos.UpdateOneAsync(
-                 a => a.Id.Equals(id),// Filtros para encontrar al jugador y partido correcto
-                Builders<Partido>.Update
-                .Push<EquipoJugador>(b => b.EquipoJugador,j));*/
-            }
+                    var equipoJugadorIndex = await _partidos
+                  .Find(p => p.Id == id)
+                  .Project(p => p.EquipoJugador.FindIndex(t => t.idEquipo == equipoDeJugador.Id))
+                  .SingleOrDefaultAsync();
+
+                    if(equipoJugadorIndex==-1)
+                    { 
+                    var update = Builders<Partido>.Update
+                        .Push<EquipoJugador>(e => e.EquipoJugador, j);
+                        await _partidos.FindOneAndUpdateAsync(filter, update);
+
+                    }
+                    else
+                    {
+                        foreach (EquipoJugador.JugadorEquipo je in j.jugadorEquipo)
+                        {
+                            Boolean yaExisteJugador = j.jugadorEquipo.Any(p => p.idJugador == je.idJugador);
+                            if (yaExisteJugador == false)
+                            {
+                                var update = Builders<Partido>.Update
+                                .Push<EquipoJugador.JugadorEquipo>(e => e.EquipoJugador[equipoJugadorIndex].jugadorEquipo, je);
+                                await _partidos.FindOneAndUpdateAsync(filter, update);
+                            }
+                        }
+                    }
+                   
+                    /*  await _partidos.UpdateOneAsync(
+                       a => a.Id.Equals(id),// Filtros para encontrar al jugador y partido correcto
+                      Builders<Partido>.Update
+                      .Push<EquipoJugador>(b => b.EquipoJugador,j));*/
+                }
            
            return true;
             }

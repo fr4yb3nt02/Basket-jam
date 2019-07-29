@@ -25,13 +25,16 @@ namespace BasketJam.Services
 
     public class TorneoService : ITorneoService
 {
-        private readonly IMongoCollection<Torneo> _torneos;      
+        private readonly IMongoCollection<Torneo> _torneos;
 
-        public TorneoService(IConfiguration config)
+       private readonly ITablaDePosicionesService _tablaDePosicionesService;
+
+        public TorneoService(IConfiguration config,ITablaDePosicionesService tablaDePosicionesService)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
              _torneos=database.GetCollection<Torneo>("torneos");
+            _tablaDePosicionesService = tablaDePosicionesService;
 
         }
         public async Task<List<Torneo>> ListarTorneos()
@@ -46,8 +49,33 @@ namespace BasketJam.Services
 
         public async Task<Torneo> CrearTorneo(Torneo torneo)
         {
-            await _torneos.InsertOneAsync(torneo);
+            try
+            {
+                TablaDePosiciones tp = new TablaDePosiciones();
+                tp.EquiposTablaPosicion = new List<TablaDePosiciones.EquipoTablaPosicion>();
+
+                await _torneos.InsertOneAsync(torneo);
+
+                tp.IdTorneo = torneo.Id;
+                foreach (Equipo p in torneo.Equipos)
+                {
+                    TablaDePosiciones.EquipoTablaPosicion etp = new TablaDePosiciones.EquipoTablaPosicion();
+                    etp.idEquipo = p.Id;
+                    etp.PE = 0;
+                    etp.PG = 0;
+                    etp.Posicion = 1;
+                    etp.PP = 0;
+                    etp.Puntos = 0;
+                    tp.EquiposTablaPosicion.Add(etp);
+                }
+                await _tablaDePosicionesService.CrearTablaDePosiciones(tp);
             return torneo;
+            }
+            catch
+            {
+                return null;
+            }
+
         }
 
         public void ActualizarTorneo(string id, Torneo tor)

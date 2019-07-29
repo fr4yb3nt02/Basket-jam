@@ -54,3 +54,17 @@ C:\Users\Emiliano\Desktop\Repositorio\Basket-jam\BasketJam\obj\Debug\netcoreapp2
 C:\Users\Emiliano\Desktop\Repositorio\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.RazorTargetAssemblyInfo.cache
 C:\Users\Emiliano\Desktop\Repositorio\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.dll
 C:\Users\Emiliano\Desktop\Repositorio\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.pdb
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\bin\Debug\netcoreapp2.1\BasketJam.deps.json
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\bin\Debug\netcoreapp2.1\BasketJam.runtimeconfig.json
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\bin\Debug\netcoreapp2.1\BasketJam.runtimeconfig.dev.json
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\bin\Debug\netcoreapp2.1\BasketJam.dll
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\bin\Debug\netcoreapp2.1\BasketJam.pdb
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.csprojAssemblyReference.cache
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.csproj.CoreCompileInputs.cache
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.RazorAssemblyInfo.cache
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.RazorAssemblyInfo.cs
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.AssemblyInfoInputs.cache
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.AssemblyInfo.cs
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.RazorTargetAssemblyInfo.cache
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.dll
+C:\Users\cristian\Desktop\Repositorio EMi\Basket-jam\BasketJam\obj\Debug\netcoreapp2.1\BasketJam.pdb

@@ -98,7 +98,6 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpPost("subirFoto")]
-[HttpPost]  
   public async Task<IActionResult> subirFoto(IFormFile file)  
   {  
       if (file == null || file.Length == 0)  

@@ -37,7 +37,7 @@ namespace BasketJam.Services
 
         public async Task<TablaDePosiciones> BuscarTablaDePosiciones(string id)
         {
-            return await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.Torneo.Id == id).FirstOrDefaultAsync();
+            return await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.IdTorneo == id).FirstOrDefaultAsync();
         }
 
         public async Task<TablaDePosiciones> CrearTablaDePosiciones(TablaDePosiciones tablaDePosiciones)

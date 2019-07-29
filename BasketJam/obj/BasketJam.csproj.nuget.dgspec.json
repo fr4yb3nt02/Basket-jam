@@ -1,26 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
+    "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj": {
+    "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "projectUniqueName": "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj",
         "projectName": "BasketJam",
-        "projectPath": "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\BasketJam.csproj",
-        "packagesPath": "C:\\Users\\Emiliano\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Emiliano\\Desktop\\Repositorio\\Basket-jam\\BasketJam\\obj\\",
+        "projectPath": "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "packagesPath": "C:\\Users\\cristian\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Emiliano\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\cristian\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"

@@ -10,14 +10,10 @@ public class TablaDePosiciones
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
-
-    [BsonRequired]
-    [BsonElement("Nombre")]
-    public string Nombre { get; set; }
     
     [BsonRequired]
-    [BsonElement("Torneo")]
-    public Torneo Torneo { get; set; }
+    [BsonElement("IdTorneo")]
+    public string IdTorneo { get; set; }
 
     [BsonRequired]
     [BsonElement("EquiposTablaPosicion")]
