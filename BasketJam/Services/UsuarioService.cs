@@ -124,50 +124,37 @@ namespace BasketJam.Services
         
         public async Task<Usuario> Create(Usuario usuario)
         {
+            try
+            {
+                /*Inicio creación de índices*/
+                IndexKeysDefinition<Usuario> keysNomUser =
+               Builders<Usuario>.IndexKeys.Ascending("NombreUser");
+                    var optionsNomUser = new CreateIndexOptions { Name = "IndexUniqueNombreUser", Unique = true };
+                    var indexModelNomUser = new CreateIndexModel<Usuario>(keysNomUser, optionsNomUser);
+                    await _usuarios.Indexes.CreateOneAsync(indexModelNomUser);
 
-            // validation
-            /*/if (string.IsNullOrWhiteSpace(usuario.Password))
-                throw new AppException("Por favor ingrese una contraseña.");
+                IndexKeysDefinition<Usuario> keysCi =
+                   Builders<Usuario>.IndexKeys.Ascending("CI");
+                   var optionsCi = new CreateIndexOptions { Name = "IndexUniqueCI", Unique = true };
+                   var indexModelCi = new CreateIndexModel<Usuario>(keysCi, optionsCi);
+                   await _usuarios.Indexes.CreateOneAsync(indexModelCi);
+                /*Fin creación de índices*/
 
-            //var user = _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any();
-            
-            //if (user != null)
-            if(_usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
-                throw new AppException("El usuario \"" + usuario.NomUser + "\" ya existe"); 
-                //throw new AppException("User not found");
-            if(_usuarios.Find<Usuario>(x => x.NomUser==usuario.NomUser).First()!=null)
-              throw new AppException("El usuario \"" + usuario.NomUser + "\" ya existe"); *
-            
-              
 
-            /*byte[] passwordHash, passwordSalt;
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+                await _usuarios.InsertOneAsync(usuario);
 
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt; */
-          if(_usuarios.Find<Usuario>(x => x.NomUser==usuario.NomUser).Any())
-              throw new AppException("El usuario \"" + usuario.NomUser + "\" ya existe"); 
-            
-            if(_usuarios.Find<Usuario>(x => x.CI==usuario.CI).Any())
-                throw new AppException("Ya existe un usuario con la cédula ingresada.");
-
-            IndexKeysDefinition<Usuario> keys =
-            Builders<Usuario>.IndexKeys.Ascending("CI");            
-            var options = new CreateIndexOptions { Name = "IndexUniqueCI" , Unique=true};            
-            var indexModel = new CreateIndexModel<Usuario>(keys,options);
-            await _usuarios.Indexes.CreateOneAsync(indexModel);
-
-            /*var options = new CreateIndexOptions() { Unique = true };
-            var field = new StringFieldDefinition<Usuario>("CI");
-            var indexDefinition = new IndexKeysDefinitionBuilder<Usuario>().Ascending(field);
-            await _usuarios.Indexes.CreateOneAsync(indexDefinition, options);
- */
-
-            await _usuarios.InsertOneAsync(usuario);
-            //_context.Users.Add(user);
-            //_context.SaveChanges();
-
-            return usuario;
+                return usuario;
+            }
+            catch(MongoWriteException ex)
+            {
+                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI"))
+                     throw new AppException("Ya existe un usuario con la C.I ingresada.");
+               else if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueNombreUser"))
+                        throw new AppException("Ya existe un usuario con el nombre de usuario ingresado.");
+                else
+                    throw ex;
+           
+            }
         }
     }
 }

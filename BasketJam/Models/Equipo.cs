@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
@@ -13,6 +14,7 @@ public class Equipo
     
     [BsonRequired]
     [BsonElement("NombreEquipo")]
+    [StringLength(20, ErrorMessage = "El nombre debe tener 20 caracteres como máximo.")]
     public string NombreEquipo { get; set; }
     
     [BsonRequired]
