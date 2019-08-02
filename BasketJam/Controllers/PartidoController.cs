@@ -190,5 +190,29 @@ namespace BasketJam.Controllers
 
         }
 
+        [AllowAnonymous]
+        [HttpPut("ActualizarestadoPartido/")]
+        public IActionResult ActualizarEstadoPartido(string id, string tiempo)
+        {
+            try
+            {
+                /*var partido = _partidoService.BuscarPartido(id);
+
+                if (partido == null)
+                {
+                    return NotFound();
+                }
+                */
+                _partidoService.ActualizarEstadoPartido(id, tiempo);
+                return Ok();
+            }
+            catch
+            {
+                return NoContent();
+            }
+        }
+
+
+
     }
 }

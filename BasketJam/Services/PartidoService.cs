@@ -49,7 +49,7 @@ namespace BasketJam.Services
 
        void ActualizarTiempoPartido(string id, string tiempo);
 
-       // void ActualizarEstadoPartido(string id);
+        void ActualizarEstadoPartido(string id, string tiempo);
     }
 
     public class PartidoService : IPartidoService
@@ -199,6 +199,40 @@ try
         {
             _partidos.ReplaceOne(partido => partido.Id == id, pa);
         }
+
+        public async void ActualizarEstadoPartido(string id, string tiempo)
+        {
+            try
+            { 
+            Partido p =  await _partidos.Find<Partido>(pa => pa.Id == id).FirstOrDefaultAsync();
+                if (p.estado == (EstadoPartido)0 || (p.estado== (EstadoPartido)2 & tiempo=="10:00"))
+                { 
+                    await _partidos.UpdateOneAsync(
+                                    pa => pa.Id.Equals(id),
+                                    Builders<Partido>.Update.
+                                    Set(b => b.estado, (EstadoPartido)1));
+                }
+                if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto!=4)
+                {
+                    await _partidos.UpdateOneAsync(
+                                                        pa => pa.Id.Equals(id),
+                                                        Builders<Partido>.Update.
+                                                        Set(b => b.estado, (EstadoPartido)2));
+                }
+                if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto == 4)
+                {
+                    await _partidos.UpdateOneAsync(
+                                                        pa => pa.Id.Equals(id),
+                                                        Builders<Partido>.Update.
+                                                        Set(b => b.estado, (EstadoPartido)3));
+                }
+            }
+            catch
+            {
+                throw new Exception ( "Error al cambiar de estado." );
+            }
+        }
+
         public async void ActualizarTiempoPartido(string id, string tiempo)
         {
 
