@@ -1,4 +1,7 @@
 using BasketJam.Helper;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using FluentFTP;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -9,10 +12,13 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using WebApi.Helpers;
+using System.Drawing;
+using BasketJam.Models;
+using System.Web;
 
 namespace BasketJam.Services
 {
@@ -23,6 +29,7 @@ namespace BasketJam.Services
         Task<Equipo> CrearEquipo(Equipo equipo);
         void ActualizarEquipo(string id, Equipo eq);
         void EliminarEquipo(string id);
+        void subirImagen(Imagen img);
 
         Task<List<Jugador>> ListarJugadoresEquipo(string id);
     }
@@ -48,20 +55,32 @@ namespace BasketJam.Services
 
         }
 
-
-        public void subirImagen(string imagePath)
+        //string idEquipo,string image
+        public void subirImagen(Imagen img)
         {
-            byte[] imagenToBytes=null;
-            FileStream fileStream=new FileStream(imagePath,FileMode.Open,FileAccess.Read);
-            using (BinaryReader reader = new BinaryReader(fileStream))
+            try
             {
-                imagenToBytes=new byte[reader.BaseStream.Length];
-                for(int i =0; i < reader.BaseStream.Length;i++)
-                    imagenToBytes[i]=reader.ReadByte();
+                Account account = new Account(
+                                     "dregj5syg",
+                                     "373562826237252",
+                                      "pyLkt3TJd5dlmm1krFbwkb1g5Ws");
+
+
+                Cloudinary cloudinary = new Cloudinary(account);
+                var uploadParams = new ImageUploadParams()
+                {
+
+                    File = new FileDescription(img.ImgBase64),
+                    PublicId = "Equipos/"+img.Nombre,
+                    Overwrite = true,
+
+                };
+                var uploadResult = cloudinary.Upload(uploadParams);
             }
-
-            var id = _bucket.UploadFromBytes("filename", imagenToBytes);
-
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<List<Equipo>> ListarEquipos()

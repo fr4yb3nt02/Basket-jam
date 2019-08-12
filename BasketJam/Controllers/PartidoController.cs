@@ -196,19 +196,42 @@ namespace BasketJam.Controllers
         {
             try
             {
-                /*var partido = _partidoService.BuscarPartido(id);
-
-                if (partido == null)
-                {
-                    return NotFound();
-                }
-                */
                 _partidoService.ActualizarEstadoPartido(id, tiempo);
                 return Ok();
             }
             catch
             {
                 return NoContent();
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ListarJugadoresEquiposPartido/{id:length(24)}")]
+        public async Task<List<Object>> ListarJugadoresEquiposPartido(string id)
+        {
+            try
+            {
+              return await _partidoService.ListarJugadoresEquiposPartido(id);
+   
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ListarEstadios/")]
+        public async Task<List<Object>> ListarEstadios()
+        {
+            try
+            {
+                return await _partidoService.ListarEstadios();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 

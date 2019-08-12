@@ -25,7 +25,7 @@ namespace BasketJam
              WebHost.CreateDefaultBuilder(args)
                  .UseStartup<Startup>();
         
-    /* public static void Main(string[] args)
+    /*public static void Main(string[] args)
         {
             BuildWebHost(args).Run();
         }

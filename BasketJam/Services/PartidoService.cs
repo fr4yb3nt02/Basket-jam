@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using WebApi.Helpers;
 using BasketJam.Models;
 
+
 namespace BasketJam.Services
 {
     public interface IPartidoService
@@ -50,6 +51,9 @@ namespace BasketJam.Services
        void ActualizarTiempoPartido(string id, string tiempo);
 
         void ActualizarEstadoPartido(string id, string tiempo);
+
+        Task<List<Object>> ListarJugadoresEquiposPartido(string idPartido);
+        Task<List<Object>> ListarEstadios();
     }
 
     public class PartidoService : IPartidoService
@@ -140,6 +144,8 @@ try
     Equipo Eq2 =await _equipos.Find<Equipo>(x => x.Id == p.equipos[1].Id).FirstOrDefaultAsync();
 
     dev.Add(new { idPartido=p.Id,
+                   idEquipo1=Eq1.Id,
+                   idEquipo2=Eq2.Id,
                    estadio=p.estadio,
                    categoria=Eq1.Categoria,
                    equipo1=Eq1.NombreEquipo,
@@ -504,40 +510,104 @@ public async Task<Object> UltimosEventosEquipo(string idPartido)
 }
 }
 
-/*public async Task<Object> ConsultaDetallesPartido(string idPartido)
-{
-    try
-    {
 
-    Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
-    EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
-    EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
+        public async Task<List<Object>> ListarJugadoresEquiposPartido(string idPartido)
+        {
+            try
+            {
 
-    var det=new { idPartido=part.Id,
-                   estadio=part.estadio,
-                   ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
-                   ptosOverTimeEq1= estEqPar1.PuntosOverTime,
-                   ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
-                   ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
-                   arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
-                   arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
-                   arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,
-                   statuspartido=((EstadoPartido)part.estado).ToString()   };
+                 Partido part = await _partidos.Find<Partido>(x => x.Id==idPartido).FirstOrDefaultAsync();
+                List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
+                List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
+                List<Object> listaJugadores = new List<Object>();
+                List<Object> devv = new List<Object>();
+                List<Jugador> jugEqPart;
+
+                foreach (Equipo e in part.equipos)
+                {
+                    jugEqPart = new List<Jugador>(); ;
+                    listaJugadores= new List<Object>(); 
+                    jugEqPart = await _jugadores.Find<Jugador>(x => x.IdEquipo==e.Id).ToListAsync();
+                    foreach (Jugador j in jugEqPart)
+                    {
+
+                        listaJugadores.Add(new
+                        {
+                            idJugadir = j.Id,
+                            nombre = j.Nombre,
+                            apellido = j.Apellido,
+                            posicion = j.Posicion                    
+                    });
+                    }
+                    devv.Add(new
+                        {
+                            equipo = e.Id,
+                            jugadores = listaJugadores
+                        });
+               
+                }
+
+                return devv;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception ( ex.Message );
+            }
+        }
+
+        public async Task<List<Object>> ListarEstadios()
+        {
+            try
+            {
+                List<Object> estadios = new List<object>();
+                List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
+                foreach (Equipo e in equi)
+                {
+                    estadios.Add(e.Estadio);
+                }
+                return estadios;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
 
-    return det;
-    }
-    catch(Exception ex)
-{
-    return new {ERROR=ex.Message};
-}
-} */
+        /*public async Task<Object> ConsultaDetallesPartido(string idPartido)
+        {
+            try
+            {
+
+            Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
+            EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
+            EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
+
+            var det=new { idPartido=part.Id,
+                           estadio=part.estadio,
+                           ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
+                           ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
+                           ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
+                           ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
+                           ptosOverTimeEq1= estEqPar1.PuntosOverTime,
+                           ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
+                           ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
+                           ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
+                           ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
+                           ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
+                           arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
+                           arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
+                           arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,
+                           statuspartido=((EstadoPartido)part.estado).ToString()   };
+
+
+            return det;
+            }
+            catch(Exception ex)
+        {
+            return new {ERROR=ex.Message};
+        }
+        } */
 
     }
 }

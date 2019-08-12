@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.IO;
+using System;
+using BasketJam.Models;
 
 namespace BasketJam.Controllers
 {
@@ -97,25 +99,18 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("subirFoto")]
-  public async Task<IActionResult> subirFoto(IFormFile file)  
-  {  
-      if (file == null || file.Length == 0)  
-          return Content("No se ha adjuntado imágen.");  
-  
-
-         var filePath = Path.GetTempFileName();
-
-      var path = Path.Combine(  
-                  Directory.GetCurrentDirectory(), "wwwroot",   
-                  file.FileName);  
-  
-      using (var stream = new FileStream(path, FileMode.Create))  
-      {  
-          await file.CopyToAsync(stream);  
-      }  
-  
-      return RedirectToAction("Files");  
-  } 
+        [HttpPost("subirFoto/")]
+  public  IActionResult subirFoto(Imagen img)  
+  {
+            try
+            { 
+            _equipoService.subirImagen(img);
+            return Ok();
+            }
+            catch(Exception ex)
+            {
+            return BadRequest();
+            }
+        } 
     }
 }
