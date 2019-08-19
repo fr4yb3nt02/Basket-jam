@@ -109,14 +109,15 @@ namespace BasketJam.Services
             jugadores= new List<Object>();
     foreach(EquipoJugador ej in p.EquipoJugador)
     {
-    
-        
-        j=await _jugadores.Find<Jugador>(x => x.Id==ej.jugadorEquipo[0].idJugador && x.IdEquipo==id).FirstOrDefaultAsync();
+    foreach(EquipoJugador.JugadorEquipo je in ej.jugadorEquipo)
+                        { 
+        j=await _jugadores.Find<Jugador>(x => x.Id==je.idJugador && x.IdEquipo==id).FirstOrDefaultAsync();
         if(j!=null){
-        jugadores.Add(new{Nombre = j.Nombre , Apellido = j.Apellido , Posicion = j.Posicion , Camiseta = ej.jugadorEquipo[0].nroCamiseta});
+        jugadores.Add(new{Nombre = j.Nombre , Apellido = j.Apellido , Posicion = j.Posicion , Camiseta = je.nroCamiseta});
         }
-        //equiposJugadores.Add(ej);
-    }
+                        }
+                        //equiposJugadores.Add(ej);
+                    }
     tecnico=await _cuerpoTecnico.Find<CuerpoTecnico>(x => x.IdEquipo==e.Id && x.Cargo==(CargoCuerpoTecnico)0).FirstOrDefaultAsync();
         jugEq.Add(new{Equipo = e.Id , Entrenador = tecnico.Nombre +" "+ tecnico.Apellido , jugadores});
         }
@@ -367,9 +368,11 @@ foreach(Partido p in part)
         puntosEq2=estEqPar2.Puntos;
 
 
-   devv.Add( new
-              {
-                   idPartido=p.Id,
+                devv.Add(new
+                {
+                    idPartido = p.Id,
+                    idEquipo1 = p.equipos[0].Id,
+                    idEquipo2 = p.equipos[1].Id,
                    equipo1= p.equipos[0].NombreEquipo,
                    equipo2= p.equipos[1].NombreEquipo,
                    estadio=p.estadio,
@@ -411,7 +414,9 @@ public async Task<Object> ConsultarHeaderPartido(string idPartido)
                   idPartido=p.Id,
                    idEquipo1=p.equipos[0].Id,
                    idEquipo2=p.equipos[1].Id,
-                   equipo1= p.equipos[0].NombreEquipo,
+                   fotoEquipo1= HelperCloudinary.cloudUrl+"Equipos/"+ p.equipos[0].Id,
+                   fotoEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[1].Id, 
+                   equipo1 = p.equipos[0].NombreEquipo,
                    equipo2= p.equipos[1].NombreEquipo,
                    ptosequipo1=puntosEq1,
                    ptosequipo2=puntosEq2,                 

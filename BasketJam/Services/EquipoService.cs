@@ -40,6 +40,7 @@ namespace BasketJam.Services
         private readonly IMongoCollection<Jugador> _jugadores;
       
         private readonly  IGridFSBucket _bucket;
+        private readonly string entidadParaImagen = "Equipos";
 
         //private readonly IMongoCollection<Estadio> _estadios;
         public EquipoService(IConfiguration config)
@@ -61,10 +62,9 @@ namespace BasketJam.Services
             try
             {
                 Account account = new Account(
-                                     "dregj5syg",
-                                     "373562826237252",
-                                      "pyLkt3TJd5dlmm1krFbwkb1g5Ws");
-
+                                     HelperCloudinary.secretName,
+                                     HelperCloudinary.apiKey,
+                                      HelperCloudinary.apiSecret);
 
                 Cloudinary cloudinary = new Cloudinary(account);
                 var uploadParams = new ImageUploadParams()

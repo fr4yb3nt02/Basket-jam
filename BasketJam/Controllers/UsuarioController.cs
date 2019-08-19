@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using System;
 using WebApi.Helpers;
-
+using BasketJam.Models;
 
 namespace BasketJam.Controllers
 {
@@ -39,11 +39,12 @@ namespace BasketJam.Controllers
             //if(_usuarioService.Get().Find(x => x.NomUser == usuario.NomUser).Any())
             // return BadRequest("El usuario \"" + usuario.NomUser + "\" ya existe"); 
 //                _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
-
+  
 
             await _usuarioService.Create(usuario);
 
-            return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
+
+                return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
             }
             catch(AppException ex)
             {

@@ -1,4 +1,5 @@
 ﻿using BasketJam.Helper;
+using BasketJam.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -35,35 +36,22 @@ namespace BasketJam.Services
         
         private readonly AppSettings _appSettings;
 
-        
+        private IConfiguracionUsuarioMovilService _configuracionUsuarioMovilService;
+
+
         string coso;
-        /*public UsuarioService(IOptions<AppSettings> appSettings)
-        {
-            _appSettings = appSettings.Value;
-        }*/
-    public UsuarioService(IOptions<AppSettings> appSettings,IConfiguration config)
+
+    public UsuarioService(IOptions<AppSettings> appSettings,IConfiguration config, IConfiguracionUsuarioMovilService configuracionUsuarioMovilService)
         {
             _appSettings = appSettings.Value;
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
+            _configuracionUsuarioMovilService = configuracionUsuarioMovilService;
 
-//var client = new MongoClient("mongodb+srv://fr4yb3nt02:Emiliano49110131@basketjam-ajrid.azure.mongodb.net/test?retryWrites=true");
-//var database = client.GetDatabase("test");
+
 
 
              _usuarios=database.GetCollection<Usuario>("usuarios");
-
-
-          /*   _usuarios=database.GetCollection<Usuario>("usuarios")
-                .Indexes
-                .CreateOneAsync(Builders<Usuario>
-                                    .IndexKeys
-                                    .Ascending(item => item.CI));*/
- /*
-             var notificationLogBuilder = Builders<Usuario>.IndexKeys;
-            var indexModel = new CreateIndexModel<Usuario>(notificationLogBuilder.Ascending(x => x.CI));
-         IMongoCollection.Indexes.CreateOneAsync(indexModel, cancellationToken: cancellationToken).ConfigureAwait(false);    
- */
         }
         
         
@@ -142,6 +130,18 @@ namespace BasketJam.Services
 
 
                 await _usuarios.InsertOneAsync(usuario);
+
+                if (usuario.TipoUsuario == (TipoUsuario)2)
+                {
+                    ConfiguracionUsuarioMovil unaConf = new ConfiguracionUsuarioMovil();
+                    unaConf.EquiposFavoritos = new List<String>();
+                    unaConf.NotificacionEquiposFavoritos = false;
+                    unaConf.NotificacionFinPartido = false;
+                    unaConf.NotificacionInicioPartido = false;
+                    unaConf.NotificacionTodosLosPartidos = false;
+                    unaConf.Usuario = usuario.Id;                    
+                    await _configuracionUsuarioMovilService.CrearConfiguracionUsuarioMovil(unaConf);
+                }
 
                 return usuario;
             }

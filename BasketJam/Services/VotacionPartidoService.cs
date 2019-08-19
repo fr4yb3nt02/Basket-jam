@@ -18,6 +18,7 @@ namespace BasketJam.Services
     {
         Task<VotacionPartido> BuscarVotacionPartido(string id);
         Task<Boolean> votarEquipoPartido(VotacionPartido votacionPartido);
+        Task<Boolean> usuarioYaVoto(string usuario, string idPartido);
     }
 
     public class VotacionPartidoService : IVotacionPartidoService
@@ -49,7 +50,7 @@ namespace BasketJam.Services
                }
                else
                {
-                              int votos =vp.Contenido_Votacion[0].votos;
+                              int votos =vp.Contenido_Votacion[equipoVotadoIndex].votos;
 
              var UpdateDefinitionBuilder = Builders<VotacionPartido>.Update.Set(p => p.Contenido_Votacion[equipoVotadoIndex].votos, votos+1).Push(p => p.Usuarios,votacionPartido.Usuarios[0]);
 
@@ -71,6 +72,29 @@ namespace BasketJam.Services
                 return false;
             }
             
+        }
+
+        public async Task<Boolean> usuarioYaVoto(string usuario,string idPartido)
+        {
+            try
+            {
+                VotacionPartido vp = await BuscarVotacionPartido(idPartido);
+                if (vp != null)
+                {
+                    if (vp.Usuarios.Any(v => v == usuario))
+                    {
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                else
+                return false;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<VotacionPartido> BuscarVotacionPartido(string id)

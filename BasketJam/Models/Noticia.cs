@@ -27,4 +27,6 @@ public class Noticia
     [BsonElement("Fecha")]
     public DateTime Fecha { get; set; }
 
+
+
 }

@@ -4,6 +4,7 @@ using BasketJam.Services;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
+using BasketJam.Models;
 
 namespace BasketJam.Controllers
 {
@@ -29,6 +30,12 @@ namespace BasketJam.Controllers
         public async Task<ActionResult<List<Noticia>>> Get(DateTime fecha)
         {
             return await _noticiaService.ListarNoticiasPorFecha(fecha);
+        }
+
+        [HttpGet("ListarUltimasDiez")]
+        public async Task<ActionResult<List<Noticia>>> ListarUltimasDiez()
+        {
+            return await _noticiaService.ListarUltimasDiezNoticias();
         }
 
 
@@ -68,6 +75,21 @@ namespace BasketJam.Controllers
             _noticiaService.EliminarNoticia(noticia.Id.ToString());
 
             return NoContent();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("subirFoto/")]
+        public IActionResult subirFoto(Imagen img)
+        {
+            try
+            {
+                _noticiaService.subirImagen(img);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }

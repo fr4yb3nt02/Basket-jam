@@ -34,7 +34,21 @@ namespace BasketJam.Controllers
         {    
 
             return await _votacionPartidoService.BuscarVotacionPartido(idPartido);
-}  
-        
+}
+
+        [AllowAnonymous]
+        [HttpGet("UsuarioYaVoto/")]
+        public async Task<Boolean> UsuarioYaVoto(string usuario,string idPartido)
+        {
+            try
+            { 
+            return await _votacionPartidoService.usuarioYaVoto(usuario,idPartido);
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
     }
     }

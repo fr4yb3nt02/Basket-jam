@@ -1,4 +1,7 @@
 using BasketJam.Helper;
+using BasketJam.Models;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +25,8 @@ namespace BasketJam.Services
         Task<Noticia> CrearNoticia(Noticia noticia);
         void ActualizarNoticia(string id, Noticia not);
         void EliminarNoticia(string id);
+        Task<List<Noticia>> ListarUltimasDiezNoticias();
+        void subirImagen(Imagen img);
     }
 
     public class NoticiaService : INoticiaService
@@ -43,6 +48,21 @@ namespace BasketJam.Services
         public async Task<List<Noticia>> ListarNoticiasPorFecha(DateTime fecha)
         {
             return await _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToListAsync();            
+        }
+
+        public async Task<List<Noticia>> ListarUltimasDiezNoticias()
+        {
+            List<Noticia> noticias = await _noticias.Find<Noticia>(noticia => true).ToListAsync();
+            List<Noticia> paraDev = new List<Noticia>();
+            var ultimas10 = (from n in noticias
+                             orderby n.Fecha descending
+                             select n
+                            ).Take(10);
+            foreach (Noticia no in ultimas10)
+            {
+                paraDev.Add(no);
+            }
+            return paraDev;
         }
 
         public async Task<Noticia> CrearNoticia(Noticia noticia)
@@ -68,6 +88,32 @@ namespace BasketJam.Services
         public void EliminarNoticia(string id)
         {
             _noticias.DeleteOne(noticia => noticia.Id == id);
+        }
+
+        public void subirImagen(Imagen img)
+        {
+            try
+            {
+                Account account = new Account(
+                                     HelperCloudinary.secretName,
+                                     HelperCloudinary.apiKey,
+                                      HelperCloudinary.apiSecret);
+
+                Cloudinary cloudinary = new Cloudinary(account);
+                var uploadParams = new ImageUploadParams()
+                {
+
+                    File = new FileDescription(img.ImgBase64),
+                    PublicId = "Equipos/" + img.Nombre,
+                    Overwrite = true,
+
+                };
+                var uploadResult = cloudinary.Upload(uploadParams);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

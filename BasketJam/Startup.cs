@@ -70,6 +70,7 @@ namespace BasketJam
             services.AddScoped<IEstadisticasJugadorPartidoService,EstadisticasJugadorPartidoService>();
             services.AddScoped<IVotacionPartidoService,VotacionPartidoService>();
             services.AddScoped<ITablaDePosicionesService, TablaDePosicionesService>();
+            services.AddScoped<IConfiguracionUsuarioMovilService, ConfiguracionUsuarioMovilService>();
 
             //services.AddScoped<DataContext>();
 

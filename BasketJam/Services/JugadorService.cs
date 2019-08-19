@@ -1,4 +1,7 @@
 using BasketJam.Helper;
+using BasketJam.Models;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -69,6 +72,33 @@ namespace BasketJam.Services
         public void EliminarJugador(string id)
         {
             _jugadores.DeleteOne(jugador => jugador.Id == id);
+        }
+
+        public void subirImagen(Imagen img)
+        {
+            try
+            {
+                Account account = new Account(
+                                     "dregj5syg",
+                                     "373562826237252",
+                                      "pyLkt3TJd5dlmm1krFbwkb1g5Ws");
+
+
+                Cloudinary cloudinary = new Cloudinary(account);
+                var uploadParams = new ImageUploadParams()
+                {
+
+                    File = new FileDescription(img.ImgBase64),
+                    PublicId = "Equipos/" + img.Nombre,
+                    Overwrite = true,
+
+                };
+                var uploadResult = cloudinary.Upload(uploadParams);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
