@@ -10,6 +10,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using BasketJam.Models;
 
 namespace BasketJam
 {
@@ -21,6 +24,7 @@ namespace BasketJam
         }
 
         public IConfiguration Configuration { get; }
+        public object UIFramework { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -71,8 +75,28 @@ namespace BasketJam
             services.AddScoped<IVotacionPartidoService,VotacionPartidoService>();
             services.AddScoped<ITablaDePosicionesService, TablaDePosicionesService>();
             services.AddScoped<IConfiguracionUsuarioMovilService, ConfiguracionUsuarioMovilService>();
+            services.AddScoped<INoticiaService, NoticiaService>();
 
             //services.AddScoped<DataContext>();
+
+            /*Para Verificacion via mail*/
+            /* services.Configure<MvcOptions>(options =>
+             {
+                 options.Filters.Add(new RequireHttpsAttribute());
+             });
+
+
+             services.AddDefaultIdentity<IdentityUser>(config =>
+             {
+                 config.SignIn.RequireConfirmedEmail = true;
+             });
+             services.AddTransient<IEmailSender, EmailSender>();
+             services.Configure<AuthMessageSenderOptions>(Configuration);
+
+             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+             */
+
+            /*Para Verificacion via mail*/
 
         }
 

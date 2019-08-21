@@ -15,7 +15,7 @@ namespace BasketJam
 {
     public class Program
     {
-
+        
               public static void Main(string[] args)
          {
              CreateWebHostBuilder(args).Build().Run();
@@ -34,7 +34,7 @@ namespace BasketJam
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseUrls("http://localhost:5001")
-                .Build();*/
-
+                .Build();
+        */
     }
 }

@@ -39,7 +39,7 @@ namespace BasketJam.Controllers
         }
 
 
-        [HttpPost("crearNoticia")]
+        [HttpPost]
         public async Task<ActionResult<Noticia>> Create(Noticia noticia)
         {
             await _noticiaService.CrearNoticia(noticia);
