@@ -31,9 +31,11 @@ public class TablaDePosiciones
 
         public int PG { get; set; }
 
-        public int PE { get; set; }
-
         public int PP { get; set; }
+
+        public int PF { get; set; }
+
+        public int PC { get; set; }
 
         public int DIF { get; set; }
     }

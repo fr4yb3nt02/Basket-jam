@@ -26,6 +26,7 @@ public class Usuario
     //[Required(ErrorMessage = "Por favor ingrese un nombre de usuario")]
     [StringLength(50 , MinimumLength =5,ErrorMessage = "El nombre de usuario debe tener como mínimo 5 caracateres , y 50 como máximo.")]
    // [Required(ErrorMessage = "Es necesario ingresar un nombre de usuario.")]
+    [DataType(DataType.EmailAddress,ErrorMessage ="Por favor ingrese un e-mail")]
     [BsonElement("NombreUser")]
     public string NomUser { get; set; }
     
@@ -48,6 +49,12 @@ public class Usuario
 
     [BsonElement("TipoUsuario")]
     public TipoUsuario TipoUsuario { get; set; }
+
+    [BsonElement("EmailValidado")]
+    public bool EmailValidado { get; set; }
+
+    [BsonElement("CodigoAutenticacion")]
+    public string CodigoAutenticacion { get; set; }
 
     public string Token { get; set; }
     

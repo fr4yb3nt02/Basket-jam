@@ -446,18 +446,55 @@ public async Task<Object> ConsultaDetallesPartido(string idPartido)
     EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
     EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
 
-    var det=new { idPartido=part.Id,
+                int PuntosPrimerCuartoEq1, PuntosSegundoCuartoEq1, PuntosTercerCuartoEq1, PuntosCuartoCuartoEq1, PuntosOverTimeEq1 =0;
+                int PuntosPrimerCuartoEq2, PuntosSegundoCuartoEq2, PuntosTercerCuartoEq2, PuntosCuartoCuartoEq2, PuntosOverTimeEq2;
+
+                if(estEqPar1==null)
+                {
+                    PuntosPrimerCuartoEq1 = 0;
+                    PuntosSegundoCuartoEq1 = 0;
+                    PuntosTercerCuartoEq1 = 0;
+                    PuntosCuartoCuartoEq1 = 0;
+                    PuntosOverTimeEq1 = 0;
+                }
+                else
+                {
+                    PuntosPrimerCuartoEq1 = estEqPar1.PuntosPrimerCuarto;
+                    PuntosSegundoCuartoEq1 = estEqPar1.PuntosSegundoCuarto;
+                    PuntosTercerCuartoEq1 = estEqPar1.PuntosTercerCuarto;
+                    PuntosCuartoCuartoEq1 = estEqPar1.PuntosCuartoCuarto;
+                    PuntosOverTimeEq1 = estEqPar1.PuntosOverTime;
+                }
+                if (estEqPar2 == null)
+                {
+                    PuntosPrimerCuartoEq2 = 0;
+                    PuntosSegundoCuartoEq2 = 0;
+                    PuntosTercerCuartoEq2 = 0;
+                    PuntosCuartoCuartoEq2 = 0;
+                    PuntosOverTimeEq2 = 0;
+                }
+                else
+                {
+                    PuntosPrimerCuartoEq2 = estEqPar2.PuntosPrimerCuarto;
+                    PuntosSegundoCuartoEq2 = estEqPar2.PuntosSegundoCuarto;
+                    PuntosTercerCuartoEq2 = estEqPar2.PuntosTercerCuarto;
+                    PuntosCuartoCuartoEq2 = estEqPar2.PuntosCuartoCuarto;
+                    PuntosOverTimeEq2 = estEqPar2.PuntosOverTime;
+                }
+
+
+                var det=new { idPartido=part.Id,
                    estadio=part.estadio,
-                   ptosPrimerCuartoEq1=estEqPar1.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq1=estEqPar1.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq1=estEqPar1.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq1=estEqPar1.PuntosCuartoCuarto,
-                   ptosOverTimeEq1= estEqPar1.PuntosOverTime,
-                   ptosPrimerCuartoEq2=estEqPar2.PuntosPrimerCuarto,
-                   ptosSegundoCuartoEq2=estEqPar2.PuntosSegundoCuarto,
-                   ptosTercerCuartoEq2=estEqPar2.PuntosTercerCuarto,
-                   ptosCuartoCuartoEq2=estEqPar2.PuntosCuartoCuarto,
-                   ptosOverTimeEq2= estEqPar2.PuntosOverTime,                   
+                   ptosPrimerCuartoEq1= PuntosPrimerCuartoEq1,
+                   ptosSegundoCuartoEq1= PuntosSegundoCuartoEq1,
+                   ptosTercerCuartoEq1= PuntosTercerCuartoEq1,
+                   ptosCuartoCuartoEq1= PuntosCuartoCuartoEq1,
+                   ptosOverTimeEq1= PuntosOverTimeEq1,
+                   ptosPrimerCuartoEq2= PuntosPrimerCuartoEq2,
+                   ptosSegundoCuartoEq2= PuntosSegundoCuartoEq2,
+                   ptosTercerCuartoEq2= PuntosTercerCuartoEq2,
+                   ptosCuartoCuartoEq2= PuntosCuartoCuartoEq2,
+                   ptosOverTimeEq2= PuntosOverTimeEq2,                   
                    arbitro1=part.jueces[0].Nombre+" "+part.jueces[0].Apellido,
                    arbitro2=part.jueces[1].Nombre+" "+part.jueces[1].Apellido,
                    arbitro3=part.jueces[2].Nombre+" "+part.jueces[2].Apellido,

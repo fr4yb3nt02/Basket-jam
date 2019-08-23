@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
@@ -21,12 +23,13 @@ namespace BasketJam.Services
     {
         Task<Usuario> Autenticar(string nomUser, string password);
         //List<Usuario> GetAll();
-        Task<Usuario> Create(Usuario usuario);
+        Task<string> Create(Usuario usuario);
         Task<Usuario> Get(string id);
 
         Task<List<Usuario>> Get();
 
         bool BuscarUsuarioPorCI(string ci);
+        Task<string> VerificarCuenta(string activationCode);
         //IEnumerable<Usuario> GetAll();
     }
 
@@ -61,7 +64,7 @@ namespace BasketJam.Services
             var usuario = await _usuarios.Find<Usuario>(x => x.NomUser == username && x.Password == password).FirstOrDefaultAsync();
 
             // Retorno nulo si no encuentro el usuario
-            if (usuario == null)
+            if (usuario == null || usuario.EmailValidado==false)
                 return null;
 
             // si la autenticación es correcta genero el Token JWT 
@@ -111,10 +114,17 @@ namespace BasketJam.Services
         }
 
         
-        public async Task<Usuario> Create(Usuario usuario)
+        public async Task<string> Create(Usuario usuario)
         {
             try
             {
+                 string host = "54.208.166.6";
+                 string scheme = "http";
+                 string port = "";
+                /*string host = "localhost";
+                string scheme = "http";
+                string port = "5001";*/
+
                 /*Inicio creación de índices*/
                 IndexKeysDefinition<Usuario> keysNomUser =
                Builders<Usuario>.IndexKeys.Ascending("NombreUser");
@@ -128,6 +138,8 @@ namespace BasketJam.Services
                    var indexModelCi = new CreateIndexModel<Usuario>(keysCi, optionsCi);
                    await _usuarios.Indexes.CreateOneAsync(indexModelCi);
                 /*Fin creación de índices*/
+
+                usuario.CodigoAutenticacion = Guid.NewGuid().ToString();
 
 
                 await _usuarios.InsertOneAsync(usuario);
@@ -144,7 +156,11 @@ namespace BasketJam.Services
                     await _configuracionUsuarioMovilService.CrearConfiguracionUsuarioMovil(unaConf);
                 }
 
-                return usuario;
+                    SendVerificationLinkEmail(usuario.NomUser, usuario.CodigoAutenticacion.ToString(), scheme, host, port);
+                   return "El registro se ha realizado correctamente ,se ha enviado un link de activación a tu mail: " + usuario.NomUser;
+                
+
+               //return usuario;
             }
             catch(MongoWriteException ex)
             {
@@ -158,40 +174,60 @@ namespace BasketJam.Services
             }
         }
 
-
-
-
-     /*   public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        private void SendVerificationLinkEmail(string emailId, string codigoActivacion, string scheme, string host, string port)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            //var varifyUrl = scheme + "://" + host + ":" + port + "/usuario/ActivateAccount/" + codigoActivacion;//esto es para pruebas locales
+            var varifyUrl = scheme + "://" + host + "/usuario/ActivateAccount/" + codigoActivacion;
+            var fromMail = new MailAddress("basketjam2019@gmail.com", "Basket Jam Team");
+            var toMail = new MailAddress(emailId);
+            var frontEmailPassowrd = "BasketJam2019";
+            string subject = "¡Tu cuenta en BasketJam ha sido creada exitosamente!";
+            string body = "<br/><br/>Estamos encantados de informarte que tu cuenta " +
+        " fué creada exitosamente. Por favor haz click en el link debajo para verificar tu cuenta" +
+        " <br/><br/><a href='" + varifyUrl + "'>" + varifyUrl + "</a> ";
 
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User created a new account with password.");
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromMail.Address, frontEmailPassowrd)
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { userId = user.Id, code = code },
-                        protocol: Request.Scheme);
+            };
+            using (var message = new MailMessage(fromMail, toMail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+        }
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+        public async Task<string> VerificarCuenta(string activationCode)
+        {
 
-                    //await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            
+            string str = "";
+            /*objEntity.Configuration.ValidateOnSaveEnabled = false;            
+            var value = objEntity.RegDetails.Where(a => a.ActivateionCode == new Guid(activationCode)).FirstOrDefault();*/
+            var usuario = await _usuarios.Find<Usuario>(x => x.CodigoAutenticacion == activationCode).FirstOrDefaultAsync();
+            if (usuario != null)
+            {
+                await _usuarios.UpdateOneAsync(
+                                 us => us.CodigoAutenticacion.Equals(activationCode),
+                                 Builders<Usuario>.Update.
+                                 Set(b => b.EmailValidado, true));
 
-            // If we got this far, something failed, redisplay form
-            return Page();
-        }*/
+                str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
+            }
+            else
+            {
+                str = "Estimado usuario , su e-mail no ha podido ser activado.";
+            }
+
+            return str;
+
+        }
     }
 }

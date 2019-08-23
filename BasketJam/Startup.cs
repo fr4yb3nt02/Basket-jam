@@ -94,8 +94,8 @@ namespace BasketJam
              services.Configure<AuthMessageSenderOptions>(Configuration);
 
              services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-             */
-
+             
+            */
             /*Para Verificacion via mail*/
 
         }

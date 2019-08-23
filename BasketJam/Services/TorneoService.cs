@@ -61,7 +61,8 @@ namespace BasketJam.Services
                 {
                     TablaDePosiciones.EquipoTablaPosicion etp = new TablaDePosiciones.EquipoTablaPosicion();
                     etp.idEquipo = p.Id;
-                    etp.PE = 0;
+                    etp.PC = 0;
+                    etp.PF = 0;
                     etp.PG = 0;
                     etp.Posicion = 1;
                     etp.PP = 0;

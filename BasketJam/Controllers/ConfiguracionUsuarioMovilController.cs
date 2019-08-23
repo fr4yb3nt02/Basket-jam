@@ -21,13 +21,13 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("ModoficarConfiguraionUsuarioMovil/{id:length(24)}")]
-        public async Task<Boolean> ModoficarConfiguraionUsuarioMovil(string idUser,ConfiguracionUsuarioMovil conf)
+        [HttpPut("ModoficarConfiguracionUsuarioMovil/{id:length(24)}")]
+        public async Task<Boolean> ModoficarConfiguracionUsuarioMovil(string id,ConfiguracionUsuarioMovil conf)
         {
             try
             {
                 Boolean resultado;
-                resultado = await _configuracionUsuarioMovilService.ActualizarConfiguracionUsuarioMovil(idUser,conf);
+                resultado = await _configuracionUsuarioMovilService.ActualizarConfiguracionUsuarioMovil(id, conf);
                 return (resultado);
             }
             catch (Exception ex)
@@ -37,10 +37,10 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("BuscarConfiguracionUsuarioMovil")]
-        public async Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string idUser)
+        [HttpGet("BuscarConfiguracionUsuarioMovil/{id:length(24)}")]
+        public async Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string id)
         {
-           return await _configuracionUsuarioMovilService.BuscarConfiguracionUsuarioMovil(idUser);
+           return await _configuracionUsuarioMovilService.BuscarConfiguracionUsuarioMovil(id);
         }
 
         [AllowAnonymous]

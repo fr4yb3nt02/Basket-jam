@@ -36,10 +36,10 @@ namespace BasketJam.Controllers
         }
 
             [AllowAnonymous]
-            [HttpGet("BuscarTablaDePosiciones")]
-            public async Task<ActionResult> BuscarTablaDePosiciones(string idTorneo)
+            [HttpGet("BuscarTablaDePosiciones/{id:length(24)}")]
+            public async Task<ActionResult> BuscarTablaDePosiciones(string id)
             {    
-            return Ok(await _tablaDePosicionesService.BuscarTablaDePosiciones(idTorneo));
+            return Ok(await _tablaDePosicionesService.BuscarTablaDePosiciones(id));
             }  
 
 

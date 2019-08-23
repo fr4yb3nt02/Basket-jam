@@ -7,6 +7,8 @@ using MongoDB.Driver;
 using System;
 using WebApi.Helpers;
 using BasketJam.Models;
+using System.Net.Http;
+using System.Net;
 
 namespace BasketJam.Controllers
 {
@@ -26,7 +28,7 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpPost("registrar")]
-        public async Task<ActionResult<Usuario>> Create(Usuario usuario)
+        public async Task<ActionResult<string>> Create(Usuario usuario)
         {
             try{
             if (string.IsNullOrWhiteSpace(usuario.Password))
@@ -41,10 +43,10 @@ namespace BasketJam.Controllers
 //                _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
   
 
-            await _usuarioService.Create(usuario);
+            return await _usuarioService.Create(usuario);
 
 
-                return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
+              //  return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
             }
             catch(AppException ex)
             {
@@ -86,7 +88,7 @@ namespace BasketJam.Controllers
             if (user == null)
                 return BadRequest(new {result=false, message = "Nombre de usuario o contraseña incorrecta" });
 
-            return Ok(new {result=true, user.Token });
+            return Ok(new {result=true, user.Token,idUser=user.Id });
         }
 
 [AllowAnonymous]
@@ -101,37 +103,69 @@ public  IActionResult VerificarCI(string ci)
 
     return Ok(true);
 }
-
-
-       /* [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(Usuario model, string returnUrl = null)
+        [HttpGet("ActivateAccount/{id}")]
+        public async Task<ActionResult> ActivateAccount(string id)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
-            {
-                var user = new Usuario { NomUser = model.NomUser};
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                        $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                    //await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation(3, "User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
+            string str = "";
+            RestClient restClient = new RestClient();
+            string value = await restClient.RunAsyncGet<string, string>("usuario/VeryFiyAccount", id);
 
-                }
-                AddErrors(result);
+            if (value != null)
+            {
+                str = value;
+            }
+            else
+            {
+                str = "¡Activación ha fallado!";
+            }
+            return Ok(str);
+            //ViewBag.Message = str;
+            //return View();
+
+        }
+        [AllowAnonymous]
+        [HttpGet("VeryFiyAccount/{id}")]
+        public string VeryfiyUserAccount(string id)
+        {
+            string str = "";
+            try
+            {
+              //  str = objReg.VeryFiyAccount(id);
+                str = _usuarioService.VerificarCuenta(id).Result;
+            }
+            catch (Exception ex)
+            {
+                //throw new Exception(new{ StatusCode = HttpStatusCode.BadGateway.ToString(), Razon = ex.Message });
+                return ex.Message;
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }*/
+            return str;
+        }
 
+        // If we got this far, something failed, redisplay form
+        //  return View(model);
     }
+
+    /*[HttpGet]
+    public async Task<ActionResult> ActivateAccount(string id)
+    {
+        string str = "";
+        RestClient restClient = new RestClient();
+        string value = await restClient.RunAsyncGet<string, string>("api/UserReg/VeryFiyAccount", id);
+
+        if (value != null)
+        {
+            str = value;
+        }
+        else
+        {
+            str = "Activation falid";
+        }
+
+        ViewBag.Message = str;
+        return View();
+
+    }*/
 }
+
