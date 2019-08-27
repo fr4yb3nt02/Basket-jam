@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
+    "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj": {
+    "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "projectUniqueName": "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj",
         "projectName": "BasketJam",
-        "projectPath": "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\BasketJam.csproj",
-        "packagesPath": "C:\\Users\\cristian\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cristian\\Desktop\\Repositorio EMi\\Basket-jam\\BasketJam\\obj\\",
+        "projectPath": "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "packagesPath": "C:\\Users\\edasilva\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\cristian\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\edasilva\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -41,9 +41,17 @@
       "frameworks": {
         "netcoreapp2.1": {
           "dependencies": {
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.8.0, )"
+            },
             "DnsClient": {
               "target": "Package",
               "version": "[1.2.0, )"
+            },
+            "FluentFTP": {
+              "target": "Package",
+              "version": "[27.0.2, )"
             },
             "Microsoft.AspNetCore.App": {
               "suppressParent": "All",
@@ -68,6 +76,14 @@
             "MongoDB.Driver.GridFS": {
               "target": "Package",
               "version": "[2.8.1, )"
+            },
+            "Sendgrid": {
+              "target": "Package",
+              "version": "[9.12.0, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[4.5.1, )"
             }
           },
           "imports": [

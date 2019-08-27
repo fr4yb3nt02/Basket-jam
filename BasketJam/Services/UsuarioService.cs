@@ -23,13 +23,13 @@ namespace BasketJam.Services
     {
         Task<Usuario> Autenticar(string nomUser, string password);
         //List<Usuario> GetAll();
-        Task<string> Create(Usuario usuario);
+        Task<Object> Create(Usuario usuario);
         Task<Usuario> Get(string id);
 
         Task<List<Usuario>> Get();
 
         bool BuscarUsuarioPorCI(string ci);
-        Task<string> VerificarCuenta(string activationCode);
+        Task<Object> VerificarCuenta(string activationCode);
         //IEnumerable<Usuario> GetAll();
     }
 
@@ -37,7 +37,7 @@ namespace BasketJam.Services
     {
 
         private readonly IMongoCollection<Usuario> _usuarios;
-        
+
         private readonly AppSettings _appSettings;
 
         private IConfiguracionUsuarioMovilService _configuracionUsuarioMovilService;
@@ -45,7 +45,7 @@ namespace BasketJam.Services
 
         string coso;
 
-    public UsuarioService(IOptions<AppSettings> appSettings,IConfiguration config, IConfiguracionUsuarioMovilService configuracionUsuarioMovilService)
+        public UsuarioService(IOptions<AppSettings> appSettings, IConfiguration config, IConfiguracionUsuarioMovilService configuracionUsuarioMovilService)
         {
             _appSettings = appSettings.Value;
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
@@ -55,16 +55,16 @@ namespace BasketJam.Services
 
 
 
-             _usuarios=database.GetCollection<Usuario>("usuarios");
+            _usuarios = database.GetCollection<Usuario>("usuarios");
         }
-        
-        
+
+
         public async Task<Usuario> Autenticar(string username, string password)
-        {            
+        {
             var usuario = await _usuarios.Find<Usuario>(x => x.NomUser == username && x.Password == password).FirstOrDefaultAsync();
 
             // Retorno nulo si no encuentro el usuario
-            if (usuario == null || usuario.EmailValidado==false)
+            if (usuario == null || usuario.EmailValidado == false)
                 return null;
 
             // si la autenticación es correcta genero el Token JWT 
@@ -72,7 +72,7 @@ namespace BasketJam.Services
             var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[] 
+                Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, usuario.Id.ToString())
                 }),
@@ -80,47 +80,47 @@ namespace BasketJam.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            usuario.Token = tokenHandler.WriteToken(token);            
+            usuario.Token = tokenHandler.WriteToken(token);
 
             return usuario;
         }
-  
+
         public async Task<Usuario> Get(string id)
         {
-           var _usuario =await  _usuarios.Find<Usuario>(usuario => usuario.Id == id).FirstOrDefaultAsync();
+            var _usuario = await _usuarios.Find<Usuario>(usuario => usuario.Id == id).FirstOrDefaultAsync();
 
-           return _usuario;
+            return _usuario;
         }
 
-       public bool BuscarUsuarioPorCI(string ci)
+        public bool BuscarUsuarioPorCI(string ci)
         {
-           var _usuario =  _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
-           // return  _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
-           if(_usuario!=null)
-           {
-           return  true ;
-           }
-           else 
-           {
-           return false;
-           }
+            var _usuario = _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
+            // return  _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
+            if (_usuario != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
         }
 
         public async Task<List<Usuario>> Get()
         {
             return await _usuarios.Find(usuario => true).ToListAsync();
-            
+
         }
 
-        
-        public async Task<string> Create(Usuario usuario)
+
+        public async Task<Object> Create(Usuario usuario)
         {
             try
             {
-                 string host = "54.208.166.6";
-                 string scheme = "http";
-                 string port = "";
+                string host = "54.208.166.6";
+                string scheme = "http";
+                string port = "";
                 /*string host = "localhost";
                 string scheme = "http";
                 string port = "5001";*/
@@ -128,15 +128,15 @@ namespace BasketJam.Services
                 /*Inicio creación de índices*/
                 IndexKeysDefinition<Usuario> keysNomUser =
                Builders<Usuario>.IndexKeys.Ascending("NombreUser");
-                    var optionsNomUser = new CreateIndexOptions { Name = "IndexUniqueNombreUser", Unique = true };
-                    var indexModelNomUser = new CreateIndexModel<Usuario>(keysNomUser, optionsNomUser);
-                    await _usuarios.Indexes.CreateOneAsync(indexModelNomUser);
+                var optionsNomUser = new CreateIndexOptions { Name = "IndexUniqueNombreUser", Unique = true };
+                var indexModelNomUser = new CreateIndexModel<Usuario>(keysNomUser, optionsNomUser);
+                await _usuarios.Indexes.CreateOneAsync(indexModelNomUser);
 
                 IndexKeysDefinition<Usuario> keysCi =
                    Builders<Usuario>.IndexKeys.Ascending("CI");
-                   var optionsCi = new CreateIndexOptions { Name = "IndexUniqueCI", Unique = true };
-                   var indexModelCi = new CreateIndexModel<Usuario>(keysCi, optionsCi);
-                   await _usuarios.Indexes.CreateOneAsync(indexModelCi);
+                var optionsCi = new CreateIndexOptions { Name = "IndexUniqueCI", Unique = true };
+                var indexModelCi = new CreateIndexModel<Usuario>(keysCi, optionsCi);
+                await _usuarios.Indexes.CreateOneAsync(indexModelCi);
                 /*Fin creación de índices*/
 
                 usuario.CodigoAutenticacion = Guid.NewGuid().ToString();
@@ -152,25 +152,26 @@ namespace BasketJam.Services
                     unaConf.NotificacionFinPartido = false;
                     unaConf.NotificacionInicioPartido = false;
                     unaConf.NotificacionTodosLosPartidos = false;
-                    unaConf.Usuario = usuario.Id;                    
+                    unaConf.Usuario = usuario.Id;
                     await _configuracionUsuarioMovilService.CrearConfiguracionUsuarioMovil(unaConf);
                 }
 
-                    SendVerificationLinkEmail(usuario.NomUser, usuario.CodigoAutenticacion.ToString(), scheme, host, port);
-                   return "El registro se ha realizado correctamente ,se ha enviado un link de activación a tu mail: " + usuario.NomUser;
-                
+                SendVerificationLinkEmail(usuario.NomUser, usuario.CodigoAutenticacion.ToString(), scheme, host, port);
+                string mensaje="El registro se ha realizado correctamente ,se ha enviado un link de activación a tu mail: " + usuario.NomUser;
+                return new { result = true, mensaje = mensaje };
 
-               //return usuario;
+                //return usuario;
             }
-            catch(MongoWriteException ex)
+            catch (MongoWriteException ex)
             {
                 if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI"))
-                     throw new AppException("Ya existe un usuario con la C.I ingresada.");
-               else if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueNombreUser"))
-                        throw new AppException("Ya existe un usuario con el nombre de usuario ingresado.");
+                    return (new {result=false,mensaje= "Ya existe un usuario con la C.I ingresada." });
+                else if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueNombreUser"))
+                    //throw new AppException("Ya existe un usuario con el nombre de usuario ingresado.");
+                    return (new { result=false,mensaje="Ya existe un usuario con el nombre de usuario ingresado." });
                 else
                     throw ex;
-           
+
             }
         }
 
@@ -205,28 +206,40 @@ namespace BasketJam.Services
                 smtp.Send(message);
         }
 
-        public async Task<string> VerificarCuenta(string activationCode)
+        public async Task<Object> VerificarCuenta(string activationCode)
         {
 
-            string str = "";
-            /*objEntity.Configuration.ValidateOnSaveEnabled = false;            
-            var value = objEntity.RegDetails.Where(a => a.ActivateionCode == new Guid(activationCode)).FirstOrDefault();*/
-            var usuario = await _usuarios.Find<Usuario>(x => x.CodigoAutenticacion == activationCode).FirstOrDefaultAsync();
-            if (usuario != null)
+            try
             {
-                await _usuarios.UpdateOneAsync(
-                                 us => us.CodigoAutenticacion.Equals(activationCode),
-                                 Builders<Usuario>.Update.
-                                 Set(b => b.EmailValidado, true));
+                string str = "";
+               
+                /*objEntity.Configuration.ValidateOnSaveEnabled = false;            
+                var value = objEntity.RegDetails.Where(a => a.ActivateionCode == new Guid(activationCode)).FirstOrDefault();*/
+                var usuario = await _usuarios.Find<Usuario>(x => x.CodigoAutenticacion == activationCode).FirstOrDefaultAsync();
+                if (usuario != null)
+                {
+                      await _usuarios.UpdateOneAsync(
+                                       us => us.CodigoAutenticacion.Equals(activationCode),
+                                       Builders<Usuario>.Update.
+                                       Set(b => b.EmailValidado, true));
 
-                str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
+
+                      str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
+                      return new { result = true, mensaje = str };
+                   // return usuario;
+                }
+                else
+                {
+                    str = "Estimado usuario , su e-mail no ha podido ser activado.";
+                    return new { result = false, mensaje = str };
+                }
+
+                //  return str;
             }
-            else
+            catch
             {
-                str = "Estimado usuario , su e-mail no ha podido ser activado.";
+                return new { result = false, mensaje = "Se ha producido un error inesperado." };
             }
-
-            return str;
 
         }
     }

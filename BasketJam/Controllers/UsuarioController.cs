@@ -18,37 +18,37 @@ namespace BasketJam.Controllers
     public class UsuarioController : ControllerBase
     {
         private IUsuarioService _usuarioService;
-  
+
         public UsuarioController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
         }
 
-        
+
 
         [AllowAnonymous]
         [HttpPost("registrar")]
-        public async Task<ActionResult<string>> Create(Usuario usuario)
+        public async Task<ActionResult<Object>> Create(Usuario usuario)
         {
-            try{
-            if (string.IsNullOrWhiteSpace(usuario.Password))
-                return BadRequest("Por favor ingrese una contraseña.");
+            try {
+                if (string.IsNullOrWhiteSpace(usuario.Password))
+                    return BadRequest("Por favor ingrese una contraseña.");
 
-            //var user = _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any();
-            
-            //if (user != null)
-        //    var usuarios=await _usuarioService.Get();
-            //if(_usuarioService.Get().Find(x => x.NomUser == usuario.NomUser).Any())
-            // return BadRequest("El usuario \"" + usuario.NomUser + "\" ya existe"); 
-//                _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
-  
+                //var user = _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any();
 
-            return await _usuarioService.Create(usuario);
+                //if (user != null)
+                //    var usuarios=await _usuarioService.Get();
+                //if(_usuarioService.Get().Find(x => x.NomUser == usuario.NomUser).Any())
+                // return BadRequest("El usuario \"" + usuario.NomUser + "\" ya existe"); 
+                //                _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
 
 
-              //  return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
+                return await _usuarioService.Create(usuario);
+
+
+                //  return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
             }
-            catch(AppException ex)
+            catch (AppException ex)
             {
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
@@ -59,13 +59,13 @@ namespace BasketJam.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Usuario>>> Get()
         {
-   
-            
+
+
             return await _usuarioService.Get();
         }
 
         [HttpGet("{id:length(24)}", Name = "GetUsuario")]
- 
+
         public async Task<ActionResult<Usuario>> Get(string id)
         {
             var usuario = await _usuarioService.Get(id);
@@ -77,62 +77,68 @@ namespace BasketJam.Controllers
 
             return usuario;
         }
-//[FromBody]
+        //[FromBody]
 
-      [AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("autenticar")]
         public async Task<IActionResult> Autenticar([FromBody]Usuario userParam)
         {
             var user = await _usuarioService.Autenticar(userParam.NomUser, userParam.Password);
 
             if (user == null)
-                return BadRequest(new {result=false, message = "Nombre de usuario o contraseña incorrecta" });
+                return BadRequest(new { result = false, message = "Nombre de usuario o contraseña incorrecta" });
 
-            return Ok(new {result=true, user.Token,idUser=user.Id });
+            return Ok(new { result = true, user.Token, idUser = user.Id });
         }
 
-[AllowAnonymous]
-[HttpGet("VerifCi")]
-//[AcceptVerbs("Get" , "Post")]
-public  IActionResult VerificarCI(string ci)
-{
-    if (!_usuarioService.BuscarUsuarioPorCI(ci))
-    {
-        return Ok($"CI {ci} is already in use.");
-    }
+        [AllowAnonymous]
+        [HttpGet("VerifCi")]
+        //[AcceptVerbs("Get" , "Post")]
+        public IActionResult VerificarCI(string ci)
+        {
+            if (!_usuarioService.BuscarUsuarioPorCI(ci))
+            {
+                return Ok($"CI {ci} is already in use.");
+            }
 
-    return Ok(true);
-}
+            return Ok(true);
+        }
+        /* old
         [AllowAnonymous]
         [HttpGet("ActivateAccount/{id}")]
-        public async Task<ActionResult> ActivateAccount(string id)
+        public async Task<IActionResult> ActivateAccount(string id)
         {
             string str = "";
             RestClient restClient = new RestClient();
-            string value = await restClient.RunAsyncGet<string, string>("usuario/VeryFiyAccount", id);
-
+             string value = await restClient.RunAsyncGet<string, string>("usuario/VeryFiyAccount", id);
+            //string value = "sadf";
             if (value != null)
             {
                 str = value;
+               // return new { nombre = "potato happy" };
             }
             else
             {
                 str = "¡Activación ha fallado!";
+               // return new { nombre = "potato sad" };
             }
             return Ok(str);
             //ViewBag.Message = str;
             //return View();
 
         }
+        */
         [AllowAnonymous]
-        [HttpGet("VeryFiyAccount/{id}")]
-        public string VeryfiyUserAccount(string id)
+        //[HttpGet("VeryFiyAccount/{id}")]
+        [HttpGet("ActivateAccount/{id}")]
+        public async Task<Object> VerifyAccount(string id)
         {
             string str = "";
             try
             {
-              //  str = objReg.VeryFiyAccount(id);
-                str = _usuarioService.VerificarCuenta(id).Result;
+                //  str = objReg.VeryFiyAccount(id);
+                return await _usuarioService.VerificarCuenta(id);
+               // return new { res = "potato" };
             }
             catch (Exception ex)
             {
@@ -140,7 +146,7 @@ public  IActionResult VerificarCI(string ci)
                 return ex.Message;
             }
 
-            return str;
+           // return str;
         }
 
         // If we got this far, something failed, redisplay form

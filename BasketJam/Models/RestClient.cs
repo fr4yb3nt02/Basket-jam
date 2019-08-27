@@ -10,7 +10,7 @@ namespace BasketJam.Models
     public class RestClient
     {
         private HttpClient client;
-        public const string ApiUri = "http://localhost:5001/";
+        public const string ApiUri = "http://ec2-54-208-166-6.compute-1.amazonaws.com/";
         public const string MediaTypeJson = "application/json";
         public const string RequestMsg = "Request has not been processed";
         public static string ReasonPhrase { get; set; }
@@ -18,8 +18,8 @@ namespace BasketJam.Models
         {
             this.client = new HttpClient();
             this.client.BaseAddress = new Uri(ApiUri);
-            this.client.DefaultRequestHeaders.Accept.Clear();
-            this.client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeJson));
+           // this.client.DefaultRequestHeaders.Accept.Clear();
+           // this.client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeJson));
         }
         public async Task<List<U>> RunAsyncGetAll<T, U>(dynamic uri)
         {

@@ -22,17 +22,17 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpPut("ModoficarConfiguracionUsuarioMovil/{id:length(24)}")]
-        public async Task<Boolean> ModoficarConfiguracionUsuarioMovil(string id,ConfiguracionUsuarioMovil conf)
+        public async Task<Object> ModoficarConfiguracionUsuarioMovil(string id,ConfiguracionUsuarioMovil conf)
         {
             try
             {
                 Boolean resultado;
                 resultado = await _configuracionUsuarioMovilService.ActualizarConfiguracionUsuarioMovil(id, conf);
-                return (resultado);
+                return (new {result= resultado });
             }
             catch (Exception ex)
             {
-                return false;
+                return (new { result = false });
             }
         }
 
