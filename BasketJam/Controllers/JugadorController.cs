@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BasketJam.Models;
+using System;
 
 namespace BasketJam.Controllers
 {
@@ -79,6 +81,21 @@ namespace BasketJam.Controllers
             _jugadorService.EliminarJugador(jugador.Id.ToString());
 
             return NoContent();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("subirFoto/")]
+        public IActionResult subirFoto(Imagen img)
+        {
+            try
+            {
+                _jugadorService.subirImagen(img);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ namespace BasketJam.Services
     {
         Task<List<Noticia>> ListarNoticias();
         Task<List<Noticia>> ListarNoticiasPorFecha(DateTime fecha);
-        Task<Noticia> BuscarNoticia(string id);
+        Task<dynamic> BuscarNoticia(string id);
         Task<Noticia> CrearNoticia(Noticia noticia);
         void ActualizarNoticia(string id, Noticia not);
         void EliminarNoticia(string id);
@@ -71,9 +71,11 @@ namespace BasketJam.Services
             return noticia;
         }
 
-        public async Task<Noticia> BuscarNoticia(string id)
+        public async Task<dynamic> BuscarNoticia(string id)
         {
-            return await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
+           dynamic Object = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
+            Object.foto = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/"+id;            
+            return Object;
         }
         public void ActualizarNoticia(string id, Noticia not)
         {
@@ -92,23 +94,11 @@ namespace BasketJam.Services
 
         public void subirImagen(Imagen img)
         {
+
             try
             {
-                Account account = new Account(
-                                     HelperCloudinary.secretName,
-                                     HelperCloudinary.apiKey,
-                                      HelperCloudinary.apiSecret);
-
-                Cloudinary cloudinary = new Cloudinary(account);
-                var uploadParams = new ImageUploadParams()
-                {
-
-                    File = new FileDescription(img.ImgBase64),
-                    PublicId = "Equipos/" + img.Nombre,
-                    Overwrite = true,
-
-                };
-                var uploadResult = cloudinary.Upload(uploadParams);
+                string claseImagen = "Noticias";
+                ImagenService.subirImagen(img, claseImagen);
             }
             catch (Exception ex)
             {

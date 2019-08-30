@@ -61,6 +61,15 @@ namespace BasketJam.Services
         {
             try
             {
+                string claseImagen = "Equipos";
+                ImagenService.subirImagen(img,claseImagen);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+           /* try
+            {
                 Account account = new Account(
                                      HelperCloudinary.secretName,
                                      HelperCloudinary.apiKey,
@@ -80,7 +89,7 @@ namespace BasketJam.Services
             catch(Exception ex)
             {
                 throw new Exception(ex.Message);
-            }
+            }*/
         }
 
         public async Task<List<Equipo>> ListarEquipos()

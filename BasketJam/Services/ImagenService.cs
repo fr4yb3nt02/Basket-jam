@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace BasketJam.Services
 {
-    public interface IImagenService
+    /*public interface IImagenService
     {
-        void subirImagen(Imagen img, string entidadImagen);
+       static void subirImagen(Imagen img, string entidadImagen);
        // Task<Imagen> BuscarImagen(string id);       
-    }
+    }*/
 
-    public class ImagenService : IImagenService
+    internal class ImagenService //: IImagenService
     {
 
 
-        public void subirImagen(Imagen img,string entidadImagen)
+        internal static void subirImagen(Imagen img,string entidadImagen)
         {
             try
             {

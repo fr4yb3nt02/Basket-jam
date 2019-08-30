@@ -26,6 +26,12 @@ namespace BasketJam.Controllers
             return await _noticiaService.ListarNoticias();
         }
 
+        [HttpGet("BuscarNoticia/{id:length(24)}")]
+        public async Task<ActionResult<dynamic>> Get(string id)
+        {
+            return await _noticiaService.BuscarNoticia(id);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<Noticia>>> Get(DateTime fecha)
         {

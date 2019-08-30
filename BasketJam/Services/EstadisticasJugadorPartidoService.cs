@@ -137,7 +137,9 @@ namespace BasketJam.Services
                 int faltasRecibidas=EstadisticasJugadorPartido.FaltasRecibidas+ejp.FaltasRecibidas;
                 int faltasCometidas=EstadisticasJugadorPartido.FaltasCometidas+ejp.FaltasCometidas;
 
-                Coordenada unaCoor=ejp.CoordenadasAcciones[0];
+               Coordenada unaCoor= ejp.CoordenadasAcciones[0];
+               /* unaCoor.X = ejp.CoordenadasAcciones[0].X;
+                unaCoor.Y = ejp.CoordenadasAcciones[0].Y;*/
 
                 await _estadisticasJugadorPartido.UpdateOneAsync(
                  a => a.IdJugador.Equals(ejp.IdJugador) && a.IdPartido.Equals(ejp.IdPartido),// Filtros para encontrar al jugador y partido correcto
@@ -165,7 +167,7 @@ namespace BasketJam.Services
                
                 );
 
-                if(unaCoor!=null) 
+                if(unaCoor != null) 
                { await _estadisticasJugadorPartido.UpdateOneAsync(
                  a => a.IdJugador.Equals(ejp.IdJugador) && a.IdPartido.Equals(ejp.IdPartido),// Filtros para encontrar al jugador y partido correcto
                 Builders<EstadisticasJugadorPartido>.Update .Push(e => e.CoordenadasAcciones, unaCoor));}

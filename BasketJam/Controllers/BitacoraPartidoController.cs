@@ -21,7 +21,7 @@ namespace BasketJam.Controllers
         }
 
 [AllowAnonymous]
- [HttpPost("GenerarBitacora/{id:length(24)}")]
+ [HttpPost("GenerarBitacora")]
                 public async Task<ActionResult>  GenerarBitacora(BitacoraPartido bp)
         {    
             return Ok(new {resultado=await _bitacoraService.GenerarBitacora(bp)});
