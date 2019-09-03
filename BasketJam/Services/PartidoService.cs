@@ -570,26 +570,50 @@ namespace BasketJam.Services
                 List<Object> listaJugadores = new List<Object>();
                 List<Object> devv = new List<Object>();
                 List<Jugador> jugEqPart;
+                List<EquipoJugador.JugadorEquipo> jugEq = new List<EquipoJugador.JugadorEquipo>();
+
+                dynamic jugadoresEquipoPartido = new System.Dynamic.ExpandoObject();
+                jugadoresEquipoPartido.nombreEq1 = part.equipos[0].NombreEquipo;
+                jugadoresEquipoPartido.nombreEq2 = part.equipos[1].NombreEquipo;
+                jugadoresEquipoPartido.cantJugadoresConvocadosEq1 = part.EquipoJugador[0].jugadorEquipo.Count;
+                jugadoresEquipoPartido.cantJugadoresConvocadosEq2 = part.EquipoJugador[1].jugadorEquipo.Count;
+              
 
                 foreach (Equipo e in part.equipos)
                 {
+                    var equipoJugadorIndex = await _partidos
+                       .Find(p => p.Id == idPartido)
+                       .Project(p => p.EquipoJugador.FindIndex(t => t.idEquipo == e.Id))
+                       .SingleOrDefaultAsync();
+                    jugEq = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo;
+
                     jugEqPart = new List<Jugador>(); ;
                     listaJugadores = new List<Object>();
-                    jugEqPart = await _jugadores.Find<Jugador>(x => x.IdEquipo == e.Id).ToListAsync();
-                    foreach (Jugador j in jugEqPart)
-                    {
+                    int cantJugadoresConvocados;
+                    cantJugadoresConvocados= part.EquipoJugador[equipoJugadorIndex].jugadorEquipo.Count;
+                    foreach (EquipoJugador.JugadorEquipo je in jugEq)
+                    { 
+                  //  jugEqPart = await _jugadores.Find<Jugador>(x => x.IdEquipo == e.Id).ToListAsync();
+                    Jugador jug = await _jugadores.Find<Jugador>(x => x.Id == je.idJugador).SingleOrDefaultAsync();
 
+                  //      foreach (Jugador j in jugEqPart)
+                   // {
+                        
                         listaJugadores.Add(new
                         {
-                            idJugadir = j.Id,
-                            nombre = j.Nombre,
-                            apellido = j.Apellido,
-                            posicion = j.Posicion
+                            idJugador = jug.Id,
+                            nombre = jug.Nombre,
+                            apellido = jug.Apellido,
+                            posicion = jug.Posicion,
+                            esTitular=je.esTitular
                         });
                     }
+                  //  }
                     devv.Add(new
                     {
                         equipo = e.Id,
+                        nombreEquipo=e.NombreEquipo,
+                        cantJugadoresConvocados= cantJugadoresConvocados,
                         jugadores = listaJugadores
                     });
 

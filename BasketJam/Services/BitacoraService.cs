@@ -18,7 +18,7 @@ namespace BasketJam.Services
     public interface IBitacoraService
     {
         BitacoraPartido BuscarBitacoraPartido(string idPartido);
-        Task<Boolean> GenerarBitacora(BitacoraPartido bp);
+        Task<Object> GenerarBitacora(BitacoraPartido bp);
 
         Task<Object> consultarEstadisticasPeriodo(string idPartido, int periodo);
     }
@@ -30,6 +30,7 @@ namespace BasketJam.Services
         //private readonly IMongoCollection<EstadisticasJugadorPartido> _estadisticasJugadorPartido;
 
         private readonly IEstadisticasJugadorPartidoService _estadisticasJugadorPartido;
+        private readonly IPartidoService _partidoService;
 
         private readonly IMongoCollection<Partido> _partido;
 
@@ -37,7 +38,7 @@ namespace BasketJam.Services
 
         private readonly IMongoCollection<Jugador> _jugadores;
 
-        public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido)
+        public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido,IPartidoService partidoService)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
@@ -47,6 +48,7 @@ namespace BasketJam.Services
             _equipo = database.GetCollection<Equipo>("equipos");
             _jugadores = database.GetCollection<Jugador>("jugadores");
             _estadisticasJugadorPartido = estadisticasJugadorPartido;
+            _partidoService = partidoService;
 
         }
 
@@ -55,7 +57,7 @@ namespace BasketJam.Services
             return _bitacoraPartido.Find<BitacoraPartido>(bp => bp.idPartido == idPartido).FirstOrDefault();
         }
 
-        public async Task<Boolean> GenerarBitacora(BitacoraPartido bp)
+        public async Task<Object> GenerarBitacora(BitacoraPartido bp)
         {
             try
             {
@@ -248,10 +250,15 @@ namespace BasketJam.Services
                         }
 
                         await _estadisticasJugadorPartido.CargarEstadistica(ejb);
+                        //Object eep = await _partidoService.ConsultaDetallesPartido(bp.idPartido);
+                        
+                        
                         // return true;
                     }
                     //cargoStatDesdeBitacora(bp);
-                    return true;
+                    //return true;
+                    return await _partidoService.ConsultarHeaderPartido(bp.idPartido);
+
                 }
                 /*foreach(BitacoraPartido.BitacoraTimeLine b in bp.bitacoraTimeLine)
                 {
@@ -379,6 +386,8 @@ namespace BasketJam.Services
                     coordenadas.Add(b.CoordenadasAcciones);
 
                     _estadisticasJugadorPartido.CargarEstadistica(ejb);
+
+             
 
                 }
                 return true;
