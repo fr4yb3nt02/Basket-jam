@@ -115,12 +115,12 @@ namespace BasketJam.Controllers
 
             
             if(res)
-            return Ok();
+            return Ok(new { mensaje = "Se han agregado los jueces correctamente." });
             else
             return BadRequest(new{error="No se ha podido realizar la acción."});
         }
 
-                [HttpPut("AgregarJugadoresAPartido/{id:length(24)}")]
+        [HttpPut("AgregarJugadoresAPartido/{id:length(24)}")]
        // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
         public async Task<ActionResult<bool>> AgregarJugadoresAPartido(string id,[FromBody]List<EquipoJugador> jugadores)
         {
@@ -135,7 +135,7 @@ namespace BasketJam.Controllers
           Boolean res= await _partidoService.AgregarJugadoresAPartido(id,jugadores);
 
             if(res)
-            return Ok();
+            return Ok(new { error = "No se han asignado los jugadores de manera correcta." });
             else
             return BadRequest(new{error="No se ha podido realizar la acción."});
             
@@ -186,7 +186,14 @@ namespace BasketJam.Controllers
  [HttpGet("ListarEquiposJugador/{id:length(24)}")]
                 public async Task<ActionResult>  ListarEquiposJugador(string id)
         {    
+            try
+            { 
             return Ok(await _partidoService.ListarEquipoJugador(id));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest( new{Error = ex.Message });
+            }
 
         }
 

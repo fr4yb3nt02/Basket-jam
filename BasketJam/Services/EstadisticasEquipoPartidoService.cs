@@ -20,7 +20,7 @@ namespace BasketJam.Services
         Task<Boolean> CargarEstadistica(EstadisticasEquipoPartido eep);
         Task<Boolean> CargarEstadistica(string IdPartido , string IdEquipo , int ptos);
         Task<Boolean> CargarEstadistica(EstadisticasJugadorPartido ejp);
-
+        EstadisticasEquipoPartido BuscarEstadisticasEquipoPartido(string IdPartido, string IdEquipo);
         Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string IdPartido);
     }
 
@@ -44,9 +44,16 @@ namespace BasketJam.Services
             _jugadorService=jugadorService;
         }
 
-                public EstadisticasEquipoPartido BuscarEstadisticasEquipoPartido(string IdPartido,string IdEquipo)
+        public EstadisticasEquipoPartido BuscarEstadisticasEquipoPartido(string IdPartido,string IdEquipo)
         {    
+            try
+            { 
             return  _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdEquipo.Equals(IdEquipo)&& a.IdPartido.Equals(IdPartido)).FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string IdPartido)
@@ -73,8 +80,7 @@ namespace BasketJam.Services
             }
         }
 
-
- public  async Task<Boolean> CargarEstadistica(EstadisticasJugadorPartido ejp)
+        public  async Task<Boolean> CargarEstadistica(EstadisticasJugadorPartido ejp)
         {
             Jugador Jugador=await _jugadorService.BuscarJugador(ejp.IdJugador);
             //Equipo Equipo=await _equipoService.BuscarEquipo(Jugador.IdEquipo);
@@ -230,7 +236,7 @@ namespace BasketJam.Services
             }
         }
 
-         public async Task<ReplaceOneResult> Save(EstadisticasEquipoPartido eep)
+        public async Task<ReplaceOneResult> Save(EstadisticasEquipoPartido eep)
     {
         return await _estadisticasEquipoPartido.ReplaceOneAsync<EstadisticasEquipoPartido>(x => x.IdEquipo.Equals(eep.IdEquipo) && x.IdPartido.Equals(eep.IdPartido),eep, new UpdateOptions { IsUpsert = true });
     }

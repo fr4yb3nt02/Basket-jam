@@ -77,6 +77,7 @@ namespace BasketJam.Services
                     //return true;
                     foreach (BitacoraPartido.BitacoraTimeLine b in bp.bitacoraTimeLine)
                     {
+                         ejb = new EstadisticasJugadorPartido();
                         ejb2 = _estadisticasJugadorPartido.BuscarEstadisticasJugadorPartido(bp.idPartido, b.idJugador);
                         if (ejb2 != null)
                             ejb.Id = ejb2.Id;
@@ -157,6 +158,7 @@ namespace BasketJam.Services
 
                     foreach (BitacoraPartido.BitacoraTimeLine b in bp.bitacoraTimeLine)
                     {
+                        ejb = new EstadisticasJugadorPartido();
                         var update = Builders<BitacoraPartido>.Update
                                     .Push<BitacoraPartido.BitacoraTimeLine>(e => e.bitacoraTimeLine, b);
                         await _bitacoraPartido.FindOneAndUpdateAsync(filter, update);
