@@ -81,6 +81,7 @@ namespace BasketJam.Services
 
 
         }
+
         public async Task<List<Partido>> ListarPartidos()
         {
             return await _partidos.Find(partido => true).ToListAsync();
@@ -208,8 +209,6 @@ namespace BasketJam.Services
         {
             return await _partidos.Find<Partido>(partido => partido.Id == id).FirstOrDefaultAsync();
         }
-
-
 
         public async Task<Partido> CrearPartido(Partido partido)
         {
@@ -590,7 +589,6 @@ namespace BasketJam.Services
                 return new { ERROR = "No se encuentran estadísticas para el partido." };
             }
         }
-
 
         /* public async Task<List<Object>> ListarJugadoresEquiposPartido(string idPartido)
          {

@@ -149,9 +149,60 @@ namespace BasketJam.Controllers
            // return str;
         }
 
-        // If we got this far, something failed, redisplay form
-        //  return View(model);
+        [AllowAnonymous]
+        //[HttpGet("VeryFiyAccount/{id}")]
+        [HttpPost("ResetearPassword/")]
+        public  IActionResult ResetearContraseña(string email)
+        {
+            string str = "";
+            try
+            {
+   
+                _usuarioService.SendPassReset(email);
+                return Ok( );
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+    
+
+    [AllowAnonymous]
+    //[HttpGet("VeryFiyAccount/{id}")]
+    [HttpPost("CambiarPassowrd/")]
+    public async Task<Boolean> CambiarPassowrd(string email,string password)
+    {
+        try
+        {
+
+            return await _usuarioService.CambiarPassword(email,password);
+            //return Ok();
+
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
     }
+}
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
 
     /*[HttpGet]
     public async Task<ActionResult> ActivateAccount(string id)
@@ -173,5 +224,5 @@ namespace BasketJam.Controllers
         return View();
 
     }*/
-}
+
 

@@ -27,6 +27,7 @@ namespace BasketJam.Services
         private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
         private readonly IMongoCollection<EstadisticasJugadorPartido> _estadisticasJugadorPartido;   
+
         private readonly IMongoCollection<Jugador> _jugadores;         
 
         public EstadisticasJugadorPartidoService(IConfiguration config,IEstadisticasEquipoPartidoService estadisticasEquipoPartidoService)
@@ -39,7 +40,7 @@ namespace BasketJam.Services
 
         }
 
-                public EstadisticasJugadorPartido BuscarEstadisticasJugadorPartido(string IdPartido,string IdJugador)
+        public EstadisticasJugadorPartido BuscarEstadisticasJugadorPartido(string IdPartido,string IdJugador)
         {    
             return  _estadisticasJugadorPartido.Find<EstadisticasJugadorPartido>(a => a.IdJugador.Equals(IdJugador)&& a.IdPartido.Equals(IdPartido)).FirstOrDefault();
         }
@@ -184,8 +185,7 @@ namespace BasketJam.Services
             
         }
 
-
-         public async Task<ReplaceOneResult> Save(EstadisticasJugadorPartido ejp)
+        public async Task<ReplaceOneResult> Save(EstadisticasJugadorPartido ejp)
     {
         return await _estadisticasJugadorPartido.ReplaceOneAsync<EstadisticasJugadorPartido>(x => x.IdJugador.Equals(ejp.IdJugador) && x.IdPartido.Equals(ejp.IdPartido),ejp, new UpdateOptions { IsUpsert = true });
     }
