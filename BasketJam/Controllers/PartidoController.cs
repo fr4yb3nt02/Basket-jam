@@ -12,54 +12,90 @@ namespace BasketJam.Controllers
     [Route("[controller]")]
     public class PartidoController : ControllerBase
     {
-      private IPartidoService _partidoService;
+        private IPartidoService _partidoService;
 
         public PartidoController(IPartidoService partidoService)
         {
             _partidoService = partidoService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<Partido>>> Get()
         {
-            return await _partidoService.ListarPartidos();
+            try
+            {
+                return await _partidoService.ListarPartidos();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerPartido")]
         public async Task<ActionResult<Partido>> Get(string id)
         {
-            var partido =await _partidoService.BuscarPartido(id);
-
-            if (partido == null)
+            try
             {
-                return NotFound();
-            }
+                var partido = await _partidoService.BuscarPartido(id);
 
-            return partido;
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
+
+                return partido;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Partido>> Create(Partido partido)
         {
-            
-            await _partidoService.CrearPartido(partido);
+            try
+            {
+                await _partidoService.CrearPartido(partido);
 
-            return CreatedAtRoute("ObtenerPartido", new { id = partido.Id.ToString() }, partido);
+                return CreatedAtRoute("ObtenerPartido", new { id = partido.Id.ToString() }, partido);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Partido partidoIn)
         {
-            var partido = _partidoService.BuscarPartido(id);
-
-            if (partido == null)
+            try
             {
-                return NotFound();
+                var partido = _partidoService.BuscarPartido(id);
+
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
+
+                _partidoService.ActualizarPartido(id, partidoIn);
+
+                return Ok(new { Resultado = true });
             }
-
-            _partidoService.ActualizarPartido(id,partidoIn);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPut("ActualizarTiempoPartido/{id:length(24)}")]
@@ -67,132 +103,233 @@ namespace BasketJam.Controllers
         {
             try
             {
-            var partido = _partidoService.BuscarPartido(id);
+                var partido = _partidoService.BuscarPartido(id);
 
-            if (partido == null)
-            {
-                return NotFound();
-            }
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
 
-            _partidoService.ActualizarTiempoPartido(id,tiempo);
-            return Ok();
+                _partidoService.ActualizarTiempoPartido(id, tiempo);
+                return Ok(new { Resultado = true });
             }
-            catch
+            catch (Exception ex)
             {
-            return NoContent();
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
         }
-        
+
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var partido = _partidoService.BuscarPartido(id);
-
-            if (partido == null)
+            try
             {
-                return NotFound();
+                var partido = _partidoService.BuscarPartido(id);
+
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
+
+                _partidoService.EliminarPartido(partido.Id.ToString());
+
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
 
-            _partidoService.EliminarPartido(partido.Id.ToString());
-
-            return NoContent();
         }
 
 
         [HttpPut("AgregarJuezAPartido/{id:length(24)}")]
-       // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
-        public async Task<ActionResult<bool>> AgregarJuezAPartido(string id,[FromBody]List<Juez> jueces)
+        // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
+        public async Task<ActionResult<bool>> AgregarJuezAPartido(string id, [FromBody]List<Juez> jueces)
         {
-            var partido = await _partidoService.BuscarPartido(id);
-
-            if (partido == null)
+            try
             {
-                return NotFound();
+                var partido = await _partidoService.BuscarPartido(id);
+
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
+
+                Boolean res = await _partidoService.AgregarJuezPartida(id, jueces);
+
+
+                if (res)
+                    return Ok(new { mensaje = "Se han agregado los jueces correctamente." });
+                else
+                    return BadRequest(new { error = "No se ha podido realizar la acción." });
             }
-
-          Boolean res= await _partidoService.AgregarJuezPartida(id,jueces);
-
-            
-            if(res)
-            return Ok(new { mensaje = "Se han agregado los jueces correctamente." });
-            else
-            return BadRequest(new{error="No se ha podido realizar la acción."});
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPut("AgregarJugadoresAPartido/{id:length(24)}")]
-       // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
-        public async Task<ActionResult<bool>> AgregarJugadoresAPartido(string id,[FromBody]List<EquipoJugador> jugadores)
+        // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
+        public async Task<ActionResult<bool>> AgregarJugadoresAPartido(string id, [FromBody]List<EquipoJugador> jugadores)
         {
-
-            var partido = await _partidoService.BuscarPartido(id);
-
-            if (partido == null)
-            {
-                return NotFound();
-            }
-
-          Boolean res= await _partidoService.AgregarJugadoresAPartido(id,jugadores);
-
-            if(res)
-            return Ok(new { error = "No se han asignado los jugadores de manera correcta." });
-            else
-            return BadRequest(new{error="No se ha podido realizar la acción."});
-            
-        }
-
-        
-
-[AllowAnonymous]
- [HttpGet("Listpart")]
-                public async Task<ActionResult>  visualizadorPartidos()
-        {
-
-          //  List<String> a = await _partidoService.DevuelvoListPartidosAndroid();
-            return Ok(await _partidoService.DevuelvoListPartidosAndroid());
-    //return Ok(_partidoService.DevuelvoListPartidosAndroid);
-}
-
-[AllowAnonymous]
- [HttpGet("ListPartidosProgOJug")]
-                public async Task<ActionResult>  ListarPartidosProgOJug()
-        {
-            return Ok(await _partidoService.ListarPartidosProgOJug());
-        }
-
-[AllowAnonymous]
- [HttpGet("ConsultarHeaderPartido/{id:length(24)}")]
-                public async Task<ActionResult>  ConsultarHeaderPartido(string id)
-        {
-            return Ok(await _partidoService.ConsultarHeaderPartido(id));
-}
-
-[AllowAnonymous]
- [HttpGet("ConsultaDetallesPartido/{id:length(24)}")]
-                public async Task<ActionResult>  ConsultaDetallesPartido(string id)
-        {
-          
-            return Ok(await _partidoService.ConsultaDetallesPartido(id));
-}
-
-[AllowAnonymous]
- [HttpGet("UltimosEventosEquipo/{id:length(24)}")]
-                public async Task<ActionResult>  UltimosEventosEquipo(string id)
-        {    
-            return Ok(await _partidoService.UltimosEventosEquipo(id));
-}
-
- [AllowAnonymous]
- [HttpGet("ListarEquiposJugador/{id:length(24)}")]
-                public async Task<ActionResult>  ListarEquiposJugador(string id)
-        {    
             try
-            { 
-            return Ok(await _partidoService.ListarEquipoJugador(id));
-            }
-            catch(Exception ex)
             {
-                return BadRequest( new{Error = ex.Message });
+                var partido = await _partidoService.BuscarPartido(id);
+
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
+
+                Boolean res = await _partidoService.AgregarJugadoresAPartido(id, jugadores);
+
+                if (res)
+                    return Ok(new { error = "No se han asignado los jugadores de manera correcta." });
+                else
+                    return BadRequest(new { error = "No se ha podido realizar la acción." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpGet("Listpart")]
+        public async Task<ActionResult> visualizadorPartidos()
+        {
+            try
+            {
+                //  List<String> a = await _partidoService.DevuelvoListPartidosAndroid();
+                return Ok(await _partidoService.DevuelvoListPartidosAndroid());
+                //return Ok(_partidoService.DevuelvoListPartidosAndroid);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ListPartidosProgOJug")]
+        public async Task<ActionResult> ListarPartidosProgOJug()
+        {
+            try
+            {
+                return Ok(await _partidoService.ListarPartidosProgOJug());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ListarPartidosPorEstado")]
+        public async Task<ActionResult> ListarPartidosPorEstado(int estado)
+        {
+            try
+            {
+                return Ok(await _partidoService.ListarPartidosPorEstado(estado));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConsultarHeaderPartido/{id:length(24)}")]
+        public async Task<ActionResult> ConsultarHeaderPartido(string id)
+        {
+            try
+            {
+                return Ok(await _partidoService.ConsultarHeaderPartido(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConsultaDetallesPartido/{id:length(24)}")]
+        public async Task<ActionResult> ConsultaDetallesPartido(string id)
+        {
+            try
+            {
+                return Ok(await _partidoService.ConsultaDetallesPartido(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("UltimosEventosEquipo/{id:length(24)}")]
+        public async Task<ActionResult> UltimosEventosEquipo(string id)
+        {
+            try
+            {
+                return Ok(await _partidoService.UltimosEventosEquipo(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ListarEquiposJugador/{id:length(24)}")]
+        public async Task<ActionResult> ListarEquiposJugador(string id)
+        {
+            try
+            {
+                return Ok(await _partidoService.ListarEquipoJugador(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
 
         }
@@ -204,11 +341,14 @@ namespace BasketJam.Controllers
             try
             {
                 _partidoService.ActualizarEstadoPartido(id, tiempo);
-                return Ok();
+                return Ok(new { Resultado = true });
             }
-            catch
+            catch (Exception ex)
             {
-                return NoContent();
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
         }
 
@@ -218,12 +358,15 @@ namespace BasketJam.Controllers
         {
             try
             {
-              return await _partidoService.ListarJugadoresEquiposPartido(id);
-   
+                return await _partidoService.ListarJugadoresEquiposPartido(id);
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception(
+
+                    "Se ha producido un error: " + ex.Message
+                 );
             }
         }
 
@@ -238,7 +381,10 @@ namespace BasketJam.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception(
+
+                    "Se ha producido un error: " + ex.Message
+                 );
             }
         }
 

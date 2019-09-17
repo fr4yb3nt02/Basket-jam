@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace BasketJam.Controllers
 {
@@ -21,58 +22,108 @@ namespace BasketJam.Controllers
        [HttpGet]
         public async Task<ActionResult<List<Torneo>>> Get()
         {
-            return await _torneoService.ListarTorneos();
+            try
+            {
+                return await _torneoService.ListarTorneos();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpGet("{id:length(24)}", Name = "ObtenerTorneo")]
         public async Task<ActionResult<Torneo>> Get(string id)
         {
-            var torneo = await _torneoService.BuscarTorneo(id);
-
-            if (torneo == null)
+            try
             {
-                return NotFound();
-            }
+                var torneo = await _torneoService.BuscarTorneo(id);
 
-            return torneo;
+                if (torneo == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el torneo." });
+                }
+
+                return torneo;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Torneo>> Create([FromBody]Torneo torneo)
         {
-            await _torneoService.CrearTorneo(torneo);
+            try
+            {
+                await _torneoService.CrearTorneo(torneo);
 
-            return CreatedAtRoute("ObtenerTorneo", new { id = torneo.Id.ToString() }, torneo);
+                return CreatedAtRoute("ObtenerTorneo", new { id = torneo.Id.ToString() }, torneo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Torneo torneoIn)
         {
-            var torneo = _torneoService.BuscarTorneo(id);
-
-            if (torneo == null)
+            try
             {
-                return NotFound();
+                var torneo = _torneoService.BuscarTorneo(id);
+
+                if (torneo == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el torneo." });
+                }
+
+                _torneoService.ActualizarTorneo(id, torneoIn);
+
+                return Ok(new { Resultado= true});
             }
-
-            _torneoService.ActualizarTorneo(id,torneoIn);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var torneo = _torneoService.BuscarTorneo(id);
-
-            if (torneo == null)
+            try
             {
-                return NotFound();
+                var torneo = _torneoService.BuscarTorneo(id);
+
+                if (torneo == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el torneo." });
+                }
+
+                _torneoService.EliminarTorneo(torneo.Id.ToString());
+
+                return Ok(new { Resultado = true });
             }
-
-            _torneoService.EliminarTorneo(torneo.Id.ToString());
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
     }
 }

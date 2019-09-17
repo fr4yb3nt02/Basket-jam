@@ -79,6 +79,7 @@ namespace BasketJam.Services
 
         }
 
+
         public void ActualizarTorneo(string id, Torneo tor)
         {
             _torneos.ReplaceOne(torneo => torneo.Id == id, tor);

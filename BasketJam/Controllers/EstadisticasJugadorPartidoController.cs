@@ -11,24 +11,24 @@ namespace BasketJam.Controllers
     [ApiController]
     [Route("[controller]")]
     public class EstadisticasJugadorPartidoController : ControllerBase
-    
+
     {
         private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
         private IEstadisticasJugadorPartidoService _estadisticasJugadorPartidoService;
 
-        public EstadisticasJugadorPartidoController(IEstadisticasEquipoPartidoService estadisticasEquipoPartidoService , IEstadisticasJugadorPartidoService estadisticasJugadorPartidoService)
+        public EstadisticasJugadorPartidoController(IEstadisticasEquipoPartidoService estadisticasEquipoPartidoService, IEstadisticasJugadorPartidoService estadisticasJugadorPartidoService)
         {
             _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
-            _estadisticasJugadorPartidoService=estadisticasJugadorPartidoService;
+            _estadisticasJugadorPartidoService = estadisticasJugadorPartidoService;
         }
 
-       [HttpPost("cargarPuntosJugador")]
+        [HttpPost("cargarPuntosJugador")]
         public async Task<ActionResult<ReplaceOneResult>> Create(EstadisticasEquipoPartido eep)
         {
             await _estadisticasEquipoPartidoService.Save(eep);
             return Ok();
-          //  return Ok(new{si=true,eep});
+            //  return Ok(new{si=true,eep});
         }
 
         [HttpPost("cargarPtosJugador")]
@@ -38,4 +38,4 @@ namespace BasketJam.Controllers
             return Ok();
         }
     }
-    }
+}

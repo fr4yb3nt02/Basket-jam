@@ -30,7 +30,8 @@ namespace BasketJam.Controllers
         [HttpPost("registrar")]
         public async Task<ActionResult<Object>> Create(Usuario usuario)
         {
-            try {
+            try
+            {
                 if (string.IsNullOrWhiteSpace(usuario.Password))
                     return BadRequest("Por favor ingrese una contraseña.");
 
@@ -48,10 +49,12 @@ namespace BasketJam.Controllers
 
                 //  return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
             }
-            catch (AppException ex)
+            catch (Exception ex)
             {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
         }
 
@@ -59,23 +62,42 @@ namespace BasketJam.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Usuario>>> Get()
         {
+            try
+            {
 
-
-            return await _usuarioService.Get();
+                return await _usuarioService.Get();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpGet("{id:length(24)}", Name = "GetUsuario")]
 
         public async Task<ActionResult<Usuario>> Get(string id)
         {
-            var usuario = await _usuarioService.Get(id);
-
-            if (usuario == null)
+            try
             {
-                return NotFound();
-            }
+                var usuario = await _usuarioService.Get(id);
 
-            return usuario;
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
         //[FromBody]
 
@@ -83,12 +105,22 @@ namespace BasketJam.Controllers
         [HttpPost("autenticar")]
         public async Task<IActionResult> Autenticar([FromBody]Usuario userParam)
         {
-            var user = await _usuarioService.Autenticar(userParam.NomUser, userParam.Password);
+            try
+            {
+                var user = await _usuarioService.Autenticar(userParam.NomUser, userParam.Password);
 
-            if (user == null)
-                return BadRequest(new { result = false, message = "Nombre de usuario o contraseña incorrecta" });
+                if (user == null)
+                    return BadRequest(new { result = false, message = "Nombre de usuario o contraseña incorrecta" });
 
-            return Ok(new { result = true, user.Token, idUser = user.Id });
+                return Ok(new { result = true, user.Token, idUser = user.Id });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [AllowAnonymous]
@@ -96,12 +128,22 @@ namespace BasketJam.Controllers
         //[AcceptVerbs("Get" , "Post")]
         public IActionResult VerificarCI(string ci)
         {
-            if (!_usuarioService.BuscarUsuarioPorCI(ci))
+            try
             {
-                return Ok($"CI {ci} is already in use.");
-            }
+                if (!_usuarioService.BuscarUsuarioPorCI(ci))
+                {
+                    return Ok($"CI {ci} is already in use.");
+                }
 
-            return Ok(true);
+                return Ok(new {Resultado= true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
         /* old
         [AllowAnonymous]
@@ -138,7 +180,7 @@ namespace BasketJam.Controllers
             {
                 //  str = objReg.VeryFiyAccount(id);
                 return await _usuarioService.VerificarCuenta(id);
-               // return new { res = "potato" };
+                // return new { res = "potato" };
             }
             catch (Exception ex)
             {
@@ -146,49 +188,56 @@ namespace BasketJam.Controllers
                 return ex.Message;
             }
 
-           // return str;
+            // return str;
         }
 
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
         [HttpPost("ResetearPassword/")]
-        public  IActionResult ResetearContraseña(string email)
+        public IActionResult ResetearContraseña(string email)
         {
             string str = "";
             try
             {
-   
+
                 _usuarioService.SendPassReset(email);
-                return Ok( );
-                
+                return Ok(new { resultado = true });
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
 
         }
-    
 
-    [AllowAnonymous]
-    //[HttpGet("VeryFiyAccount/{id}")]
-    [HttpPost("CambiarPassowrd/")]
-    public async Task<Boolean> CambiarPassowrd(string email,string password)
-    {
-        try
+
+        [AllowAnonymous]
+        //[HttpGet("VeryFiyAccount/{id}")]
+        [HttpPost("CambiarPassowrd/")]
+        public async Task<IActionResult> CambiarPassowrd(string email, string password)
         {
+            try
+            {
 
-            return await _usuarioService.CambiarPassword(email,password);
-            //return Ok();
+                await _usuarioService.CambiarPassword(email, password);
+                return Ok(new { resultado = true });
+                //return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
 
         }
-        catch (Exception ex)
-        {
-            return false;
-        }
-
     }
-}
 
 
 

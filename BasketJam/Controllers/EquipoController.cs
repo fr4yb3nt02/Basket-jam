@@ -22,11 +22,19 @@ namespace BasketJam.Controllers
             _equipoService = equipoService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<Equipo>>> Get()
         {
-            return await _equipoService.ListarEquipos();
+            try
+            {
+                return await _equipoService.ListarEquipos();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
+
 
         [HttpGet("{id:length(24)}", Name = "ObtenerEquipo")]
         public async Task<ActionResult<Equipo>> Get(string id)
@@ -58,59 +66,82 @@ namespace BasketJam.Controllers
         [HttpPost]
         public async Task<ActionResult<Equipo>> Create(Equipo equipo)
         {
-           // Estadio e=new Estadio();
-           // e.Nombre=equipo.Estadio.Nombre;
-           // e.Direccion=equipo.Estadio.Direccion;
-           // e.Id=equipo.Estadio.Id;
-            //Estadio estadio=new Estadio(equipo.Estadio.Id,equipo.Estadio.Nombre,equipo.Estadio.Nombre);
-            await _equipoService.CrearEquipo(equipo);
+            try
+            {
+                // Estadio e=new Estadio();
+                // e.Nombre=equipo.Estadio.Nombre;
+                // e.Direccion=equipo.Estadio.Direccion;
+                // e.Id=equipo.Estadio.Id;
+                //Estadio estadio=new Estadio(equipo.Estadio.Id,equipo.Estadio.Nombre,equipo.Estadio.Nombre);
 
-            return CreatedAtRoute("ObtenerEquipo", new { id = equipo.Id.ToString() }, equipo);
+                await _equipoService.CrearEquipo(equipo);
+
+                return CreatedAtRoute("ObtenerEquipo", new { id = equipo.Id.ToString() }, equipo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
+
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Equipo equipoIn)
         {
-            var equipo = _equipoService.BuscarEquipo(id);
-
-            if (equipo == null)
+            try
             {
-                return NotFound();
+                var equipo = _equipoService.BuscarEquipo(id);
+
+                if (equipo == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el equipo." });
+                }
+
+                _equipoService.ActualizarEquipo(id, equipoIn);
+
+                return Ok(new { Resultado = true });
             }
-
-            _equipoService.ActualizarEquipo(id, equipoIn);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var equipo = _equipoService.BuscarEquipo(id);
-
-            if (equipo == null)
+            try
             {
-                return NotFound();
+                var equipo = _equipoService.BuscarEquipo(id);
+
+                if (equipo == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el equipo." });
+                }
+
+                _equipoService.EliminarEquipo(equipo.Id.ToString());
+
+                return Ok(new { Resultado = true });
             }
-
-            _equipoService.EliminarEquipo(equipo.Id.ToString());
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [AllowAnonymous]
         [HttpPost("subirFoto/")]
-  public  IActionResult subirFoto(Imagen img)  
-  {
+        public IActionResult subirFoto(Imagen img)
+        {
             try
-            { 
-            _equipoService.subirImagen(img);
-            return Ok();
-            }
-            catch(Exception ex)
             {
-            return BadRequest();
+                _equipoService.subirImagen(img);
+                return Ok(new { Resultado = true });
             }
-        } 
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
+        }
     }
 }

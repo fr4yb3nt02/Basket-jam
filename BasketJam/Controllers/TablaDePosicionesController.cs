@@ -8,7 +8,7 @@ using System;
 
 namespace BasketJam.Controllers
 {
-        [ApiController]
+    [ApiController]
     [Route("[controller]")]
     public class TablaDePosicionesController : ControllerBase
     {
@@ -22,29 +22,42 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpPost("CrearTablaDePosiciones")]
-        public async Task<ActionResult>  CrearTablaDePosiciones(TablaDePosiciones tp)
+        public async Task<ActionResult> CrearTablaDePosiciones(TablaDePosiciones tp)
         {
             try
             {
                 await _tablaDePosicionesService.CrearTablaDePosiciones(tp);
                 return Ok("Se ha generado la tabla de posiciones correctamente.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
             }
         }
 
-            [AllowAnonymous]
-            [HttpGet("BuscarTablaDePosiciones/{id:length(24)}")]
-            public async Task<ActionResult> BuscarTablaDePosiciones(string id)
-            {    
-            return Ok(await _tablaDePosicionesService.BuscarTablaDePosiciones(id));
-            }  
+        [AllowAnonymous]
+        [HttpGet("BuscarTablaDePosiciones/{id:length(24)}")]
+        public async Task<ActionResult> BuscarTablaDePosiciones(string id)
+        {
+            try
+            {
+                return Ok(await _tablaDePosicionesService.BuscarTablaDePosiciones(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
 
 
-        
+
     }
-    }
+}
 
 

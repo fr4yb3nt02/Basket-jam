@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -16,9 +17,10 @@ namespace BasketJam.Services
 {
     public interface ITablaDePosicionesService
     {
-        Task<TablaDePosiciones> BuscarTablaDePosiciones(string id);
+        Task<Object> BuscarTablaDePosiciones(string id);
         Task<TablaDePosiciones> CrearTablaDePosiciones(TablaDePosiciones tablaDePosiciones);
         Task<Boolean> ActualizarTablaDePosiciones(string id, List<TablaDePosiciones.EquipoTablaPosicion> tp);
+        Task<List<String>> ListarFotosEquiposTorneo(string idTorneo);
     }
 
     public class TablaDePosicionesService : ITablaDePosicionesService
@@ -35,9 +37,68 @@ namespace BasketJam.Services
 
         }
 
-        public async Task<TablaDePosiciones> BuscarTablaDePosiciones(string id)
+        /*   public async Task<TablaDePosiciones> BuscarTablaDePosiciones(string id)
+           {
+               try
+               { 
+               return await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.IdTorneo == id).FirstOrDefaultAsync();
+               }
+               catch(Exception ex)
+               {
+                   throw new Exception(ex.Message);
+               }
+           }*/
+        public async Task<Object> BuscarTablaDePosiciones(string id)
         {
-            return await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.IdTorneo == id).FirstOrDefaultAsync();
+            try
+            {
+               TablaDePosiciones t=  await _tablaDePosiciones.Find<TablaDePosiciones>(to => to.IdTorneo == id).FirstOrDefaultAsync();
+                dynamic tabla =new ExpandoObject();
+
+                tabla.Id = t.Id;
+                tabla.IdTorneo = t.IdTorneo;
+                List<ExpandoObject> equiposTablaPos = new List<ExpandoObject>();
+                foreach (TablaDePosiciones.EquipoTablaPosicion e in t.EquiposTablaPosicion)
+                {
+                    dynamic equipo = new ExpandoObject();
+                    equipo.idEquipo = e.idEquipo;
+                    equipo.Puntos = e.Puntos;
+                    equipo.Posicion = e.Posicion;
+                    equipo.PG = e.PG;
+                    equipo.PP = e.PP;
+                    equipo.PF = e.PF;
+                    equipo.PC = e.PC;
+                    equipo.DIF = e.DIF;
+                    equipo.Foto = HelperCloudinary.cloudUrl + "Equipos/" + e.idEquipo;
+                    equiposTablaPos.Add(equipo);
+                }
+                tabla.EquiposTablaPosicion = equiposTablaPos;
+
+                return tabla;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<String>> ListarFotosEquiposTorneo(string idTorneo)
+        {
+            try
+            { 
+            TablaDePosiciones tabla = await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.Id == idTorneo).FirstOrDefaultAsync();
+                List<String> stringFotos = new List<string>();
+                foreach(TablaDePosiciones.EquipoTablaPosicion e in tabla.EquiposTablaPosicion)
+                {
+                    stringFotos.Add(HelperCloudinary.cloudUrl + "Equipos/" + e.idEquipo);
+                }
+                return stringFotos;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<TablaDePosiciones> CrearTablaDePosiciones(TablaDePosiciones tablaDePosiciones)

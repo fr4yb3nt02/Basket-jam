@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace BasketJam.Controllers
 {
@@ -11,14 +12,14 @@ namespace BasketJam.Controllers
     [Route("[controller]")]
     public class JuezController : ControllerBase
     {
-      private IJuezService _juezService;
+        private IJuezService _juezService;
 
         public JuezController(IJuezService juezService)
         {
             _juezService = juezService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<Juez>>> Get()
         {
             return await _juezService.ListarJueces();
@@ -27,37 +28,65 @@ namespace BasketJam.Controllers
         [HttpGet("{id:length(24)}", Name = "ObtenerJuez")]
         public async Task<ActionResult<Juez>> Get(string id)
         {
-            var juez = await _juezService.BuscarJuez(id);
-
-            if (juez == null)
+            try
             {
-                return NotFound();
-            }
+                var juez = await _juezService.BuscarJuez(id);
 
-            return juez;
+                if (juez == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el juez." });
+                }
+
+                return juez;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Juez>> Create(Juez juez)
         {
-            await _juezService.CrearJuez(juez);
+            try
+            {
+                await _juezService.CrearJuez(juez);
 
-            return CreatedAtRoute("ObtenerJuez", new { id = juez.Id.ToString() }, juez);
+                return CreatedAtRoute("ObtenerJuez", new { id = juez.Id.ToString() }, juez);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Juez juezIn)
         {
-            var juez = _juezService.BuscarJuez(id);
-
-            if (juez == null)
+            try
             {
-                return NotFound();
+                var juez = _juezService.BuscarJuez(id);
+
+                if (juez == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el juez." });
+                }
+
+                _juezService.ActualizarJuez(id, juezIn);
+
+                return Ok(new { Resultado = true });
             }
-
-            _juezService.ActualizarJuez(id,juezIn);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
 
@@ -65,16 +94,23 @@ namespace BasketJam.Controllers
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var juez = _juezService.BuscarJuez(id);
-
-            if (juez == null)
+            try
             {
-                return NotFound();
+                var juez = _juezService.BuscarJuez(id);
+
+                if (juez == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el juez." });
+                }
+
+                _juezService.EliminarJuez(juez.Id.ToString());
+
+                return Ok(new { Resultado = true });
             }
-
-            _juezService.EliminarJuez(juez.Id.ToString());
-
-            return Ok();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
     }
 }

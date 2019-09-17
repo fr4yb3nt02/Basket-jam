@@ -21,41 +21,29 @@ namespace BasketJam.Services
 {
     public interface IPartidoService
     {
+
+        void ActualizarPartido(string id, Partido pa);
+        void EliminarPartido(string id);
+        void ActualizarTiempoPartido(string id, string tiempo);
+        void ActualizarEstadoPartido(string id, string tiempo);
         Task<List<Partido>> ListarPartidos();
         Task<Partido> BuscarPartido(string id);
         Task<Partido> CrearPartido(Partido equipo);
-        void ActualizarPartido(string id, Partido pa);
-        void EliminarPartido(string id);
-
         Task<Boolean> AgregarJuezPartida(string id, List<Juez> jueces);
-
         Task<List<Partido>> ListarPartidosPorFecha(DateTime fecha);
-
-        //Task<List<String>> DevuelvoListPartidosAndroid();
-
         Task<List<Object>> DevuelvoListPartidosAndroid();
-
         Task<Object> ConsultarHeaderPartido(string idPartido);
-
         Task<Object> ConsultaDetallesPartido(string idPartido);
-
-
         Task<Object> UltimosEventosEquipo(string idPartido);
-
         Task<List<Object>> ListarEquipoJugador(string idPartido);
-
         Task<Boolean> AgregarJugadoresAPartido(string id, List<EquipoJugador> jugadores);
-
         Task<List<Object>> ListarPartidosProgOJug();
-
-        void ActualizarTiempoPartido(string id, string tiempo);
-
-        void ActualizarEstadoPartido(string id, string tiempo);
-
+        Task<List<Object>> ListarPartidosPorEstado(int estado);
         Task<List<Object>> ListarJugadoresEquiposPartido(string idPartido);
         Task<List<Object>> ListarEstadios();
+        //Task<List<String>> DevuelvoListPartidosAndroid();
     }
-    
+
     public class PartidoService : IPartidoService
     {
         private readonly IMongoCollection<Partido> _partidos;
@@ -64,7 +52,7 @@ namespace BasketJam.Services
         private readonly IMongoCollection<Jugador> _jugadores;
         private readonly IMongoCollection<EstadisticasEquipoPartido> _estadisticasEquipoPartido;
         private IVotacionPartidoService _votacionPartidoService;
-       // private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
+        // private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
         public PartidoService(IConfiguration config, IVotacionPartidoService votacionPartidoService)
         {
@@ -76,7 +64,7 @@ namespace BasketJam.Services
             _cuerpoTecnico = database.GetCollection<CuerpoTecnico>("cuerpoTecnico");
             _estadisticasEquipoPartido = database.GetCollection<EstadisticasEquipoPartido>("EstadisticasEquipoPartido");
             _votacionPartidoService = votacionPartidoService;
-          //  _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
+            //  _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
 
 
 
@@ -102,9 +90,9 @@ namespace BasketJam.Services
             List<Object> jugEq = new List<Object>();
             Jugador j;
             CuerpoTecnico tecnico;
-            int puntosEquipoPartido=0;
+            int puntosEquipoPartido = 0;
             EstadisticasEquipoPartido estEqPar = new EstadisticasEquipoPartido();
-            
+
 
             foreach (Equipo e in p.equipos)
             {
@@ -114,20 +102,20 @@ namespace BasketJam.Services
                     id = e.Id;
                     jugadores = new List<Object>();
                     puntosEquipoPartido = 0;
-                    if(_estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdEquipo.Equals(e.Id) && a.IdPartido.Equals(p.Id)).Any())
-                    { 
-                    estEqPar = _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdEquipo.Equals(e.Id) && a.IdPartido.Equals(p.Id)).FirstOrDefault();
-                    puntosEquipoPartido = estEqPar.Puntos;
+                    if (_estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdEquipo.Equals(e.Id) && a.IdPartido.Equals(p.Id)).Any())
+                    {
+                        estEqPar = _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(a => a.IdEquipo.Equals(e.Id) && a.IdPartido.Equals(p.Id)).FirstOrDefault();
+                        puntosEquipoPartido = estEqPar.Puntos;
                     }
-                                 
-                    
+
+
                     foreach (EquipoJugador ej in p.EquipoJugador)
                     {
                         int cantJugadoresConvocados;
                         cantJugadoresConvocados = ej.jugadorEquipo.Count;
 
 
-                      
+
 
                         foreach (EquipoJugador.JugadorEquipo je in ej.jugadorEquipo)
                         {
@@ -143,18 +131,21 @@ namespace BasketJam.Services
                                     Camiseta = je.nroCamiseta,
                                     EsTitular = je.esTitular,
                                     EsCapitan = je.esCapitan,
-                                    FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id                           
-                            });
+                                    FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id
+                                });
                             }
                         }
                         //equiposJugadores.Add(ej);
                     }
                     tecnico = await _cuerpoTecnico.Find<CuerpoTecnico>(x => x.IdEquipo == e.Id && x.Cargo == (CargoCuerpoTecnico)0).FirstOrDefaultAsync();
-                    jugEq.Add(new { Equipo = e.Id,
+                    jugEq.Add(new
+                    {
+                        Equipo = e.Id,
                         NombreEquipo = e.NombreEquipo,
-                        FotoEquipo= "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Equipos/" + e.Id,
+                        FotoEquipo = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Equipos/" + e.Id,
                         PuntosEnPartido = puntosEquipoPartido,
-                        Entrenador = tecnico.Nombre + " " + tecnico.Apellido, jugadores
+                        Entrenador = tecnico.Nombre + " " + tecnico.Apellido,
+                        jugadores
                     });
                 }
             }
@@ -189,7 +180,45 @@ namespace BasketJam.Services
                         equipo2 = Eq2.NombreEquipo,
                         fecha = p.fecha.ToString("dd/MM/yyyy"),
                         hora = p.fecha.ToShortTimeString(),
-                        estado=p.estado
+                        estado = p.estado
+                    });
+                    //dev.Add(det);
+                };
+
+
+                return dev;
+            }
+            catch (Exception ex)
+            {
+                List<Object> dev = new List<Object>();
+                dev.Add(new { Error = ex.Message });
+                return dev;
+            }
+        }
+
+        public async Task<List<Object>> ListarPartidosPorEstado(int estado)
+        {
+            try
+            {
+                List<Object> dev = new List<Object>();
+                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)estado).ToListAsync();
+                foreach (Partido p in parts)
+                {
+                    Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
+                    Equipo Eq2 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[1].Id).FirstOrDefaultAsync();
+
+                    dev.Add(new
+                    {
+                        idPartido = p.Id,
+                        idEquipo1 = Eq1.Id,
+                        idEquipo2 = Eq2.Id,
+                        estadio = p.estadio,
+                        categoria = Eq1.Categoria,
+                        equipo1 = Eq1.NombreEquipo,
+                        equipo2 = Eq2.NombreEquipo,
+                        fecha = p.fecha.ToString("dd/MM/yyyy"),
+                        hora = p.fecha.ToShortTimeString(),
+                        estado = p.estado
                     });
                     //dev.Add(det);
                 };

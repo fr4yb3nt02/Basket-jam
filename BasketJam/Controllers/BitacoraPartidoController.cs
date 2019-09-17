@@ -11,7 +11,7 @@ namespace BasketJam.Controllers
     [ApiController]
     [Route("[controller]")]
     public class BitacoraPartidoController : ControllerBase
-    
+
     {
         private IBitacoraService _bitacoraService;
 
@@ -20,19 +20,33 @@ namespace BasketJam.Controllers
             _bitacoraService = bitacoraService;
         }
 
-[AllowAnonymous]
- [HttpPost("GenerarBitacora")]
-                public async Task<ActionResult>  GenerarBitacora(BitacoraPartido bp)
-        {    
-            return Ok(new {resultado=await _bitacoraService.GenerarBitacora(bp)});
-}
+        [AllowAnonymous]
+        [HttpPost("GenerarBitacora")]
+        public async Task<ActionResult> GenerarBitacora(BitacoraPartido bp)
+        {
+            try
+            {
+                return Ok(new { resultado = await _bitacoraService.GenerarBitacora(bp) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
 
-      [AllowAnonymous]
- [HttpGet("consultarEstadisticasPeriodo")]
-                public async Task<ActionResult>  consultarEstadisticasPeriodo(string idPartido , int periodo)
-        {    
-            return Ok(await _bitacoraService.consultarEstadisticasPeriodo(idPartido,periodo));
-}  
-        
+        [AllowAnonymous]
+        [HttpGet("consultarEstadisticasPeriodo")]
+        public async Task<ActionResult> consultarEstadisticasPeriodo(string idPartido, int periodo)
+        {
+            try
+            {
+                return Ok(await _bitacoraService.consultarEstadisticasPeriodo(idPartido, periodo));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
     }
-    }
+}

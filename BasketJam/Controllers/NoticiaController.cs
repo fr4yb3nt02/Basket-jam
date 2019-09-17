@@ -23,64 +23,119 @@ namespace BasketJam.Controllers
        [HttpGet]
         public async Task<ActionResult<List<Noticia>>> Get()
         {
-            return await _noticiaService.ListarNoticias();
+            try
+            {
+                return await _noticiaService.ListarNoticias();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpGet("BuscarNoticia/{id:length(24)}")]
         public async Task<ActionResult<dynamic>> Get(string id)
         {
-            return await _noticiaService.BuscarNoticia(id);
+            try
+            {
+                return await _noticiaService.BuscarNoticia(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Noticia>>> Get(DateTime fecha)
         {
-            return await _noticiaService.ListarNoticiasPorFecha(fecha);
+            try
+            {
+                return await _noticiaService.ListarNoticiasPorFecha(fecha);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpGet("ListarUltimasDiez")]
         public async Task<ActionResult<List<Noticia>>> ListarUltimasDiez()
         {
-            return await _noticiaService.ListarUltimasDiezNoticias();
+            try
+            {
+                return await _noticiaService.ListarUltimasDiezNoticias();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
 
         [HttpPost]
         public async Task<ActionResult<Noticia>> Create(Noticia noticia)
         {
-            await _noticiaService.CrearNoticia(noticia);
+            try
+            {
+                await _noticiaService.CrearNoticia(noticia);
 
-            return noticia;
+                return noticia;
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+
+            }
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Noticia noticiaIn)
         {
-            var noticia = _noticiaService.BuscarNoticia(id);
-
-            if (noticia == null)
+            try
             {
-                return NotFound();
+                var noticia = _noticiaService.BuscarNoticia(id);
+
+                if (noticia == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado la noticia." });
+                }
+
+                _noticiaService.ActualizarNoticia(id, noticiaIn);
+
+                return Ok(new { Resultado = true });
             }
-
-            _noticiaService.ActualizarNoticia(id,noticiaIn);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var noticia = _noticiaService.BuscarNoticia(id);
-
-            if (noticia == null)
+            try
             {
-                return NotFound();
+                var noticia = _noticiaService.BuscarNoticia(id);
+
+                if (noticia == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado la noticia." });
+                }
+
+                _noticiaService.EliminarNoticia(noticia.Id.ToString());
+
+                return Ok(new { Resultado = true });
             }
 
-            _noticiaService.EliminarNoticia(noticia.Id.ToString());
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
         }
 
         [AllowAnonymous]
@@ -90,11 +145,11 @@ namespace BasketJam.Controllers
             try
             {
                 _noticiaService.subirImagen(img);
-                return Ok();
+                return Ok(new { Resultado=true});
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
         }
     }

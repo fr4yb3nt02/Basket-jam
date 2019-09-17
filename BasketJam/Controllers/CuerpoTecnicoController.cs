@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace BasketJam.Controllers
 {
@@ -11,14 +12,14 @@ namespace BasketJam.Controllers
     [Route("[controller]")]
     public class CuerpoTecnicoController : ControllerBase
     {
-      private ICuerpoTecnicoService _cuerpoTecnicoService;
+        private ICuerpoTecnicoService _cuerpoTecnicoService;
 
         public CuerpoTecnicoController(ICuerpoTecnicoService cuerpoTecnicoService)
         {
             _cuerpoTecnicoService = cuerpoTecnicoService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<List<CuerpoTecnico>> Get()
         {
             return await _cuerpoTecnicoService.ListarMiembroCuerpoTecnico();
@@ -40,39 +41,61 @@ namespace BasketJam.Controllers
         [HttpPost]
         public async Task<ActionResult<CuerpoTecnico>> Create(CuerpoTecnico miembroCuerpoTecnico)
         {
-            await _cuerpoTecnicoService.CrearMiembroCuerpoTecnico(miembroCuerpoTecnico);
+            try
+            {
+                await _cuerpoTecnicoService.CrearMiembroCuerpoTecnico(miembroCuerpoTecnico);
 
-            return CreatedAtRoute("ObtenerMiembroCuerpoTecnico", new { id = miembroCuerpoTecnico.Id.ToString() }, miembroCuerpoTecnico);
+                return CreatedAtRoute("ObtenerMiembroCuerpoTecnico", new { id = miembroCuerpoTecnico.Id.ToString() }, miembroCuerpoTecnico);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, CuerpoTecnico miembroCuerpoTecnicoIn)
         {
-            var miembroCuerpoTecnico = _cuerpoTecnicoService.BuscarMiembroCuerpoTecnico(id);
-
-            if (miembroCuerpoTecnico == null)
+            try
             {
-                return NotFound();
+                var miembroCuerpoTecnico = _cuerpoTecnicoService.BuscarMiembroCuerpoTecnico(id);
+
+                if (miembroCuerpoTecnico == null)
+                {
+                    return NotFound();
+                }
+
+                _cuerpoTecnicoService.ActualizarMiembroCuerpoTecnico(id, miembroCuerpoTecnicoIn);
+
+                return Ok(new { Resultado = true });
             }
 
-            _cuerpoTecnicoService.ActualizarMiembroCuerpoTecnico(id,miembroCuerpoTecnicoIn);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var miembroCuerpoTecnico = _cuerpoTecnicoService.BuscarMiembroCuerpoTecnico(id);
-
-            if (miembroCuerpoTecnico == null)
+            try
             {
-                return NotFound();
+                var miembroCuerpoTecnico = _cuerpoTecnicoService.BuscarMiembroCuerpoTecnico(id);
+
+                if (miembroCuerpoTecnico == null)
+                {
+                    return NotFound();
+                }
+
+                _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(miembroCuerpoTecnico.Id.ToString());
+
+                return Ok(new { Resultado = true });
             }
-
-            _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(miembroCuerpoTecnico.Id.ToString());
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
     }
 }

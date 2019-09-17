@@ -7,11 +7,12 @@ using MongoDB.Driver;
 using System;
 using BasketJam.Models;
 
+
 namespace BasketJam.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ConfiguracionUsuarioMovilController
+    public class ConfiguracionUsuarioMovilController : ControllerBase
     {
         private IConfiguracionUsuarioMovilService _configuracionUsuarioMovilService;
 
@@ -22,13 +23,13 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpPut("ModoficarConfiguracionUsuarioMovil/{id:length(24)}")]
-        public async Task<Object> ModoficarConfiguracionUsuarioMovil(string id,ConfiguracionUsuarioMovil conf)
+        public async Task<Object> ModoficarConfiguracionUsuarioMovil(string id, ConfiguracionUsuarioMovil conf)
         {
             try
             {
                 Boolean resultado;
                 resultado = await _configuracionUsuarioMovilService.ActualizarConfiguracionUsuarioMovil(id, conf);
-                return (new {result= resultado });
+                return (new { result = resultado });
             }
             catch (Exception ex)
             {
@@ -40,35 +41,45 @@ namespace BasketJam.Controllers
         [HttpGet("BuscarConfiguracionUsuarioMovil/{id:length(24)}")]
         public async Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string id)
         {
-           return await _configuracionUsuarioMovilService.BuscarConfiguracionUsuarioMovil(id);
+            try
+            {
+
+                return await _configuracionUsuarioMovilService.BuscarConfiguracionUsuarioMovil(id);
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception("Se ha producido un error: " + ex.Message);
+            }
         }
 
         [AllowAnonymous]
         [HttpGet("AgregarEquipoFavorito/{id:length(24)}")]
-        public async Task<bool> AgregarEquipoFavorito(string idUser,List<string> equipos)
+        public async Task<IActionResult> AgregarEquipoFavorito(string idUser, List<string> equipos)
         {
             try
             {
-                await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
-                return true;
+                //  await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
+                // return Ok (new { resultado = true });
+                return Ok(new { resultado = await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos) });
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                return BadRequest(new { Error = ex.Message });
             }
         }
 
         [AllowAnonymous]
         [HttpGet("EquipoEsFavorito/{id:length(24)}")]
-        public async Task<bool> EquipoEsFavorito(string idUser, string idEquipo)
+        public async Task<IActionResult> EquipoEsFavorito(string idUser, string idEquipo)
         {
             try
             {
-                return await _configuracionUsuarioMovilService.EquipoEsFavorito(idUser, idEquipo);                
+                return Ok(new { resultado = await _configuracionUsuarioMovilService.EquipoEsFavorito(idUser, idEquipo) });
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                return BadRequest(new { Error = ex.Message });
             }
         }
     }

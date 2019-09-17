@@ -76,6 +76,8 @@ namespace BasketJam
             services.AddScoped<ITablaDePosicionesService, TablaDePosicionesService>();
             services.AddScoped<IConfiguracionUsuarioMovilService, ConfiguracionUsuarioMovilService>();
             services.AddScoped<INoticiaService, NoticiaService>();
+            /*services.AddScoped<IEmailSender, EmailSender();
+            services.AddScoped<ImagenService(), ImagenService()>;*/
 
             //services.AddScoped<DataContext>();
 

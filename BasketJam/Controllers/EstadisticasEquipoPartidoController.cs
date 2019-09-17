@@ -11,7 +11,7 @@ namespace BasketJam.Controllers
     [ApiController]
     [Route("[controller]")]
     public class EstadisticasEquipoPartidoController : ControllerBase
-    
+
     {
         private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
@@ -20,12 +20,12 @@ namespace BasketJam.Controllers
             _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
         }
 
-       [HttpPost("cargarPuntosEquipo")]
+        [HttpPost("cargarPuntosEquipo")]
         public async Task<ActionResult<ReplaceOneResult>> Create(EstadisticasEquipoPartido eep)
         {
             await _estadisticasEquipoPartidoService.Save(eep);
             return Ok();
-          //  return Ok(new{si=true,eep});
+            //  return Ok(new{si=true,eep});
         }
 
         [HttpPost("CargarEstadistica")]
@@ -40,8 +40,8 @@ namespace BasketJam.Controllers
         public async Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string id)
         {
             return await _estadisticasEquipoPartidoService.EstadisticasEquipoPorPartido(id);
-            
+
         }
-        
+
     }
-    }
+}

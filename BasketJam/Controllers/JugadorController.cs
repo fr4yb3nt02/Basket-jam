@@ -35,52 +35,80 @@ namespace BasketJam.Controllers
         [HttpGet("{id:length(24)}", Name = "ObtenerJugador")]
         public async Task<ActionResult<Jugador>> Get(string id)
         {
+            try
+            { 
             var jugador = await _jugadorService.BuscarJugador(id);
 
             if (jugador == null)
             {
-                return NotFound();
+                return NotFound(new { Error = "No se ha encontrado el jugador." });
             }
 
             return jugador;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpPost("crearJugador")]
         public async Task<ActionResult<Jugador>> Create(Jugador jugador)
         {
-            await _jugadorService.CrearJugador(jugador);
+            try
+            {
+                await _jugadorService.CrearJugador(jugador);
 
-            return CreatedAtRoute("ObtenerJugador", new { id = jugador.Id.ToString() }, jugador);
+                return CreatedAtRoute("ObtenerJugador", new { id = jugador.Id.ToString() }, jugador);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Jugador jugadorIn)
         {
+            try
+            { 
             var jugador = _jugadorService.BuscarJugador(id);
 
             if (jugador == null)
             {
-                return NotFound();
-            }
+                    return NotFound(new { Error = "No se ha encontrado el jugador." });
+                }
 
             _jugadorService.ActualizarJugador(id,jugadorIn);
 
-            return NoContent();
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
+            try
+            { 
             var jugador = _jugadorService.BuscarJugador(id);
 
             if (jugador == null)
             {
-                return NotFound();
-            }
+                    return NotFound(new { Error = "No se ha encontrado el jugador." });
+                }
 
             _jugadorService.EliminarJugador(jugador.Id.ToString());
 
-            return NoContent();
+            return Ok(new { Resultado = true });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
         }
 
         [AllowAnonymous]
@@ -90,11 +118,11 @@ namespace BasketJam.Controllers
             try
             {
                 _jugadorService.subirImagen(img);
-                return Ok();
+                return Ok(new { Resultado = true });
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
         }
     }

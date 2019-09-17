@@ -11,7 +11,7 @@ namespace BasketJam.Controllers
     [ApiController]
     [Route("[controller]")]
     public class VotacionPartidoController : ControllerBase
-    
+
     {
         private IVotacionPartidoService _votacionPartidoService;
 
@@ -20,35 +20,35 @@ namespace BasketJam.Controllers
             _votacionPartidoService = votacionPartidoService;
         }
 
-[AllowAnonymous]
- [HttpPost("Votar")]
-                public async Task<ActionResult>  GenerarBitacora(VotacionPartido ve)
-        {    
-            
-            return Ok(new {resultado=await _votacionPartidoService.votarEquipoPartido(ve)});
-}
+        [AllowAnonymous]
+        [HttpPost("Votar")]
+        public async Task<ActionResult> GenerarBitacora(VotacionPartido ve)
+        {
 
-      [AllowAnonymous]
- [HttpGet("ConsultarVotacion/{idPartido:length(24)}")]
-                public async Task<VotacionPartido>  consultarVotacionPartido(string idPartido)
-        {    
+            return Ok(new { resultado = await _votacionPartidoService.votarEquipoPartido(ve) });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConsultarVotacion/{idPartido:length(24)}")]
+        public async Task<VotacionPartido> consultarVotacionPartido(string idPartido)
+        {
 
             return await _votacionPartidoService.BuscarVotacionPartido(idPartido);
-}
+        }
 
         [AllowAnonymous]
         [HttpGet("UsuarioYaVoto/")]
-        public async Task<Boolean> UsuarioYaVoto(string usuario,string idPartido)
+        public async Task<Boolean> UsuarioYaVoto(string usuario, string idPartido)
         {
             try
-            { 
-            return await _votacionPartidoService.usuarioYaVoto(usuario,idPartido);
+            {
+                return await _votacionPartidoService.usuarioYaVoto(usuario, idPartido);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
         }
 
     }
-    }
+}
