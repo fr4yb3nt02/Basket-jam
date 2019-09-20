@@ -8,6 +8,7 @@ using System.Linq;
 using System.IO;
 using System;
 using BasketJam.Models;
+using System.Dynamic;
 
 namespace BasketJam.Controllers
 {
@@ -23,7 +24,7 @@ namespace BasketJam.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Equipo>>> Get()
+        public async Task<ActionResult<List<ExpandoObject>>> Get()
         {
             try
             {

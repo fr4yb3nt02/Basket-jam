@@ -19,12 +19,13 @@ using System.Threading.Tasks;
 using System.Drawing;
 using BasketJam.Models;
 using System.Web;
+using System.Dynamic;
 
 namespace BasketJam.Services
 {
     public interface IEquipoService
     {
-        Task<List<Equipo>> ListarEquipos();
+        Task<List<ExpandoObject>> ListarEquipos();
         Task<Equipo> BuscarEquipo(string id);
         Task<Equipo> CrearEquipo(Equipo equipo);
         void ActualizarEquipo(string id, Equipo eq);
@@ -92,10 +93,25 @@ namespace BasketJam.Services
             }*/
         }
 
-        public async Task<List<Equipo>> ListarEquipos()
+        public async Task<List<ExpandoObject>> ListarEquipos()
         {
-            
-            return await _equipos.Find(equipo => true).ToListAsync();
+            List<Equipo> equipos= await _equipos.Find(equipo => true).ToListAsync();
+            List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
+            foreach(Equipo e in equipos)
+            {
+                dynamic eq = new ExpandoObject();
+                dynamic estadio = new ExpandoObject();
+                eq.Id = e.Id;
+                eq.FechaFundacion = e.FechaFundacion;
+                eq.ColorCaracteristico = e.ColorCaracteristico;
+                eq.Categoria = e.Categoria;
+                estadio = e.Estadio;
+                eq.Estadio = estadio;
+                eq.foto= HelperCloudinary.cloudUrl + "Equipos/" + e.Id;
+                eqConFotos.Add(eq);
+            }
+            return eqConFotos;
+            //return await _equipos.Find(equipo => true).ToListAsync();
         }
 
                 public async Task<List<Jugador>> ListarJugadoresEquipo(string id)
@@ -106,6 +122,7 @@ namespace BasketJam.Services
 
         public async Task<Equipo> BuscarEquipo(string id)
         {   
+            
             return await _equipos.Find<Equipo>(equipo => equipo.Id == id).FirstOrDefaultAsync(); 
             //return await _equipos.Find<Equipo>(equipo => equipo.Id == id).Project(y => y.Select(y => y.direccion)).FirstOrDefaultAsync();
         }

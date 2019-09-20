@@ -41,6 +41,8 @@ namespace BasketJam.Services
         Task<List<Object>> ListarPartidosPorEstado(int estado);
         Task<List<Object>> ListarJugadoresEquiposPartido(string idPartido);
         Task<List<Object>> ListarEstadios();
+        Task<List<Object>> FixtureTodosLosEquipos();
+        Task<List<Object>> FixturePorEquipo(string idEquipo);
         //Task<List<String>> DevuelvoListPartidosAndroid();
     }
 
@@ -223,6 +225,86 @@ namespace BasketJam.Services
                     //dev.Add(det);
                 };
 
+
+                return dev;
+            }
+            catch (Exception ex)
+            {
+                List<Object> dev = new List<Object>();
+                dev.Add(new { Error = ex.Message });
+                return dev;
+            }
+        }
+
+        public async Task<List<Object>> FixtureTodosLosEquipos()
+        {
+            try
+            {
+                List<Object> dev = new List<Object>();
+                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)0  && partido.fecha>=DateTime.Now).ToListAsync();
+                foreach (Partido p in parts)
+                {
+                    Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
+                    Equipo Eq2 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[1].Id).FirstOrDefaultAsync();
+
+                    dev.Add(new
+                    {
+                        idPartido = p.Id,
+                        idEquipo1 = Eq1.Id,
+                        nombreEquipo1=Eq1.NombreEquipo,
+                        banderaEquipo1= HelperCloudinary.cloudUrl + "Equipos/" + Eq1.Id,
+                        idEquipo2 = Eq2.Id,
+                        nombreEquipo2=Eq2.NombreEquipo,
+                        banderaEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + Eq2.Id,
+                        estadio = p.estadio,
+                        categoria = Eq1.Categoria,
+                        fecha = p.fecha.ToString("dd/MM/yyyy"),
+                        hora = p.fecha.ToShortTimeString(),                        
+                    });
+                    //dev.Add(det);
+                };
+
+
+                return dev;
+            }
+            catch (Exception ex)
+            {
+                List<Object> dev = new List<Object>();
+                dev.Add(new { Error = ex.Message });
+                return dev;
+            }
+        }
+
+        public async Task<List<Object>> FixturePorEquipo(string idEquipo)
+        {
+            try
+            {
+                List<Object> dev = new List<Object>();
+                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)0 && partido.fecha >= DateTime.Now).ToListAsync();
+                foreach (Partido p in parts)
+                {
+                    if(p.equipos[0].Id.Equals(idEquipo)|| p.equipos[1].Id.Equals(idEquipo))
+                    { 
+                    Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
+                    Equipo Eq2 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[1].Id).FirstOrDefaultAsync();
+
+                    dev.Add(new
+                    {
+                        idPartido = p.Id,
+                        idEquipo1 = Eq1.Id,
+                        nombreEquipo1 = Eq1.NombreEquipo,
+                        banderaEquipo1 = HelperCloudinary.cloudUrl + "Equipos/" + Eq1.Id,
+                        idEquipo2 = Eq2.Id,
+                        nombreEquipo2 = Eq2.NombreEquipo,
+                        banderaEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + Eq2.Id,
+                        estadio = p.estadio,
+                        categoria = Eq1.Categoria,
+                        fecha = p.fecha.ToString("dd/MM/yyyy"),
+                        hora = p.fecha.ToShortTimeString(),
+                    });
+                    //dev.Add(det);
+                };
+                }
 
                 return dev;
             }

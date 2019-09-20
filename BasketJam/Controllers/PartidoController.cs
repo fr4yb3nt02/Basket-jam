@@ -266,6 +266,40 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("FixtureTodosLosEquipos")]
+        public async Task<ActionResult> FixtureTodosLosEquipos()
+        {
+            try
+            {
+                return Ok(await _partidoService.FixtureTodosLosEquipos());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("FixturePorEquipo/{id:length(24)}")]
+        public async Task<ActionResult> FixturePorEquipo(string id)
+        {
+            try
+            {
+                return Ok(await _partidoService.FixturePorEquipo(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
         [HttpGet("ConsultarHeaderPartido/{id:length(24)}")]
         public async Task<ActionResult> ConsultarHeaderPartido(string id)
         {
