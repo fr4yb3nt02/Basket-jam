@@ -54,14 +54,14 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("AgregarEquipoFavorito/{id:length(24)}")]
-        public async Task<IActionResult> AgregarEquipoFavorito(string idUser, List<string> equipos)
+        [HttpPut("AgregarEquipoFavorito/{id:length(24)}")]
+        public async Task<IActionResult> AgregarEquipoFavorito(string id, [FromBody]List<string> equipos)
         {
             try
             {
                 //  await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
                 // return Ok (new { resultado = true });
-                return Ok(new { resultado = await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos) });
+                return Ok(new { resultado = await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(id, equipos) });
             }
             catch (Exception ex)
             {
@@ -70,12 +70,26 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("EquipoEsFavorito/{id:length(24)}")]
-        public async Task<IActionResult> EquipoEsFavorito(string idUser, string idEquipo)
+        [HttpGet("EquipoEsFavorito/")]
+        public async Task<IActionResult> EquipoEsFavorito(string idUsuario, string idEquipo)
         {
             try
             {
-                return Ok(new { resultado = await _configuracionUsuarioMovilService.EquipoEsFavorito(idUser, idEquipo) });
+                return Ok(new { resultado = _configuracionUsuarioMovilService.EquipoEsFavorito(idUsuario, idEquipo) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ListarEquiposFavoritos/{id:length(24)}")]
+        public async Task<IActionResult> ListarEquiposFavoritos(string id)
+        {
+            try
+            {
+                return Ok( await _configuracionUsuarioMovilService.ListarEquiposFavoritos(id) );
             }
             catch (Exception ex)
             {

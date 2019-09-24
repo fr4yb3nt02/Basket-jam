@@ -15,17 +15,21 @@ namespace BasketJam.Services
         Task<Boolean> ActualizarConfiguracionUsuarioMovil(string id, ConfiguracionUsuarioMovil unaConf);
         Task<Boolean> AgregarEquiposFavoritos(string idUsuario, List<string> equipos);
         Task<Boolean> EquipoEsFavorito(string idUsuario, string idEquipo);
+        Task<List<Equipo>> ListarEquiposFavoritos(string idUsuario);
     }
 
     public class ConfiguracionUsuarioMovilService : IConfiguracionUsuarioMovilService
     {
         private readonly IMongoCollection<ConfiguracionUsuarioMovil> _configuracionUsuarioMovil;
 
+        private readonly IMongoCollection<Equipo> _equipos;
+
         public ConfiguracionUsuarioMovilService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
             _configuracionUsuarioMovil = database.GetCollection<ConfiguracionUsuarioMovil>("configuracionUsuarioMovil");
+            _equipos = database.GetCollection<Equipo>("equipos");
 
         }
 
@@ -62,6 +66,11 @@ namespace BasketJam.Services
 
                 var filter = Builders<ConfiguracionUsuarioMovil>.Filter.Eq(co => co.Usuario , idUsuario);
 
+                var update = Builders<ConfiguracionUsuarioMovil>.Update.Set(e => e.EquiposFavoritos, equipos);
+                 //.Push<string>(e => e.EquiposFavoritos, id);
+                await _configuracionUsuarioMovil.FindOneAndUpdateAsync(filter, update);
+
+                /*
                 foreach (string id in equipos)
                 {
                     Boolean yaExisteEquipo = conf.EquiposFavoritos.Any(e => e == id);
@@ -71,7 +80,7 @@ namespace BasketJam.Services
                         .Push<string>(e => e.EquiposFavoritos, id);
                         await _configuracionUsuarioMovil.FindOneAndUpdateAsync(filter, update);
                     }                   
-                }
+                }*/
                 return true;
                 
             }
@@ -97,6 +106,28 @@ namespace BasketJam.Services
             catch
             {
                 return false;
+            }
+        }
+
+        public async Task<List<Equipo>> ListarEquiposFavoritos(string idUsuario)
+        {
+            try
+            {
+                ConfiguracionUsuarioMovil conf = await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(c => c.Usuario == idUsuario).FirstOrDefaultAsync();
+                List<Equipo> retorno = new List<Equipo>();
+
+                foreach(string e in conf.EquiposFavoritos)
+                {
+                    Equipo eq = await _equipos.Find<Equipo>(equ => equ.Id == e).FirstOrDefaultAsync();
+                    retorno.Add(eq);
+                }
+
+                return retorno;
+
+            }
+            catch
+            {
+                return new List<Equipo>();
             }
         }
     }

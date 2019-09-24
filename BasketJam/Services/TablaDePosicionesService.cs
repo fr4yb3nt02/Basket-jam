@@ -60,8 +60,10 @@ namespace BasketJam.Services
                 List<ExpandoObject> equiposTablaPos = new List<ExpandoObject>();
                 foreach (TablaDePosiciones.EquipoTablaPosicion e in t.EquiposTablaPosicion)
                 {
+                    Equipo equi = await _equipos.Find<Equipo>(eq => eq.Id == e.idEquipo).FirstOrDefaultAsync();
                     dynamic equipo = new ExpandoObject();
                     equipo.idEquipo = e.idEquipo;
+                    equipo.nombre = equi.NombreEquipo;
                     equipo.Puntos = e.Puntos;
                     equipo.Posicion = e.Posicion;
                     equipo.PG = e.PG;
