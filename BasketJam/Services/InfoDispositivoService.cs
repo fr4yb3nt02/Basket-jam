@@ -13,6 +13,8 @@ namespace BasketJam.Services
         {
             Task<InfoDispositivo> BuscarInfoDispositivo(string id);
             Task<InfoDispositivo> CrearInfoDispositivo(InfoDispositivo infoDispositivo);
+        Task<Boolean> ModificarInfoDispositivo(InfoDispositivo infoDisp);
+        Task<Boolean> EliminarInfoDispositivo(string id);
 
         }
 
@@ -39,6 +41,18 @@ namespace BasketJam.Services
                 return infoDispositivo;
             }
 
-
+        public async Task<Boolean> ModificarInfoDispositivo(InfoDispositivo infoDisp)
+        {
+            await _infoDIspositivo.ReplaceOneAsync(i => i.Id == infoDisp.Id,infoDisp);
+            return true;
         }
+
+        public async Task<Boolean> EliminarInfoDispositivo(string id)
+        {
+            await _infoDIspositivo.DeleteOneAsync(info=> info.Id==id);
+            return true;
+        }
+
+
+    }
     }

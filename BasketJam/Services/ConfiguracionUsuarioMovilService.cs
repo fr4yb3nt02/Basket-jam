@@ -13,7 +13,8 @@ namespace BasketJam.Services
         Task<ConfiguracionUsuarioMovil> CrearConfiguracionUsuarioMovil(ConfiguracionUsuarioMovil unaConf);
         Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string id);
         Task<Boolean> ActualizarConfiguracionUsuarioMovil(string id, ConfiguracionUsuarioMovil unaConf);
-        Task<Boolean> AgregarEquiposFavoritos(string idUsuario, List<string> equipos);
+        Task<Boolean> AgregarEquiposFavoritos(string idUsuario, string equipo);
+        Task<Boolean> QuitarEquipooFavoritos(string idUsuario, string equipo);
         Task<Boolean> EquipoEsFavorito(string idUsuario, string idEquipo);
         Task<List<Equipo>> ListarEquiposFavoritos(string idUsuario);
     }
@@ -58,7 +59,7 @@ namespace BasketJam.Services
             }
         }
 
-        public async Task<Boolean> AgregarEquiposFavoritos(string idUsuario,List<string> equipos)
+        public async Task<Boolean> AgregarEquiposFavoritos(string idUsuario,string equipo)
         {
             try
             {
@@ -66,23 +67,48 @@ namespace BasketJam.Services
 
                 var filter = Builders<ConfiguracionUsuarioMovil>.Filter.Eq(co => co.Usuario , idUsuario);
 
-                var update = Builders<ConfiguracionUsuarioMovil>.Update.Set(e => e.EquiposFavoritos, equipos);
-                 //.Push<string>(e => e.EquiposFavoritos, id);
-                await _configuracionUsuarioMovil.FindOneAndUpdateAsync(filter, update);
+/*              var update = Builders<ConfiguracionUsuarioMovil>.Update.Set(e => e.EquiposFavoritos, equipos);
+                await _configuracionUsuarioMovil.FindOneAndUpdateAsync(filter, update);*/
 
-                /*
-                foreach (string id in equipos)
-                {
-                    Boolean yaExisteEquipo = conf.EquiposFavoritos.Any(e => e == id);
+                
+
+                    Boolean yaExisteEquipo = conf.EquiposFavoritos.Any(e => e == equipo);
                     if (yaExisteEquipo == false)
                     {
                         var update = Builders<ConfiguracionUsuarioMovil>.Update
-                        .Push<string>(e => e.EquiposFavoritos, id);
+                        .Push<string>(e => e.EquiposFavoritos, equipo);
                         await _configuracionUsuarioMovil.FindOneAndUpdateAsync(filter, update);
                     }                   
-                }*/
+                
                 return true;
                 
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+        public async Task<Boolean> QuitarEquipooFavoritos(string idUsuario, string equipo)
+        {
+            try
+            {
+                ConfiguracionUsuarioMovil conf = await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(c => c.Usuario == idUsuario).FirstOrDefaultAsync();
+
+                var filter = Builders<ConfiguracionUsuarioMovil>.Filter.Eq(co => co.Usuario, idUsuario);
+
+
+                    Boolean yaExisteEquipo = conf.EquiposFavoritos.Any(e => e == equipo);
+                    if (yaExisteEquipo == true)
+                    {
+                        var update = Builders<ConfiguracionUsuarioMovil>.Update
+                        .Pull<string>(e => e.EquiposFavoritos, equipo);
+                        await _configuracionUsuarioMovil.FindOneAndUpdateAsync(filter, update);
+                    }
+                
+                return true;
+
             }
             catch
             {

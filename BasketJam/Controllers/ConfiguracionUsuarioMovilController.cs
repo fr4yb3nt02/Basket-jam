@@ -55,13 +55,29 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpPut("AgregarEquipoFavorito/{id:length(24)}")]
-        public async Task<IActionResult> AgregarEquipoFavorito(string id, [FromBody]List<string> equipos)
+        public async Task<IActionResult> AgregarEquipoFavorito(string id, string equipo)
         {
             try
             {
                 //  await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
                 // return Ok (new { resultado = true });
-                return Ok(new { resultado = await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(id, equipos) });
+                return Ok(new { resultado = await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(id, equipo) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPut("QuitarEquipoFavorito/{id:length(24)}")]
+        public async Task<IActionResult> QuitarEquipoFavorito(string id, string equipo)
+        {
+            try
+            {
+                //  await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
+                // return Ok (new { resultado = true });
+                return Ok(new { resultado = await _configuracionUsuarioMovilService.QuitarEquipooFavoritos(id, equipo) });
             }
             catch (Exception ex)
             {

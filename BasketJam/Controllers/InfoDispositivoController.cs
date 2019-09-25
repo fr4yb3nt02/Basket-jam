@@ -42,6 +42,42 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPut("ModificarInfoDispositivo")]
+        public async Task<ActionResult> ModificarInfoDispositivo(InfoDispositivo info)
+        {
+            try
+            {
+                await _infoDispositivoService.ModificarInfoDispositivo(info);
+                return Ok(new { Resultado = "Se ha modificado la información del dispositivo correctamente." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("EliminarInfoDispositivo/{id:length(24)}")]
+        public async Task<ActionResult> EliminarInfoDispositivo(string id)
+        {
+            try
+            {
+                await _infoDispositivoService.EliminarInfoDispositivo(id);
+                return Ok(new { Resultado = "Se ha eliminado la información del dispositivo correctamente." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
         [HttpGet("ObtenerInfoDispositivo/")]
         public async Task<ActionResult> ObtenerInfoDispositivo(string idDispositivo)
         {

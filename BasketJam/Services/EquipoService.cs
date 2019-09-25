@@ -102,6 +102,7 @@ namespace BasketJam.Services
                 dynamic eq = new ExpandoObject();
                 dynamic estadio = new ExpandoObject();
                 eq.Id = e.Id;
+                eq.Nombre = e.NombreEquipo;
                 eq.FechaFundacion = e.FechaFundacion;
                 eq.ColorCaracteristico = e.ColorCaracteristico;
                 eq.Categoria = e.Categoria;
