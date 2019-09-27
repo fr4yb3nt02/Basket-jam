@@ -407,8 +407,8 @@ namespace BasketJam.Services
             try
             {
 
-                int libresIntentEq1 = 0, libresAcertadosEq1 = 0, dosIntentEq1 = 0, dosAcertadosEq1 = 0, tresIntentEq1 = 0, tresAcertadosEq1 = 0, campoIntentEq1 = 0, campoAcertadosEq1 = 0, rebotesOfensivosEq1 = 0, faltasEq1 = 0, perdidasEq1 = 0, tiempoMuertosEq1 = 0
-                , libresIntentEq2 = 0, libresAcertadosEq2 = 0, dosIntentEq2 = 0, dosAcertadosEq2 = 0, tresIntentEq2 = 0, tresAcertadosEq2 = 0, campoIntentEq2 = 0, campoAcertadosEq2 = 0, rebotesOfensivosEq2 = 0, faltasEq2 = 0, perdidasEq2 = 0, tiempoMuertosEq2 = 0;
+                int libresIntentEq1 = 0, libresAcertadosEq1 = 0, dosIntentEq1 = 0, dosAcertadosEq1 = 0, tresIntentEq1 = 0, tresAcertadosEq1 = 0, campoIntentEq1 = 0, campoAcertadosEq1 = 0, rebotesOfensivosEq1 = 0, rebotesDefensivosEq1=0, faltasEq1 = 0, perdidasEq1 = 0, tiempoMuertosEq1 = 0
+                , libresIntentEq2 = 0, libresAcertadosEq2 = 0, dosIntentEq2 = 0, dosAcertadosEq2 = 0, tresIntentEq2 = 0, tresAcertadosEq2 = 0, campoIntentEq2 = 0, campoAcertadosEq2 = 0, rebotesOfensivosEq2 = 0, rebotesDefensivosEq2 = 0, faltasEq2 = 0, perdidasEq2 = 0, tiempoMuertosEq2 = 0;
                 double libresPorcentajeEq1 = 0, dosPorcentajeEq1 = 0, tresPorcentajeEq1 = 0, campoPorcentajeEq1 = 0, libresPorcentajeEq2 = 0, dosPorcentajeEq2 = 0, tresPorcentajeEq2 = 0, campoPorcentajeEq2 = 0;
 
 
@@ -469,6 +469,8 @@ namespace BasketJam.Services
                     }
                     if (a.Accion == (TipoAccion)6)
                         rebotesOfensivosEq1++;
+                    if (a.Accion == (TipoAccion)7)
+                        rebotesDefensivosEq1++;
                     if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
                         faltasEq1++;
                     if (a.Accion == (TipoAccion)10)
@@ -510,6 +512,8 @@ namespace BasketJam.Services
                     }
                     if (a.Accion == (TipoAccion)6)
                         rebotesOfensivosEq2++;
+                    if (a.Accion == (TipoAccion)7)
+                        rebotesDefensivosEq2++;
                     if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
                         faltasEq2++;
                     if (a.Accion == (TipoAccion)10)
@@ -553,6 +557,7 @@ namespace BasketJam.Services
                     campAcertEq1 = campoAcertadosEq1,
                     campoPorcentajEq1 = campoPorcentajeEq1,
                     rebotesOfEq1 = rebotesOfensivosEq1,
+                    regotesDefEq2=rebotesDefensivosEq1,
                     faltsEq1 = faltasEq1,
                     perdEq1 = perdidasEq1,
                     tiempoDeadEq1 = tiempoMuertosEq1,
@@ -569,6 +574,7 @@ namespace BasketJam.Services
                     campAcertEq2 = campoAcertadosEq2,
                     campoPorcentajEq2 = campoPorcentajeEq2,
                     rebotesOfEq2 = rebotesOfensivosEq2,
+                    rebotesDefEq2=rebotesDefensivosEq2,
                     faltsEq2 = faltasEq2,
                     perdEq2 = perdidasEq2,
                     tiempoDeadEq2 = tiempoMuertosEq2
@@ -584,7 +590,7 @@ namespace BasketJam.Services
 
         }
 
-        public async Task<List<Object>> mejoresDiezCadaRubro (string idTorneo)
+      /*  public async Task<List<Object>> mejoresDiezCadaRubro (string idTorneo)
         {
             try
             {
@@ -597,6 +603,6 @@ namespace BasketJam.Services
             {
 
             }
-        }
+        }*/
     }
 }
