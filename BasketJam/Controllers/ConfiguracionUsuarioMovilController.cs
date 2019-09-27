@@ -91,7 +91,7 @@ namespace BasketJam.Controllers
         {
             try
             {
-                return Ok(new { resultado = _configuracionUsuarioMovilService.EquipoEsFavorito(idUsuario, idEquipo) });
+                return Ok(new { resultado = await _configuracionUsuarioMovilService.EquipoEsFavorito(idUsuario, idEquipo) });
             }
             catch (Exception ex)
             {

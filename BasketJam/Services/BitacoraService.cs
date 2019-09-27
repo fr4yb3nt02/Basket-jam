@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApi.Helpers;
 using BasketJam.Services;
+using BasketJam.Models;
 
 namespace BasketJam.Services
 {
@@ -529,6 +530,10 @@ namespace BasketJam.Services
                     dosPorcentajeEq2 = (dosAcertadosEq2 * 100) / dosIntentEq2;
                 if (campoIntentEq2 != 0)
                     campoPorcentajeEq2 = (campoAcertadosEq2 * 100) / campoIntentEq2;
+                if (tresIntentEq1 != 0)
+                    tresPorcentajeEq1 = (tresAcertadosEq1 * 100) / tresIntentEq1;
+                if (tresIntentEq2 != 0)
+                    tresPorcentajeEq2 = (tresAcertadosEq2 * 100) / tresIntentEq2;
 
 
                 var det = new
@@ -543,6 +548,7 @@ namespace BasketJam.Services
                     dosPorcentajEq1 = dosPorcentajeEq1,
                     tresIntEq1 = tresIntentEq1,
                     tresAcertEq1 = tresAcertadosEq1,
+                    tresPorcentajeEq1=tresPorcentajeEq1,
                     campIntentEq1 = campoIntentEq1,
                     campAcertEq1 = campoAcertadosEq1,
                     campoPorcentajEq1 = campoPorcentajeEq1,
@@ -558,6 +564,7 @@ namespace BasketJam.Services
                     dosPorcentajEq2 = dosPorcentajeEq2,
                     tresIntEq2 = tresIntentEq2,
                     tresAcertEq2 = tresAcertadosEq2,
+                    tresPorcentajeEq2=tresPorcentajeEq2,
                     campIntentEq2 = campoIntentEq2,
                     campAcertEq2 = campoAcertadosEq2,
                     campoPorcentajEq2 = campoPorcentajeEq2,
@@ -577,5 +584,19 @@ namespace BasketJam.Services
 
         }
 
+        public async Task<List<Object>> mejoresDiezCadaRubro (string idTorneo)
+        {
+            try
+            {
+
+                List<Partido> partidosPorTorneo = await _partido.Find<Partido>(p => p.IdTorneo == idTorneo && p.estado==(EstadoPartido)4).ToListAsync();
+
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
     }
 }

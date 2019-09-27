@@ -1,0 +1,17 @@
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\hostpolicy.dll
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\hostfxr.dll
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\BasketJam.exe
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\BasketJam.deps.json
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\BasketJam.runtimeconfig.json
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\BasketJam.runtimeconfig.dev.json
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\BasketJam.dll
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\bin\Release\netcoreapp2.1\win-x64\BasketJam.pdb
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.csprojAssemblyReference.cache
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.csproj.CoreCompileInputs.cache
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.RazorAssemblyInfo.cache
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.RazorAssemblyInfo.cs
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.AssemblyInfoInputs.cache
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.AssemblyInfo.cs
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.RazorTargetAssemblyInfo.cache
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.dll
+C:\Users\emikp\OneDrive\Escritorio\Repo\Basket-jam\BasketJam\obj\Release\netcoreapp2.1\win-x64\BasketJam.pdb

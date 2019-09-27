@@ -147,6 +147,7 @@ namespace BasketJam.Services
                         FotoEquipo = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Equipos/" + e.Id,
                         PuntosEnPartido = puntosEquipoPartido,
                         Entrenador = tecnico.Nombre + " " + tecnico.Apellido,
+                        IdEntrenador = tecnico.Id,
                         jugadores
                     });
                 }

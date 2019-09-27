@@ -40,6 +40,10 @@ public class Partido
     [BsonElement("Tiempo")]
     public string Tiempo { get; set; }
 
+    //[BsonRequired]
+    [BsonElement("IdTorneo")]
+    public string IdTorneo { get; set; }
+
     [BsonRequired]
     [BsonElement("Jueces")]
     public List<Juez> jueces { get; set; }

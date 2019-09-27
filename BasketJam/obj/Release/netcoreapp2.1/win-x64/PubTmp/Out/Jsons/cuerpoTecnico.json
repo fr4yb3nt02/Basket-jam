@@ -1,0 +1,31 @@
+[{
+    "_id":"",
+    "CI" : "56980123",
+    "Nombre":"Jose",
+    "Apellido":"Artigas",
+    "Cargo":"DT" 
+}
+,
+{
+    "_id":"",
+    "CI" : "58948545",
+    "Nombre":"Paparulo",
+    "Apellido":"Fagundez",
+    "Cargo":"DT" 
+},
+{
+    "_id":"",
+    "CI" : "84795236",
+    "Nombre":"Patrick",
+    "Apellido":"MckDonald",
+    "Cargo":"DT" 
+}
+,
+{
+    "_id":"",
+    "CI" : "74258965",
+    "Nombre":"Mister",
+    "Apellido":"Second",
+    "Cargo":"Aguatero" 
+}
+]
