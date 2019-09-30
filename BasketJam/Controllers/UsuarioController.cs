@@ -217,6 +217,30 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
+        [HttpPost("ResetearPasswordMovil/")]
+        public IActionResult ResetearPasswordMovil(string email,string pass)
+        {
+            string str = "";
+            try
+            {
+
+                _usuarioService.SendPassResetMovil(email,pass);
+                return Ok(new { resultado = true });
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+
+        }
+
+
+        [AllowAnonymous]
+        //[HttpGet("VeryFiyAccount/{id}")]
         [HttpPost("CambiarPassowrd/")]
         public async Task<IActionResult> CambiarPassowrd(string email, string password)
         {

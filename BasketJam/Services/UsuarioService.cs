@@ -31,6 +31,7 @@ namespace BasketJam.Services
         bool BuscarUsuarioPorCI(string ci);
         Task<Object> VerificarCuenta(string activationCode);
         void SendPassReset(string emailId);
+        void SendPassResetMovil(string emailId,string nuevaPass);
         Task<Boolean> CambiarPassword(string email, string password);
         //IEnumerable<Usuario> GetAll();
     }
@@ -254,6 +255,49 @@ namespace BasketJam.Services
             var frontEmailPassowrd = "BasketJam2019";
             string subject = "¡Se ha reseteado tu contraseña!";
             string body = "<br/><br/>Para ingresar una nueva contraseña da clic en el link debajo. " +
+        " <br/><br/><a href='" + varifyUrl + "'>" + varifyUrl + "</a> ";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromMail.Address, frontEmailPassowrd)
+
+            };
+            using (var message = new MailMessage(fromMail, toMail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+        }
+
+        public void SendPassResetMovil(string emailId, string nuevaPass)
+        {
+            string host = "54.208.166.6";
+            string scheme = "http";
+            string port = "";
+            //var varifyUrl = scheme + "://" + host + ":" + port + "/usuario/ActivateAccount/" + codigoActivacion;//esto es para pruebas locales
+            /* var usuario =  _usuarios.Find<Usuario>(u => u.NomUser == emailId).FirstOrDefaultAsync();
+             usuario..Password = null;
+             _usuarios.ReplaceOne(user => user.NomUser == emailId, usuario.Result);
+             _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
+
+            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, null);
+
+            _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
+            /*string email, string password*/
+            // var varifyUrl = scheme + "://" + host + "/usuario/resetearContraseña/?" + emailId;
+            var varifyUrl = "http://54.208.166.6/usuario/CambiarPassowrd" + "?email=" + emailId+"&password="+nuevaPass;
+            var fromMail = new MailAddress("basketjam2019@gmail.com", "Basket Jam Team");
+            var toMail = new MailAddress(emailId);
+            var frontEmailPassowrd = "BasketJam2019";
+            string subject = "¡Se ha reseteado tu contraseña!";
+            string body = "<br/><br/>Para aceptar la contraseña insertada desde la app de BasketJam haga click en el link debajo. " +
         " <br/><br/><a href='" + varifyUrl + "'>" + varifyUrl + "</a> ";
 
             var smtp = new SmtpClient

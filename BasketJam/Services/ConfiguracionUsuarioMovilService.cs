@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace BasketJam.Services
     public interface IConfiguracionUsuarioMovilService
     {
         Task<ConfiguracionUsuarioMovil> CrearConfiguracionUsuarioMovil(ConfiguracionUsuarioMovil unaConf);
-        Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string id);
+        Task<Object> BuscarConfiguracionUsuarioMovil(string id);
         Task<Boolean> ActualizarConfiguracionUsuarioMovil(string id, ConfiguracionUsuarioMovil unaConf);
         Task<Boolean> AgregarEquiposFavoritos(string idUsuario, string equipo);
         Task<Boolean> QuitarEquipooFavoritos(string idUsuario, string equipo);
@@ -25,19 +26,35 @@ namespace BasketJam.Services
 
         private readonly IMongoCollection<Equipo> _equipos;
 
+        private readonly IMongoCollection<Usuario> _usuarios;
+
         public ConfiguracionUsuarioMovilService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
             _configuracionUsuarioMovil = database.GetCollection<ConfiguracionUsuarioMovil>("configuracionUsuarioMovil");
             _equipos = database.GetCollection<Equipo>("equipos");
+            _usuarios = database.GetCollection<Usuario>("usuarios");
 
         }
 
 
-        public async Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string id)
+        public async Task<Object> BuscarConfiguracionUsuarioMovil(string id)
         {
-            return await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(conf => conf.Usuario == id).FirstOrDefaultAsync();
+            //return 
+            ConfiguracionUsuarioMovil config= await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(conf => conf.Usuario == id).FirstOrDefaultAsync();
+            Usuario u = await _usuarios.Find<Usuario>(user => user.Id == config.Usuario).FirstOrDefaultAsync();
+            return new
+            {
+                idUsuario = config.Usuario,
+                nombreUsuario = u.Nombre,
+                NotificacionEquiposFavoritos = config.NotificacionEquiposFavoritos,
+                EquiposFavoritos = config.EquiposFavoritos,
+                NotificacionTodosLosPartidos = config.NotificacionTodosLosPartidos,
+                NotificacionInicioPartido = config.NotificacionInicioPartido,
+                NotificacionFinPartido = config.NotificacionFinPartido
+
+            };
         }
 
         public  async Task<ConfiguracionUsuarioMovil> CrearConfiguracionUsuarioMovil(ConfiguracionUsuarioMovil unaConf)

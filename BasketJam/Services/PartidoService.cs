@@ -672,7 +672,7 @@ namespace BasketJam.Services
                                 join e2 in equi on p.equipos[1].Id equals e2.Id
                                 join est1 in estEqPar on e.Id equals est1.IdEquipo
                                 join est2 in estEqPar on e2.Id equals est2.IdEquipo
-                                where p.estado.Equals(3) && (p.equipos[0].Id.Equals(idPartido) || p.equipos[1].Id.Equals(idPartido))
+                                where p.estado.Equals((EstadoPartido)3) && (p.equipos[0].Id.Equals(idPartido) || p.equipos[1].Id.Equals(idPartido))
                                 orderby p.fecha descending
                                 select new
                                 {

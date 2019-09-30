@@ -7,6 +7,10 @@ namespace BasketJam.Models
 {
     public enum RubrosMejoresJugadores
     {
+        puntosTotales,
+        tirosLibresConvertidos,
+        dosPuntosConvertidos,
+        tresPuntosConvertidos,
         puntosPromedio,
         rebotesTotalesPromedio,
         rebotesOfensivosPromedio,
@@ -14,13 +18,12 @@ namespace BasketJam.Models
         recuperosPromedio,
         tresPuntosConvertidosPromedio,
         tirosLibresConvertidosPromedio,
-        dosPuntosConvertidos,
         tresPuntosPorcentaje,
         tirosLibresPorcentaje,
         dosPuntosPorcentaje,
         minutosPromedio,
-        tresPuntosConvertidos,
-        tirosLibresConvertidos
+
+
 
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using WebApi.Helpers;
 using BasketJam.Services;
 using BasketJam.Models;
+using System.Dynamic;
 
 namespace BasketJam.Services
 {
@@ -22,6 +23,7 @@ namespace BasketJam.Services
         Task<Object> GenerarBitacora(BitacoraPartido bp);
 
         Task<Object> consultarEstadisticasPeriodo(string idPartido, int periodo);
+        Task<List<Object>> mejoresDiezCadaRubro(int rubro, string idTorneo);
     }
 
     public class BitacoraService : IBitacoraService
@@ -39,7 +41,10 @@ namespace BasketJam.Services
 
         private readonly IMongoCollection<Jugador> _jugadores;
 
-        public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido,IPartidoService partidoService)
+        private readonly IMongoCollection<EstadisticasJugadorPartido> _statsJugadorPartidos;
+
+
+        public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido, IPartidoService partidoService)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
@@ -48,6 +53,7 @@ namespace BasketJam.Services
             _partido = database.GetCollection<Partido>("partidos");
             _equipo = database.GetCollection<Equipo>("equipos");
             _jugadores = database.GetCollection<Jugador>("jugadores");
+            _statsJugadorPartidos = database.GetCollection<EstadisticasJugadorPartido>("EstadisticasJugadorPartido");
             _estadisticasJugadorPartido = estadisticasJugadorPartido;
             _partidoService = partidoService;
 
@@ -78,7 +84,7 @@ namespace BasketJam.Services
                     //return true;
                     foreach (BitacoraPartido.BitacoraTimeLine b in bp.bitacoraTimeLine)
                     {
-                         ejb = new EstadisticasJugadorPartido();
+                        ejb = new EstadisticasJugadorPartido();
                         ejb2 = _estadisticasJugadorPartido.BuscarEstadisticasJugadorPartido(bp.idPartido, b.idJugador);
                         if (ejb2 != null)
                             ejb.Id = ejb2.Id;
@@ -254,8 +260,8 @@ namespace BasketJam.Services
 
                         await _estadisticasJugadorPartido.CargarEstadistica(ejb);
                         //Object eep = await _partidoService.ConsultaDetallesPartido(bp.idPartido);
-                        
-                        
+
+
                         // return true;
                     }
                     //cargoStatDesdeBitacora(bp);
@@ -390,7 +396,7 @@ namespace BasketJam.Services
 
                     _estadisticasJugadorPartido.CargarEstadistica(ejb);
 
-             
+
 
                 }
                 return true;
@@ -407,7 +413,7 @@ namespace BasketJam.Services
             try
             {
 
-                int libresIntentEq1 = 0, libresAcertadosEq1 = 0, dosIntentEq1 = 0, dosAcertadosEq1 = 0, tresIntentEq1 = 0, tresAcertadosEq1 = 0, campoIntentEq1 = 0, campoAcertadosEq1 = 0, rebotesOfensivosEq1 = 0, rebotesDefensivosEq1=0, faltasEq1 = 0, perdidasEq1 = 0, tiempoMuertosEq1 = 0
+                int libresIntentEq1 = 0, libresAcertadosEq1 = 0, dosIntentEq1 = 0, dosAcertadosEq1 = 0, tresIntentEq1 = 0, tresAcertadosEq1 = 0, campoIntentEq1 = 0, campoAcertadosEq1 = 0, rebotesOfensivosEq1 = 0, rebotesDefensivosEq1 = 0, faltasEq1 = 0, perdidasEq1 = 0, tiempoMuertosEq1 = 0
                 , libresIntentEq2 = 0, libresAcertadosEq2 = 0, dosIntentEq2 = 0, dosAcertadosEq2 = 0, tresIntentEq2 = 0, tresAcertadosEq2 = 0, campoIntentEq2 = 0, campoAcertadosEq2 = 0, rebotesOfensivosEq2 = 0, rebotesDefensivosEq2 = 0, faltasEq2 = 0, perdidasEq2 = 0, tiempoMuertosEq2 = 0;
                 double libresPorcentajeEq1 = 0, dosPorcentajeEq1 = 0, tresPorcentajeEq1 = 0, campoPorcentajeEq1 = 0, libresPorcentajeEq2 = 0, dosPorcentajeEq2 = 0, tresPorcentajeEq2 = 0, campoPorcentajeEq2 = 0;
 
@@ -552,12 +558,12 @@ namespace BasketJam.Services
                     dosPorcentajEq1 = dosPorcentajeEq1,
                     tresIntEq1 = tresIntentEq1,
                     tresAcertEq1 = tresAcertadosEq1,
-                    tresPorcentajeEq1=tresPorcentajeEq1,
+                    tresPorcentajeEq1 = tresPorcentajeEq1,
                     campIntentEq1 = campoIntentEq1,
                     campAcertEq1 = campoAcertadosEq1,
                     campoPorcentajEq1 = campoPorcentajeEq1,
                     rebotesOfEq1 = rebotesOfensivosEq1,
-                    regotesDefEq2=rebotesDefensivosEq1,
+                    rebotesDefEq1 = rebotesDefensivosEq1,
                     faltsEq1 = faltasEq1,
                     perdEq1 = perdidasEq1,
                     tiempoDeadEq1 = tiempoMuertosEq1,
@@ -569,12 +575,12 @@ namespace BasketJam.Services
                     dosPorcentajEq2 = dosPorcentajeEq2,
                     tresIntEq2 = tresIntentEq2,
                     tresAcertEq2 = tresAcertadosEq2,
-                    tresPorcentajeEq2=tresPorcentajeEq2,
+                    tresPorcentajeEq2 = tresPorcentajeEq2,
                     campIntentEq2 = campoIntentEq2,
                     campAcertEq2 = campoAcertadosEq2,
                     campoPorcentajEq2 = campoPorcentajeEq2,
                     rebotesOfEq2 = rebotesOfensivosEq2,
-                    rebotesDefEq2=rebotesDefensivosEq2,
+                    rebotesDefEq2 = rebotesDefensivosEq2,
                     faltsEq2 = faltasEq2,
                     perdEq2 = perdidasEq2,
                     tiempoDeadEq2 = tiempoMuertosEq2
@@ -590,19 +596,273 @@ namespace BasketJam.Services
 
         }
 
-      /*  public async Task<List<Object>> mejoresDiezCadaRubro (string idTorneo)
+        public async Task<List<Object>> mejoresDiezCadaRubro(int rubro, string idTorneo)
         {
             try
             {
 
-                List<Partido> partidosPorTorneo = await _partido.Find<Partido>(p => p.IdTorneo == idTorneo && p.estado==(EstadoPartido)4).ToListAsync();
+                // List<Partido> partidosPorTorneo = await _partido.Find<Partido>(p => p.IdTorneo == idTorneo && p.estado == (EstadoPartido)3).ToListAsync();
+                //List<Partido> partidosPorTorneo = await _partido.Find<Partido>(p => p.estado == (EstadoPartido)3).ToListAsync();
+                //    List<EstadisticasJugadorPartido> estJugPartido = await _statsJugadorPartidos.Find<EstadisticasJugadorPartido>(e => true).ToListAsync();
+                //  List<Jugador> jugTorneo = await _jugadores.Find<Jugador>(j => true).ToListAsync();
+                List<Jugador> jugTorneo = new List<Jugador>();
+                List<Equipo> equi = await _equipo.Find<Equipo>(x => true).ToListAsync();
+                List<Object> datos = new List<object>();
+                List<Object> datosLinq = new List<object>();
+                List<Jugador> jugadoresDeTorneo = new List<Jugador>();
+                List<Equipo> equiposTorneo = new List<Equipo>();
+                List<EquipoJugador.JugadorEquipo> jugadoresEquiposTorneo = new List<EquipoJugador.JugadorEquipo>();
+                List<EstadisticasJugadorPartido> statsJugadoresPartidosTorneo = new List<EstadisticasJugadorPartido>();
+                
+                /***********************************************/
+               // List<Partido> partidosPorTorneo = await _partido.Find<Partido>(p => p.estado == (EstadoPartido)3).ToListAsync();
+                List<Partido> partidosPorTorneo = await _partido.Find<Partido>(p => p.IdTorneo == idTorneo && p.estado == (EstadoPartido)3).ToListAsync();
+                //  List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
+                // List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
+                Object devv = new Object();
+
+                /*foreach(Partido p in part)
+                {*/
+                foreach (Partido p in partidosPorTorneo)
+                {
+                    foreach (EquipoJugador.JugadorEquipo je in p.EquipoJugador[0].jugadorEquipo)
+                    {
+                        EstadisticasJugadorPartido stat = await _statsJugadorPartidos.Find<EstadisticasJugadorPartido>(x => x.IdPartido == p.Id && x.IdJugador == je.idJugador).FirstOrDefaultAsync();
+                        if (stat != null)
+                            statsJugadoresPartidosTorneo.Add(stat);
+                    }
+                    foreach (EquipoJugador.JugadorEquipo je in p.EquipoJugador[1].jugadorEquipo)
+                    {
+                        EstadisticasJugadorPartido stat = await _statsJugadorPartidos.Find<EstadisticasJugadorPartido>(x => x.IdPartido == p.Id && x.IdJugador == je.idJugador).FirstOrDefaultAsync();
+                        if(stat!=null)
+                        statsJugadoresPartidosTorneo.Add(stat);
+                    }
+                    foreach (EstadisticasJugadorPartido ejp in statsJugadoresPartidosTorneo)
+                    {
+                        // statsJugadoresPartidosTorneo.Add(ejp);
+                        Jugador jug = await _jugadores.Find<Jugador>(j => j.Id == ejp.IdJugador).FirstOrDefaultAsync();
+                        if (!jugTorneo.Any(jee => jee.Id == jug.Id))
+                        {
+                            jugTorneo.Add(jug);
+                        }
+                    }
+                    foreach (Equipo e in p.equipos)
+                    {
+                        if (!equiposTorneo.Any(eqt => eqt.Id == e.Id))
+                        {
+                            equiposTorneo.Add(e);
+                        }
+                    }
+                    {
+
+                    }
+                }
+                    /* EstadisticasJugadorPartido estJug = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == p.Id && x.IdEquipo == p.equipos[1].Id).FirstOrDefaultAsync();
+                     int puntosEq1 = 0, puntosEq2 = 0;
+                     if (estEqPar1 != null)
+                         puntosEq1 = estEqPar1.Puntos;
+                     if (estEqPar2 != null)
+                         puntosEq2 = estEqPar2.Puntos;*/
+                    if (rubro == 0)
+                    {
+                    int counter = 1;
+                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
+                                     join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
+                                     join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
+                                     orderby statJugP.Puntos descending
+                                     group new { statJugP, jugTor,eqt } by new { jugTor.Id , eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                     //group statJugP by statJugP.IdJugador into jugGroup
+                                     select new
+                                     {
+                                         posicion = counter++,
+                                         jugador =jugGroup.Key.Id,
+                                         nombreJugador= jugGroup.Key.Nombre+" "+jugGroup.Key.Apellido,
+                                         foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                         equipo = jugGroup.Key.NombreEquipo,
+                                         puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                         //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                     }
+).Take(10);
+
+                       // datos = cosos;
+                        foreach(Object v in cosos)
+                            {
+
+                        datos.Add(v);                        
+                        }
+
+                    }
+                if (rubro == 1)
+                {
+                    int counter = 1;
+                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
+                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
+                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
+                                 orderby statJugP.TirosLibresConvertidos descending
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 //group statJugP by statJugP.IdJugador into jugGroup
+                                 select new
+                                 {
+                                     posicion = counter++,
+                                     jugador = jugGroup.Key.Id,
+                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
+                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     equipo = jugGroup.Key.NombreEquipo,
+                                     puntos = jugGroup.Sum(x => x.statJugP.TirosLibresConvertidos),
+                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                 }
+).Take(10);
+
+                    // datos = cosos;
+                    foreach (Object v in cosos)
+                    {
+
+                        datos.Add(v);
+                    }
+
+                }
+
+                if (rubro == 2)
+                {
+                    int counter = 1;
+                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
+                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
+                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
+                                 orderby statJugP.DosPuntosConvertidos descending
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 //group statJugP by statJugP.IdJugador into jugGroup
+                                 select new
+                                 {
+                                     posicion = counter++,
+                                     jugador = jugGroup.Key.Id,
+                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
+                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     equipo = jugGroup.Key.NombreEquipo,
+                                     puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
+                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                 }
+).Take(10);
+
+                    // datos = cosos;
+                    foreach (Object v in cosos)
+                    {
+
+                        datos.Add(v);
+                    }
+
+                }
+                if (rubro == 3)
+                {
+                    int counter = 1;
+                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
+                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
+                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
+                                 orderby statJugP.TresPuntosConvertidos descending
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 //group statJugP by statJugP.IdJugador into jugGroup
+                                 select new
+                                 {
+                                     posicion = counter++,
+                                     jugador = jugGroup.Key.Id,
+                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
+                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     equipo = jugGroup.Key.NombreEquipo,
+                                     puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
+                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                 }
+).Take(10);
+
+                    // datos = cosos;
+                    foreach (Object v in cosos)
+                    {
+
+                        datos.Add(v);
+                    }
+
+                }
+                if (rubro == 4)
+                {
+                    int counter = 1;
+                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
+                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
+                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
+                                 orderby statJugP.TresPuntosConvertidos descending
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 //group statJugP by statJugP.IdJugador into jugGroup
+                                 select new
+                                 {
+                                     posicion = counter++,
+                                     jugador = jugGroup.Key.Id,
+                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
+                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     equipo = jugGroup.Key.NombreEquipo,
+                                     puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
+                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                 }
+).Take(10);
+
+                    // datos = cosos;
+                    foreach (Object v in cosos)
+                    {
+
+                        datos.Add(v);
+                    }
+
+                }
+                if (rubro == 5)
+                {
+                    int counter = 1;
+                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
+                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
+                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id                                 
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido , statJugP.IdPartido } into jugGroup
+                                 orderby jugGroup.Sum(p => p.statJugP.Puntos)/jugGroup.Key.IdPartido.Count() descending
+                                 //group statJugP by statJugP.IdJugador into jugGroup
+                                 select new
+                                 {
+                                     posicion = counter++,
+                                     jugador = jugGroup.Key.Id,
+                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
+                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     equipo = jugGroup.Key.NombreEquipo,
+                                     puntos = jugGroup.Sum(p => p.statJugP.Puntos) / jugGroup.Key.IdPartido.Count(),
+                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
+                                 }
+).Take(10);
+
+                    // datos = cosos;
+                    foreach (Object v in cosos)
+                    {
+
+                        datos.Add(v);
+                    }
+
+                }
+                /***********************************************/
+                /*       
+        puntosPromedio,
+        rebotesTotalesPromedio,
+        rebotesOfensivosPromedio,
+        rebotesDefensivosPromedio,
+        recuperosPromedio,
+        tresPuntosConvertidosPromedio,
+        tirosLibresConvertidosPromedio,
+        dosPuntosConvertidos,
+        tresPuntosPorcentaje,
+        tirosLibresPorcentaje,
+        dosPuntosPorcentaje,
+        minutosPromedio,
+        tresPuntosConvertidos,
+        tirosLibresConvertidos*/
 
 
+                return datos;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
+                throw new Exception(ex.Message);
             }
-        }*/
+        }
     }
 }
+ 

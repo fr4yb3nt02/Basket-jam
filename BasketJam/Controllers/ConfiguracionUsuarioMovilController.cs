@@ -39,7 +39,7 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         [HttpGet("BuscarConfiguracionUsuarioMovil/{id:length(24)}")]
-        public async Task<ConfiguracionUsuarioMovil> BuscarConfiguracionUsuarioMovil(string id)
+        public async Task<Object> BuscarConfiguracionUsuarioMovil(string id)
         {
             try
             {
