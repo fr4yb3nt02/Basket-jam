@@ -607,8 +607,8 @@ namespace BasketJam.Services
                 //  List<Jugador> jugTorneo = await _jugadores.Find<Jugador>(j => true).ToListAsync();
                 List<Jugador> jugTorneo = new List<Jugador>();
                 List<Equipo> equi = await _equipo.Find<Equipo>(x => true).ToListAsync();
-                List<Object> datos = new List<object>();
-                List<Object> datosLinq = new List<object>();
+                List<Object> datos = new List<Object>();
+                List<Object> datosLinq = new List<Object>();
                 List<Jugador> jugadoresDeTorneo = new List<Jugador>();
                 List<Equipo> equiposTorneo = new List<Equipo>();
                 List<EquipoJugador.JugadorEquipo> jugadoresEquiposTorneo = new List<EquipoJugador.JugadorEquipo>();
@@ -685,7 +685,7 @@ namespace BasketJam.Services
 ).Take(10);
 
                        // datos = cosos;
-                        foreach(Object v in cosos)
+                        foreach(var v in cosos)
                             {
 
                         datos.Add(v);                        
@@ -767,7 +767,7 @@ namespace BasketJam.Services
                                      nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
                                      foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
                                      equipo = jugGroup.Key.NombreEquipo,
-                                     puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
+                                     puntos = jugGroup.Sum(x => x.statJugP.TresPuntosConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                  }
 ).Take(10);
@@ -780,62 +780,126 @@ namespace BasketJam.Services
                     }
 
                 }
-                if (rubro == 4)
+
+                if (rubro >=4 && rubro <= 14)
                 {
+
                     int counter = 1;
-                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
-                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
-                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
-                                 orderby statJugP.TresPuntosConvertidos descending
-                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
-                                 //group statJugP by statJugP.IdJugador into jugGroup
-                                 select new
-                                 {
-                                     posicion = counter++,
-                                     jugador = jugGroup.Key.Id,
-                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
-                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
-                                     equipo = jugGroup.Key.NombreEquipo,
-                                     puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
-                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
-                                 }
-).Take(10);
-
-                    // datos = cosos;
-                    foreach (Object v in cosos)
+                    List<string> idJugadores = new List<string>();
+                    List<string> idPartidos = new List<string>();
+                    foreach (Partido p in partidosPorTorneo)
                     {
+                        if(!idPartidos.Contains(p.Id))
+                        {
+                            idPartidos.Add(p.Id);
+                        }
+                        foreach (EquipoJugador.JugadorEquipo je in p.EquipoJugador[0].jugadorEquipo)
+                        {
+                            Jugador j = await _jugadores.Find<Jugador>(x => x.Id == je.idJugador).FirstOrDefaultAsync();
+                            if (!idJugadores.Contains(j.Id))
+                            {
+                                idJugadores.Add(j.Id);
+                            }
+                        }
+                        foreach (EquipoJugador.JugadorEquipo je in p.EquipoJugador[1].jugadorEquipo)
+                        {
+                            Jugador j = await _jugadores.Find<Jugador>(x => x.Id == je.idJugador).FirstOrDefaultAsync();
+                            if (!idJugadores.Contains(j.Id))
+                            {
+                                idJugadores.Add(j.Id);
+                            }
+                        }
+                    }
+                        List<Jugador> jugadores = await _jugadores.Find<Jugador>(x => idJugadores.Contains(x.Id)).ToListAsync();
 
-                        datos.Add(v);
+                    List<ExpandoObject> statsAAnalizar = new List<ExpandoObject>();
+                    
+                    List<Object> cosoADevolver = new List<object>();
+   
+                    
+                    foreach (Jugador j in jugadores)
+                    {
+                        Equipo e = await _equipo.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
+                        dynamic statEjp = new ExpandoObject();
+                        statEjp.idJugador = j.Id;
+                        statEjp.nombreJugador = j.Nombre + " " + j.Apellido;
+                        statEjp.foto = HelperCloudinary.cloudUrl + "Jugadores/" + j.Id;
+                        statEjp.equipo = e.NombreEquipo;
+                        statEjp.puntos = 0.0;
+                        //statEjp.partidos = 0;
+                        //int paraPorcentaje = 0;
+                        long partidosJugadosPorJugador= await _partido.Find<Partido>(pp => (pp.equipos[0].Id.Equals(j.IdEquipo) || pp.equipos[1].Id.Equals(j.IdEquipo)) && pp.estado.Equals((EstadoPartido)3)).CountDocumentsAsync();
+                        statEjp.partidos = partidosJugadosPorJugador;
+                        List<EstadisticasJugadorPartido> estJugPar = await _statsJugadorPartidos.Find<EstadisticasJugadorPartido>(es => es.IdJugador == j.Id && idPartidos.Contains(es.IdPartido)).ToListAsync();
+                        foreach (EstadisticasJugadorPartido ejp in estJugPar)
+                        {
+                            //rubro dynamic statEjp = new Object();
+                            if (rubro == 4)
+                                statEjp.puntos = statEjp.puntos + ejp.Puntos;
+                            if (rubro == 5)
+                                statEjp.puntos = statEjp.puntos+ejp.RebotesDefensivos + ejp.RebotesOfensivos;
+                            if (rubro == 6)
+                                statEjp.puntos = statEjp.puntos + ejp.RebotesOfensivos;
+                            if (rubro == 7)
+                                statEjp.puntos = statEjp.puntos + ejp.RebotesDefensivos;
+                            if (rubro == 8)
+                                statEjp.puntos = statEjp.puntos + ejp.Recuperos;
+                            if (rubro == 9 )
+                                statEjp.puntos = statEjp.puntos + ejp.TresPuntosConvertidos;
+                            if (rubro == 10)
+                                statEjp.puntos = statEjp.puntos + ejp.DosPuntosConvertidos;
+                            if (rubro == 11)
+                                statEjp.puntos = statEjp.puntos + ejp.TirosLibresConvertidos;
+                            if (rubro == 12)
+                                statEjp.puntos = statEjp.puntos + ejp.TresPuntosPorcentaje;
+                            if (rubro == 13)
+                                statEjp.puntos = statEjp.puntos + ejp.TirosLibresPorcentaje;
+                            if (rubro == 14)
+                                statEjp.puntos = statEjp.puntos + ejp.DosPuntosPorcentaje;
+
+
+                        }
+                        /*if (rubro != 12 && rubro != 13 && rubro != 14)
+                        {*/
+
+                            Double pts = Math.Round(statEjp.puntos / partidosJugadosPorJugador,2);
+                            statEjp.puntos = pts;
+                            
+                        //}
+                        statsAAnalizar.Add(statEjp);
                     }
 
-                }
-                if (rubro == 5)
-                {
-                    int counter = 1;
-                    var cosos = (from statJugP in statsJugadoresPartidosTorneo
-                                 join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
-                                 join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id                                 
-                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido , statJugP.IdPartido } into jugGroup
-                                 orderby jugGroup.Sum(p => p.statJugP.Puntos)/jugGroup.Key.IdPartido.Count() descending
-                                 //group statJugP by statJugP.IdJugador into jugGroup
-                                 select new
-                                 {
-                                     posicion = counter++,
-                                     jugador = jugGroup.Key.Id,
-                                     nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
-                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
-                                     equipo = jugGroup.Key.NombreEquipo,
-                                     puntos = jugGroup.Sum(p => p.statJugP.Puntos) / jugGroup.Key.IdPartido.Count(),
-                                     //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
-                                 }
-).Take(10);
+                    var apa = (from jugGroup in statsAAnalizar.Cast<dynamic>()
+                               orderby jugGroup.puntos descending
+                               select new
+                               {
+                                   posicion = counter++,
+                                   jugador = jugGroup.idJugador,
+                                   nombreJugador = jugGroup.nombreJugador,
+                                   foto = jugGroup.foto,
+                                   equipo = jugGroup.equipo,
+                                   puntos = jugGroup.puntos,
+                               }
+                               
+                               ).Take(10);
 
-                    // datos = cosos;
-                    foreach (Object v in cosos)
+
+                    foreach(Object o in apa)
                     {
-
-                        datos.Add(v);
+                        cosoADevolver.Add(o);
                     }
+                    return cosoADevolver;
+                    /*List<Jugador> jugDistintos = new List<Jugador>();
+
+                    foreach(Jugador j in jugadores)
+                    {
+                        if(!jugDistintos.Contains(j))
+                        {
+                            jugDistintos.Add(j);
+                        }
+                    }*/
+
+
 
                 }
                 /***********************************************/

@@ -261,6 +261,29 @@ namespace BasketJam.Controllers
             }
 
         }
+
+        [AllowAnonymous]
+        //[HttpGet("VeryFiyAccount/{id}")]
+        [HttpGet("CambiarPasswordMovil/")]
+        public async Task<IActionResult> CambiarPasswordMovil(string email, string password)
+        {
+            try
+            {
+
+                await _usuarioService.CambiarPassword(email, password);
+                return Ok(new { resultado = true });
+                //return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+
+        }
     }
 
 

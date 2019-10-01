@@ -663,22 +663,30 @@ namespace BasketJam.Services
         {
             try
             {
-                List<Partido> part = await _partidos.Find<Partido>(x => true).ToListAsync();
+                List<Partido> part = await _partidos.Find<Partido>(x => x.estado.Equals((EstadoPartido)3) && (x.equipos[0].Id.Equals(idPartido) || x.equipos[1].Id.Equals(idPartido))).ToListAsync();
+                List<EstadisticasEquipoPartido> estEq1 = new List<EstadisticasEquipoPartido>();
+                List<EstadisticasEquipoPartido> estEq2 = new List<EstadisticasEquipoPartido>();
+                foreach(Partido p in part)
+                {
+                    estEq1.Add(await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido.Equals(p.Id) && x.IdEquipo.Equals(p.equipos[0].Id)).FirstOrDefaultAsync());
+                    estEq2.Add(await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido.Equals(p.Id) && x.IdEquipo.Equals(p.equipos[1].Id)).FirstOrDefaultAsync());
+                }
+
                 List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
                 List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
 
                 var partidos = (from p in part
-                                join e in equi on p.equipos[0].Id equals e.Id
-                                join e2 in equi on p.equipos[1].Id equals e2.Id
-                                join est1 in estEqPar on e.Id equals est1.IdEquipo
-                                join est2 in estEqPar on e2.Id equals est2.IdEquipo
-                                where p.estado.Equals((EstadoPartido)3) && (p.equipos[0].Id.Equals(idPartido) || p.equipos[1].Id.Equals(idPartido))
+                               // join e in equi on p.equipos[0].Id equals e.Id
+                               // join e2 in equi on p.equipos[1].Id equals e2.Id
+                                join est1 in estEq1 on p.Id equals est1.IdPartido
+                                join est2 in estEq2 on p.Id equals est2.IdPartido
+                              //  where (p.equipos[0].Id.Equals(idPartido) || p.equipos[1].Id.Equals(idPartido))
                                 orderby p.fecha descending
                                 select new
                                 {
                                     idPartido = p.Id,
-                                    equipo1 = e.NombreEquipo,
-                                    equipo2 = e2.NombreEquipo,
+                                    equipo1 = p.equipos[0].NombreEquipo,
+                                    equipo2 = p.equipos[1].NombreEquipo,
                                     ptosequipo1 = est1.Puntos,
                                     ptosequipo2 = est2.Puntos,
                                     fecha = p.fecha.ToString("dd/MM/yyyy"),

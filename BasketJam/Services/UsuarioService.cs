@@ -292,7 +292,7 @@ namespace BasketJam.Services
             _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
             /*string email, string password*/
             // var varifyUrl = scheme + "://" + host + "/usuario/resetearContraseña/?" + emailId;
-            var varifyUrl = "http://54.208.166.6/usuario/CambiarPassowrd" + "?email=" + emailId+"&password="+nuevaPass;
+            var varifyUrl = "http://54.208.166.6/usuario/CambiarPasswordMovil" + "?email=" + emailId+"&password="+nuevaPass;
             var fromMail = new MailAddress("basketjam2019@gmail.com", "Basket Jam Team");
             var toMail = new MailAddress(emailId);
             var frontEmailPassowrd = "BasketJam2019";

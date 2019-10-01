@@ -17,6 +17,7 @@ namespace BasketJam.Models
         rebotesDefensivosPromedio,
         recuperosPromedio,
         tresPuntosConvertidosPromedio,
+        dosPuntosConvertidosPromedio,
         tirosLibresConvertidosPromedio,
         tresPuntosPorcentaje,
         tirosLibresPorcentaje,
