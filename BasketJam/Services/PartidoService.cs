@@ -43,6 +43,7 @@ namespace BasketJam.Services
         Task<List<Object>> ListarEstadios();
         Task<List<Object>> FixtureTodosLosEquipos();
         Task<List<Object>> FixturePorEquipo(string idEquipo);
+        Task<List<Object>> EstadisticasJugsEquipoPartido(string idPartido, string idEquipo);
         //Task<List<String>> DevuelvoListPartidosAndroid();
     }
 
@@ -53,6 +54,7 @@ namespace BasketJam.Services
         private readonly IMongoCollection<CuerpoTecnico> _cuerpoTecnico;
         private readonly IMongoCollection<Jugador> _jugadores;
         private readonly IMongoCollection<EstadisticasEquipoPartido> _estadisticasEquipoPartido;
+        private readonly IMongoCollection<EstadisticasJugadorPartido> _estadisticasJugadorPartido;
         private IVotacionPartidoService _votacionPartidoService;
         // private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
@@ -66,6 +68,7 @@ namespace BasketJam.Services
             _cuerpoTecnico = database.GetCollection<CuerpoTecnico>("cuerpoTecnico");
             _estadisticasEquipoPartido = database.GetCollection<EstadisticasEquipoPartido>("EstadisticasEquipoPartido");
             _votacionPartidoService = votacionPartidoService;
+            _estadisticasJugadorPartido = database.GetCollection<EstadisticasJugadorPartido>("EstadisticasJugadorPartido");
             //  _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
 
 
@@ -839,6 +842,56 @@ namespace BasketJam.Services
             }
         }
 
+        public async Task<List<Object>> EstadisticasJugsEquipoPartido(string idPartido,string idEquipo)
+        {
+            try
+            {
+
+                Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
+                List<Jugador> jugadoresEquipo= await _jugadores.Find<Jugador>(x => x.IdEquipo == idEquipo).ToListAsync();
+
+                List<dynamic> listReturn = new List<dynamic>();
+
+                foreach(Jugador j in jugadoresEquipo)
+                {
+                    EstadisticasJugadorPartido ejp = await _estadisticasJugadorPartido.Find<EstadisticasJugadorPartido>(p => p.IdPartido.Equals(idPartido) && p.IdJugador.Equals(j.Id)).FirstOrDefaultAsync();
+                    if(ejp!=null)
+                    { 
+                    var det = new
+                    {
+                        idJugador = j.Id,
+                        nombre = j.Nombre,
+                        numeroCamiseta = j.NumeroCamiseta,
+                        puntos = ejp.Puntos,
+                        tresPuntosConvertidos = ejp.TresPuntosConvertidos,
+                        tresPuntosIntentados=ejp.TresPuntosIntentados,
+                        porcentaje3Puntos=ejp.TresPuntosPorcentaje,
+                        dosPuntosConvertidos=ejp.DosPuntosConvertidos,
+                        dosPuntosIntentados=ejp.DosPuntosIntentados,
+                        dosPuntosPorcentaje=ejp.DosPuntosPorcentaje,
+                        libresConvertidos=ejp.TirosLibresConvertidos,
+                        libresIntentados=ejp.TirosLibresIntentados,
+                        porcentajeLibres=ejp.TirosLibresPorcentaje,
+                        rebotesOfensivos=ejp.RebotesOfensivos,
+                        rebotesDefensivos=ejp.RebotesDefensivos,
+                        rebotesTotales=ejp.RebotesTotales,
+                        asistencias=ejp.Asistencias,
+                        recuperos=ejp.Recuperos,
+                        faltasPersonales=ejp.FaltasPersonales
+                    };
+                    listReturn.Add(det);
+                    }
+                }
+
+
+
+                return listReturn;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         /*public async Task<Object> ConsultaDetallesPartido(string idPartido)
         {
@@ -875,5 +928,5 @@ namespace BasketJam.Services
         }
         } */
 
-    }
+            }
 }

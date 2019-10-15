@@ -48,6 +48,7 @@ namespace BasketJam.Services
 
         string coso;
 
+
         public UsuarioService(IOptions<AppSettings> appSettings, IConfiguration config, IConfiguracionUsuarioMovilService configuracionUsuarioMovilService)
         {
             _appSettings = appSettings.Value;
@@ -64,14 +65,25 @@ namespace BasketJam.Services
 
         public async Task<Usuario> Autenticar(string username, string password)
         {
-            var usuario = await _usuarios.Find<Usuario>(x => x.NomUser == username && x.Password == password).FirstOrDefaultAsync();
+            var usuario = await _usuarios.Find<Usuario>(x => x.NomUser == username).FirstOrDefaultAsync();
 
-            // Retorno nulo si no encuentro el usuario
             if (usuario == null || usuario.EmailValidado == false)
                 return null;
 
-            // si la autenticación es correcta genero el Token JWT 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            if (usuario.EmailValidado==false)
+            {
+                throw new Exception ( "Usuario aún no ha sido activado." );
+            }
+
+            // Retorno nulo si no encuentro el usuario
+           
+            if (!usuario.Password.Equals(password))
+            {
+                throw new Exception("Contraseña incorrecta.");
+            }
+
+                // si la autenticación es correcta genero el Token JWT 
+                var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -239,23 +251,24 @@ namespace BasketJam.Services
             string scheme = "http";
             string port = "";
             //var varifyUrl = scheme + "://" + host + ":" + port + "/usuario/ActivateAccount/" + codigoActivacion;//esto es para pruebas locales
-           /* var usuario =  _usuarios.Find<Usuario>(u => u.NomUser == emailId).FirstOrDefaultAsync();
-            usuario..Password = null;
-            _usuarios.ReplaceOne(user => user.NomUser == emailId, usuario.Result);
-            _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
-
-            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, null);
+            /* var usuario =  _usuarios.Find<Usuario>(u => u.NomUser == emailId).FirstOrDefaultAsync();
+             usuario..Password = null;
+             _usuarios.ReplaceOne(user => user.NomUser == emailId, usuario.Result);
+             _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
+            RandomNumberGenerator generator = new RandomNumberGenerator();
+            string pass = generator.RandomPassword();
+            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, pass);
 
              _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
 
             // var varifyUrl = scheme + "://" + host + "/usuario/resetearContraseña/?" + emailId;
-            var varifyUrl= "http://basketjam.s3.us-east-2.amazonaws.com/Bjam/restarurarContrase%C3%B1a.html"+"?mail="+emailId;
+            //var varifyUrl= "http://basketjam.s3.us-east-2.amazonaws.com/Bjam/restarurarContrase%C3%B1a.html"+"?mail="+emailId;
             var fromMail = new MailAddress("basketjam2019@gmail.com", "Basket Jam Team");
             var toMail = new MailAddress(emailId);
             var frontEmailPassowrd = "BasketJam2019";
             string subject = "¡Se ha reseteado tu contraseña!";
-            string body = "<br/><br/>Para ingresar una nueva contraseña da clic en el link debajo. " +
-        " <br/><br/><a href='" + varifyUrl + "'>" + varifyUrl + "</a> ";
+            string body = "<br/><br/>Se le ha asignado la siguiente contraseña: <b>"+pass +"</b>"+
+        " <br/><br/>por favor loguearse en Basket Jam con su usuario y contraseña proporcionada y cambiarla por una nueva. ";
 
             var smtp = new SmtpClient
             {

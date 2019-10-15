@@ -118,7 +118,7 @@ namespace BasketJam.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = "Se ha producido un error: " + ex.Message
+                    Error =  ex.Message
                 });
             }
         }

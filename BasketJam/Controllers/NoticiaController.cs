@@ -21,7 +21,7 @@ namespace BasketJam.Controllers
         }
 
        [HttpGet]
-        public async Task<ActionResult<List<Noticia>>> Get()
+        public async Task<ActionResult<List<Object>>> Get()
         {
             try
             {
@@ -34,7 +34,7 @@ namespace BasketJam.Controllers
         }
 
         [HttpGet("BuscarNoticia/{id:length(24)}")]
-        public async Task<ActionResult<dynamic>> Get(string id)
+        public async Task<ActionResult<dynamic>> BuscarNoticia(string id)
         {
             try
             {
@@ -46,8 +46,8 @@ namespace BasketJam.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Noticia>>> Get(DateTime fecha)
+        [HttpGet("ListarNoticiasPorFecha")]
+        public async Task<ActionResult<List<Object>>> ListarNoticiasPorFecha(DateTime fecha)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace BasketJam.Controllers
         }
 
         [HttpGet("ListarUltimasDiez")]
-        public async Task<ActionResult<List<Noticia>>> ListarUltimasDiez()
+        public async Task<ActionResult<List<Object>>> ListarUltimasDiez()
         {
             try
             {

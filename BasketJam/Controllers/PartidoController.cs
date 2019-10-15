@@ -196,7 +196,7 @@ namespace BasketJam.Controllers
                 Boolean res = await _partidoService.AgregarJugadoresAPartido(id, jugadores);
 
                 if (res)
-                    return Ok(new { error = "No se han asignado los jugadores de manera correcta." });
+                    return Ok(new { mensaje = "Se han asignado los jugadores de manera correcta." });
                 else
                     return BadRequest(new { error = "No se ha podido realizar la acción." });
             }
@@ -421,6 +421,26 @@ namespace BasketJam.Controllers
                  );
             }
         }
+
+
+        [AllowAnonymous]
+        [HttpGet("EstadisticasJugsEquipoPartido/")]
+        public async Task<List<Object>> ListarEsEstadisticasJugsEquipoPartidotadios(string idPartido, string idEquipo)
+        {
+            try
+            {
+                return await _partidoService.EstadisticasJugsEquipoPartido(idPartido,idEquipo);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+
+                    "Se ha producido un error: " + ex.Message
+                 );
+            }
+        }
+        
 
 
 

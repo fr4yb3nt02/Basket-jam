@@ -38,5 +38,9 @@ namespace BasketJam.Models
         [BsonElement("NotificacionFinPartido")]
         public Boolean NotificacionFinPartido { get; set; }
 
+        [BsonRequired]
+        [BsonElement("Token")]
+        public string Token { get; set; }
+
     }
 }

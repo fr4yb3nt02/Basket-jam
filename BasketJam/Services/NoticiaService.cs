@@ -19,13 +19,13 @@ namespace BasketJam.Services
 {
     public interface INoticiaService
     {
-        Task<List<Noticia>> ListarNoticias();
-        Task<List<Noticia>> ListarNoticiasPorFecha(DateTime fecha);
+        Task<List<dynamic>> ListarNoticias();
+        Task<List<Object>> ListarNoticiasPorFecha(DateTime fecha);
         Task<dynamic> BuscarNoticia(string id);
         Task<Noticia> CrearNoticia(Noticia noticia);
         void ActualizarNoticia(string id, Noticia not);
         void EliminarNoticia(string id);
-        Task<List<Noticia>> ListarUltimasDiezNoticias();
+        Task<List<Object>> ListarUltimasDiezNoticias();
         void subirImagen(Imagen img);
     }
 
@@ -40,27 +40,69 @@ namespace BasketJam.Services
             _noticias=database.GetCollection<Noticia>("noticias");
 
         }
-        public async Task<List<Noticia>> ListarNoticias()
+        public async Task<List<dynamic>> ListarNoticias()
         {
-            return await _noticias.Find(noticia => true).ToListAsync();
+            List<Noticia> noticias= await _noticias.Find(noticia => true).ToListAsync();
+            List<dynamic> paraDev = new List<dynamic>();
+            foreach (Noticia no in noticias)
+            {
+                var dat = new
+                {
+
+                    id = no.Id,
+                    titulo = no.Titulo,
+                    contenidoAbreviado = no.ContenidoAbreviado,
+                    contenido = no.Contenido,
+                    fecha = no.Fecha,
+                    imagen = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/" + no.Id
+                };
+                paraDev.Add(dat);
+            }
+            return paraDev;
         }
 
-        public async Task<List<Noticia>> ListarNoticiasPorFecha(DateTime fecha)
+        public async Task<List<Object>> ListarNoticiasPorFecha(DateTime fecha)
         {
-            return await _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToListAsync();            
+            List<Noticia> noticias= await _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToListAsync();
+            List<Object> paraDev = new List<Object>();
+            foreach (Noticia no in noticias)
+            {
+                var dat = new
+                {
+
+                    id = no.Id,
+                    titulo = no.Titulo,
+                    contenidoAbreviado = no.ContenidoAbreviado,
+                    contenido = no.Contenido,
+                    fecha = no.Fecha,
+                    imagen = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/" + no.Id
+                };
+                paraDev.Add(dat);
+            }
+            return paraDev;
         }
 
-        public async Task<List<Noticia>> ListarUltimasDiezNoticias()
+        public async Task<List<Object>> ListarUltimasDiezNoticias()
         {
             List<Noticia> noticias = await _noticias.Find<Noticia>(noticia => true).ToListAsync();
-            List<Noticia> paraDev = new List<Noticia>();
+            List<Object> paraDev = new List<Object>();
             var ultimas10 = (from n in noticias
                              orderby n.Fecha descending
                              select n
                             ).Take(10);
             foreach (Noticia no in ultimas10)
             {
-                paraDev.Add(no);
+                var dat = new
+                {
+
+                    id = no.Id,
+                    titulo = no.Titulo,
+                    contenidoAbreviado = no.ContenidoAbreviado,
+                    contenido = no.Contenido,
+                    fecha = no.Fecha,
+                    imagen = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/" + no.Id
+                };
+            paraDev.Add(dat);
             }
             return paraDev;
         }
