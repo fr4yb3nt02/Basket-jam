@@ -35,7 +35,7 @@ namespace BasketJam.Services
         Task<Object> ConsultarHeaderPartido(string idPartido);
         Task<Object> ConsultaDetallesPartido(string idPartido);
         Task<Object> UltimosEventosEquipo(string idPartido);
-        Task<List<Object>> ListarEquipoJugador(string idPartido);
+        Task<Object> ListarEquipoJugador(string idPartido);
         Task<Boolean> AgregarJugadoresAPartido(string id, List<EquipoJugador> jugadores);
         Task<List<Object>> ListarPartidosProgOJug();
         Task<List<Object>> ListarPartidosPorEstado(int estado);
@@ -55,6 +55,7 @@ namespace BasketJam.Services
         private readonly IMongoCollection<Jugador> _jugadores;
         private readonly IMongoCollection<EstadisticasEquipoPartido> _estadisticasEquipoPartido;
         private readonly IMongoCollection<EstadisticasJugadorPartido> _estadisticasJugadorPartido;
+        private readonly IMongoCollection<BitacoraPartido> _bitacoraPartido;
         private IVotacionPartidoService _votacionPartidoService;
         // private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
@@ -69,6 +70,7 @@ namespace BasketJam.Services
             _estadisticasEquipoPartido = database.GetCollection<EstadisticasEquipoPartido>("EstadisticasEquipoPartido");
             _votacionPartidoService = votacionPartidoService;
             _estadisticasJugadorPartido = database.GetCollection<EstadisticasJugadorPartido>("EstadisticasJugadorPartido");
+            _bitacoraPartido= database.GetCollection<BitacoraPartido>("BitacorasPartidos"); 
             //  _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
 
 
@@ -80,7 +82,7 @@ namespace BasketJam.Services
             return await _partidos.Find(partido => true).ToListAsync();
         }
 
-        public async Task<List<Object>> ListarEquipoJugador(string idPartido)
+        public async Task<Object> ListarEquipoJugador(string idPartido)
         {
             /*    try
         { */
@@ -97,7 +99,15 @@ namespace BasketJam.Services
             CuerpoTecnico tecnico;
             int puntosEquipoPartido = 0;
             EstadisticasEquipoPartido estEqPar = new EstadisticasEquipoPartido();
+            BitacoraPartido bp = new BitacoraPartido();
+            dynamic part;
 
+            bp = await _bitacoraPartido.Find<BitacoraPartido>(bpp => bpp.idPartido.Equals(idPartido)).FirstOrDefaultAsync();
+            string tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+            int periodo = p.cuarto;
+
+            
+            
 
             foreach (Equipo e in p.equipos)
             {
@@ -155,7 +165,14 @@ namespace BasketJam.Services
                     });
                 }
             }
-            return jugEq;
+
+            part = new
+            {
+                tiempo = tiempo,
+                periodo = periodo,
+                jugEq=jugEq
+            };
+            return part;
 
         }
 

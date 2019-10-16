@@ -46,6 +46,7 @@ namespace BasketJam.Services
             Usuario u = await _usuarios.Find<Usuario>(user => user.Id == config.Usuario).FirstOrDefaultAsync();
             return new
             {
+                idNotificacion=config.Id,
                 idUsuario = config.Usuario,
                 nombreUsuario = u.Nombre,
                 NotificacionEquiposFavoritos = config.NotificacionEquiposFavoritos,

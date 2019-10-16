@@ -35,6 +35,23 @@ namespace BasketJam.Controllers
             }
         }
 
+
+        [HttpGet("TorneoActual")]
+        public async Task<ActionResult<Torneo>> torneoAnioActual()
+        {
+            try
+            {
+                return await _torneoService.TorneoActual();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
         [HttpGet("{id:length(24)}", Name = "ObtenerTorneo")]
         public async Task<ActionResult<Torneo>> Get(string id)
         {
