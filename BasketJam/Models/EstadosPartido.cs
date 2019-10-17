@@ -5,6 +5,7 @@ namespace BasketJam.Models
         Por_jugar, 
         Jugando, 
         Detenido,
-        Finalizado
+        Finalizado,
+        SinArbitroAsignado
     }
 }

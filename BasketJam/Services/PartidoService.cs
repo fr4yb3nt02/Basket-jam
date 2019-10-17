@@ -44,6 +44,8 @@ namespace BasketJam.Services
         Task<List<Object>> FixtureTodosLosEquipos();
         Task<List<Object>> FixturePorEquipo(string idEquipo);
         Task<List<Object>> EstadisticasJugsEquipoPartido(string idPartido, string idEquipo);
+        Task<Object> DevolverEstadoPartido(string idPartido);
+        Task<List<Partido>> ListarPartidosSinJueces();
         //Task<List<String>> DevuelvoListPartidosAndroid();
     }
 
@@ -186,7 +188,7 @@ namespace BasketJam.Services
             try
             {
                 List<Object> dev = new List<Object>();
-                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado != (EstadoPartido)3).ToListAsync();
+                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado != (EstadoPartido)3 && partido.estado != (EstadoPartido)4).ToListAsync();
                 foreach (Partido p in parts)
                 {
                     Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
@@ -378,7 +380,15 @@ namespace BasketJam.Services
         {
             try
             {
+
                 Partido p = await _partidos.Find<Partido>(pa => pa.Id == id).FirstOrDefaultAsync();
+                if(p.estado ==(EstadoPartido)5)
+                {
+                    await _partidos.UpdateOneAsync(
+                                                        pa => pa.Id.Equals(id),
+                                                        Builders<Partido>.Update.
+                                                        Set(b => b.estado, (EstadoPartido)0));
+                }
                 if (p.estado == (EstadoPartido)0 || (p.estado == (EstadoPartido)2 & tiempo == "10:00"))
                 {
                     await _partidos.UpdateOneAsync(
@@ -910,6 +920,29 @@ namespace BasketJam.Services
             }
         }
 
+        public async Task<Object> DevolverEstadoPartido(string idPartido)
+        {
+            try { 
+            Partido p= await _partidos.Find<Partido>(partido => partido.Id == idPartido).FirstOrDefaultAsync();
+            if (p != null)
+                return new { estado = p.estado};
+            else
+                return new { error = "No existe el partido con el ID ingresado." };
+            }
+            catch(Exception ex)
+            {
+                return new { error = "Se ha producido un error: "+ex.Message };
+            }
+        }
+
+        public async Task<List<Partido>> ListarPartidosSinJueces()
+        {
+            List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)4).ToListAsync();
+            return parts;
+        }
+
+
+
         /*public async Task<Object> ConsultaDetallesPartido(string idPartido)
         {
             try
@@ -945,5 +978,5 @@ namespace BasketJam.Services
         }
         } */
 
-            }
+    }
 }

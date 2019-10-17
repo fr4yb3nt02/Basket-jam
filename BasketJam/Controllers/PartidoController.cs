@@ -266,6 +266,23 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("ListarPartidosSinJueces")]
+        public async Task<ActionResult> ListarPartidosSinJueces()
+        {
+            try
+            {
+                return Ok(await _partidoService.ListarPartidosSinJueces());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [AllowAnonymous]
         [HttpGet("FixtureTodosLosEquipos")]
         public async Task<ActionResult> FixtureTodosLosEquipos()
         {
@@ -424,7 +441,7 @@ namespace BasketJam.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("EstadisticasJugsEquipoPartido/")]
+        [HttpGet("EstadisticasJugsEquipoPartido")]
         public async Task<List<Object>> ListarEsEstadisticasJugsEquipoPartidotadios(string idPartido, string idEquipo)
         {
             try
@@ -440,7 +457,27 @@ namespace BasketJam.Controllers
                  );
             }
         }
-        
+
+        [AllowAnonymous]
+        [HttpGet("DevolverEstadoActualPartido/{id:length(24)}")]
+        public async Task<ActionResult<Object>> DevolverEstadoActualPartido(string id)
+        {
+            try
+            {
+                
+                return Ok(await _partidoService.DevolverEstadoPartido(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+
+
 
 
 
