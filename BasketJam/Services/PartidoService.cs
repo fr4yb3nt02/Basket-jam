@@ -437,7 +437,17 @@ namespace BasketJam.Services
                 var filter = Builders<Partido>
                  .Filter.Eq(e => e.Id, id);
 
-                foreach (Juez j in jueces)
+
+                await _partidos.UpdateOneAsync(
+                                                      pa => pa.Id.Equals(id),
+                                                      Builders<Partido>.Update.
+                                                      Set(b => b.jueces, jueces));
+
+                //await _partidos.FindOneAndUpdateAsync(filter, update);
+
+
+                //Agrega individualmente
+                /*foreach (Juez j in jueces)
                 {
                     Boolean yaExisteJuez = p.jueces.Any(ju => ju == j);
                     if (yaExisteJuez == false)
@@ -446,7 +456,12 @@ namespace BasketJam.Services
                         .Push<Juez>(e => e.jueces, j);
                         await _partidos.FindOneAndUpdateAsync(filter, update);
                     }
-                }
+                }*/
+
+                await _partidos.UpdateOneAsync(
+                                                      pa => pa.Id.Equals(id),
+                                                      Builders<Partido>.Update.
+                                                      Set(b => b.estado, (EstadoPartido)0));
 
                 return true;
             }
@@ -481,13 +496,13 @@ namespace BasketJam.Services
                   .Project(p => p.EquipoJugador.FindIndex(t => t.idEquipo == equipoDeJugador.Id))
                   .SingleOrDefaultAsync();
 
-                    if (equipoJugadorIndex == -1)
-                    {
+                   // if (equipoJugadorIndex == -1)
+                   // {
                         var update = Builders<Partido>.Update
                             .Push<EquipoJugador>(e => e.EquipoJugador, j);
                         await _partidos.FindOneAndUpdateAsync(filter, update);
 
-                    }
+                    /*}
                     else
                     {
                         foreach (EquipoJugador.JugadorEquipo je in j.jugadorEquipo)
@@ -499,8 +514,8 @@ namespace BasketJam.Services
                                 .Push<EquipoJugador.JugadorEquipo>(e => e.EquipoJugador[equipoJugadorIndex].jugadorEquipo, je);
                                 await _partidos.FindOneAndUpdateAsync(filter, update);
                             }
-                        }
-                    }
+                        }*/
+                    //}
 
                     /*  await _partidos.UpdateOneAsync(
                        a => a.Id.Equals(id),// Filtros para encontrar al jugador y partido correcto
@@ -855,10 +870,11 @@ namespace BasketJam.Services
         {
             try
             {
-                List<Object> estadios = new List<object>();
+                List<Object> estadios = new List<Object>();
                 List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
                 foreach (Equipo e in equi)
                 {
+                    if(!estadios.Contains(e) && e.Estadio!=null)
                     estadios.Add(e.Estadio);
                 }
                 return estadios;

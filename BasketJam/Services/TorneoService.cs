@@ -40,7 +40,7 @@ namespace BasketJam.Services
         }
         public async Task<List<Torneo>> ListarTorneos()
         {
-            return await _torneos.Find(torneo => true).ToListAsync();
+            return await _torneos.Find(torneo => torneo.Activo).ToListAsync();
         }
 
         public async Task<Torneo> TorneoActual()
@@ -57,9 +57,15 @@ namespace BasketJam.Services
         {
             try
             {
+                try
+                { 
                 Torneo torneoAnio = await _torneos.Find<Torneo>(t => t.Anio == torneo.Anio).FirstOrDefaultAsync();
-                if (torneo != null)
+                }
+                catch
+                //if (torneo != null)
+                { 
                     throw new Exception("Ya existe un torneo para el año ingresado.");
+                }
 
                 TablaDePosiciones tp = new TablaDePosiciones();
                 tp.EquiposTablaPosicion = new List<TablaDePosiciones.EquipoTablaPosicion>();
@@ -100,9 +106,12 @@ namespace BasketJam.Services
             _torneos.DeleteOne(torneo => torneo.Id == tor.Id);
         }
 
-        public void EliminarTorneo(string id)
+        public async void EliminarTorneo(string id)
         {
-            _torneos.DeleteOne(torneo => torneo.Id == id);
+            await _torneos.UpdateOneAsync(
+                 ju => ju.Id.Equals(id),
+                 Builders < Torneo>.Update.
+                 Set(b => b.Activo, false));
         }
     }
 }

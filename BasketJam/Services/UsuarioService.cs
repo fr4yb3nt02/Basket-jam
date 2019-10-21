@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace BasketJam.Services
         void SendPassReset(string emailId);
         void SendPassResetMovil(string emailId,string nuevaPass);
         Task<Boolean> CambiarPassword(string email, string password);
+        void subirImagen(Imagen img);
         //IEnumerable<Usuario> GetAll();
     }
 
@@ -65,7 +67,15 @@ namespace BasketJam.Services
 
         public async Task<Usuario> Autenticar(string username, string password)
         {
-            var usuario = await _usuarios.Find<Usuario>(x => x.NomUser == username).FirstOrDefaultAsync();
+            // Encripto la password con MD5
+            byte[] encodedPassword = new UTF8Encoding().GetBytes(password);
+            byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
+            string encoded = BitConverter.ToString(hash)
+               // without dashes
+               .Replace("-", string.Empty)
+               // make lowercase
+               .ToLower();
+            var usuario = await _usuarios.Find<Usuario>(x => x.NomUser.Equals(username) && x.Password.Equals(encoded)).FirstOrDefaultAsync();
 
             if (usuario == null || usuario.EmailValidado == false)
                 return null;
@@ -77,7 +87,7 @@ namespace BasketJam.Services
 
             // Retorno nulo si no encuentro el usuario
            
-            if (!usuario.Password.Equals(password))
+            if (!usuario.Password.Equals(encoded))
             {
                 throw new Exception("Contraseña incorrecta.");
             }
@@ -131,8 +141,16 @@ namespace BasketJam.Services
         public async Task<Boolean> CambiarPassword(string email , string password)
         {
             try
-            { 
-            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(user => user.Password, password);
+            {
+                // Encripto la password con MD5
+                byte[] encodedPassword = new UTF8Encoding().GetBytes(password);
+                byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
+                string encoded = BitConverter.ToString(hash)
+                   // without dashes
+                   .Replace("-", string.Empty)
+                   // make lowercase
+                   .ToLower();
+                var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(user => user.Password, encoded);
 
            // await _usuarios.UpdateOneAsync(u => u.NomUser == email, UpdateDefinitionBuilder);
 
@@ -179,6 +197,15 @@ namespace BasketJam.Services
 
                 usuario.CodigoAutenticacion = Guid.NewGuid().ToString();
 
+                // Encripto la password con MD5
+                byte[] encodedPassword = new UTF8Encoding().GetBytes(usuario.Password);
+                byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
+                string encoded = BitConverter.ToString(hash)
+                   // without dashes
+                   .Replace("-", string.Empty)
+                   // make lowercase
+                   .ToLower();
+                usuario.Password = encoded;
 
                 await _usuarios.InsertOneAsync(usuario);
 
@@ -255,7 +282,7 @@ namespace BasketJam.Services
              usuario..Password = null;
              _usuarios.ReplaceOne(user => user.NomUser == emailId, usuario.Result);
              _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
-            RandomNumberGenerator generator = new RandomNumberGenerator();
+            BasketJam.Models.RandomNumberGenerator generator = new BasketJam.Models.RandomNumberGenerator();
             string pass = generator.RandomPassword();
             var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, pass);
 
@@ -366,6 +393,20 @@ namespace BasketJam.Services
             catch
             {
                 return new { result = false, mensaje = "Se ha producido un error inesperado." };
+            }
+
+        }
+
+        public void subirImagen(Imagen img)
+        {
+            try
+            {
+                string claseImagen = "Usuarios";
+                ImagenService.subirImagen(img, claseImagen);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
         }

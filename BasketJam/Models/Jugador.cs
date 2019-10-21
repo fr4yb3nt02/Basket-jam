@@ -28,6 +28,4 @@ public class Jugador : MiembroDeEquipo
     public double Peso { get; set; }
 
 
-
-
 }

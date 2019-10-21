@@ -36,6 +36,19 @@ namespace BasketJam.Controllers
             }
         }
 
+        [HttpGet("ListarEquiposPorTorneo/{id:length(24)}")]        
+        public async Task<ActionResult<List<ExpandoObject>>> ListarEquiposPorTorneo(string id)
+        {
+            try
+            {
+                return await _equipoService.ListarEquiposPorTorneo(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
+        }
+
 
         [HttpGet("{id:length(24)}", Name = "ObtenerEquipo")]
         public async Task<ActionResult<Equipo>> Get(string id)

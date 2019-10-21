@@ -23,4 +23,8 @@ public class Torneo
     [BsonElement("Equipos")]
     public List<Equipo> Equipos { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("Activo")]
+    public Boolean Activo { get; set; }
+
 }

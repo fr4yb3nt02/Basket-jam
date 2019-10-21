@@ -40,7 +40,7 @@ namespace BasketJam.Services
         }
         public async Task<List<Juez>> ListarJueces()
         {
-            return await _jueces.Find(juez => true).ToListAsync();
+            return await _jueces.Find(juez => juez.Activo==true).ToListAsync();
         }
 
         /*public async Task<List<Juez>> ListarJuecesSinPartidoAsignado(Partido p)
@@ -89,14 +89,18 @@ namespace BasketJam.Services
             _jueces.ReplaceOne(juez => juez.Id == id, eq);
         }
 
-        public void EliminarJuez(Juez eq)
+        public async void EliminarJuez(string id)
         {
-            _jueces.DeleteOne(juez => juez.Id == eq.Id);
+            //_jueces.DeleteOne(juez => juez.Id == eq.Id);
+            await _jueces.UpdateOneAsync(
+                             ju => ju.Id.Equals(id),
+                             Builders<Juez>.Update.
+                             Set(b => b.Activo, false));
         }
 
-        public void EliminarJuez(string id)
+       /* public void EliminarJuez(string id)
         {
             _jueces.DeleteOne(juez => juez.Id == id);
-        }
+        }*/
     }
 }

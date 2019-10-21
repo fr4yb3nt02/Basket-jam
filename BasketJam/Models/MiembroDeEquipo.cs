@@ -31,4 +31,8 @@ public class MiembroDeEquipo
     [BsonElement("FechaDeNacimiento")]
     public DateTime FechaDeNacimiento { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("Activo")]
+    public Boolean Activo { get; set; }
+
 }

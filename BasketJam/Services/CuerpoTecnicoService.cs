@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -16,7 +17,7 @@ namespace BasketJam.Services
 {
     public interface ICuerpoTecnicoService
     {
-        Task<List<CuerpoTecnico>> ListarMiembroCuerpoTecnico();
+        Task<List<ExpandoObject>> ListarMiembroCuerpoTecnico();
         Task<CuerpoTecnico> BuscarMiembroCuerpoTecnico(string id);
         Task<CuerpoTecnico> CrearMiembroCuerpoTecnico(CuerpoTecnico equipo);
         void ActualizarMiembroCuerpoTecnico(string id, CuerpoTecnico eq);
@@ -25,18 +26,37 @@ namespace BasketJam.Services
 
     public class CuerpoTecnicoService : ICuerpoTecnicoService
 {
-        private readonly IMongoCollection<CuerpoTecnico> _cuerpoTecnico;      
+        private readonly IMongoCollection<CuerpoTecnico> _cuerpoTecnico;
+        private readonly IMongoCollection<Equipo> _equipos;
 
         public CuerpoTecnicoService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
              _cuerpoTecnico=database.GetCollection<CuerpoTecnico>("cuerpoTecnico");
+            _equipos = database.GetCollection<Equipo>("equipos");
 
         }
-        public async Task<List<CuerpoTecnico>> ListarMiembroCuerpoTecnico()
+        public async Task<List<ExpandoObject>> ListarMiembroCuerpoTecnico()
         {
-            return await _cuerpoTecnico.Find(cuerpoTecnico => true).ToListAsync();
+            List<CuerpoTecnico> cuerpoTecnico=await _cuerpoTecnico.Find(ct => ct.Activo==true).ToListAsync();
+            List<ExpandoObject> ctt = new List<ExpandoObject>();
+            foreach (CuerpoTecnico j in cuerpoTecnico)
+            {
+                Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
+                dynamic ju = new ExpandoObject();
+                ju.id = j.Id;
+                ju.Nombre = j.Nombre;
+                ju.Apellido = j.Apellido;
+                ju.IdEquipo = e.Id;
+                ju.NombreEquipo = e.NombreEquipo;
+                ju.FechaDeNacimiento = j.FechaDeNacimiento;
+                ju.Activo = j.Activo;
+                ju.Cargo = j.Cargo.ToString();
+                ju.Foto = HelperCloudinary.cloudUrl + "CuerpoTecnico/" + j.Id;
+                ctt.Add(ju);
+            }
+            return ctt;
         }
 
         public async Task<CuerpoTecnico> BuscarMiembroCuerpoTecnico(string id)
@@ -60,9 +80,12 @@ namespace BasketJam.Services
             _cuerpoTecnico.DeleteOne(cuerpoTecnico => cuerpoTecnico.Id == eq.Id);
         }
 
-        public void EliminarMiembroCuerpoTecnico(string id)
+        public async void EliminarMiembroCuerpoTecnico(string id)
         {
-            _cuerpoTecnico.DeleteOne(cuerpoTecnico => cuerpoTecnico.Id == id);
+            await _cuerpoTecnico.UpdateOneAsync(
+                   ju => ju.Id.Equals(id),
+                   Builders<CuerpoTecnico>.Update.
+                   Set(b => ((MiembroDeEquipo)b).Activo, false));
         }
     }
 }

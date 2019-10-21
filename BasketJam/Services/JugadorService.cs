@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -19,7 +20,7 @@ namespace BasketJam.Services
 {
     public interface IJugadorService
     {
-        Task<List<Jugador>> ListarJugadores();
+        Task<List<ExpandoObject>> ListarJugadores();
         Task<Jugador> BuscarJugador(string id);
         Task<Jugador> CrearJugador(Jugador jugador);
         void ActualizarJugador(string id, Jugador jug);
@@ -30,23 +31,48 @@ namespace BasketJam.Services
 
     public class JugadorService : IJugadorService
 {
-        private readonly IMongoCollection<Jugador> _jugadores;      
+        private readonly IMongoCollection<Jugador> _jugadores;
+        private readonly IMongoCollection<Equipo> _equipos;
 
         public JugadorService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
             _jugadores=database.GetCollection<Jugador>("jugadores");
+            _equipos = database.GetCollection<Equipo>("equipos");
+
 
         }
-        public async Task<List<Jugador>> ListarJugadores()
+        public async Task<List<ExpandoObject>> ListarJugadores()
         {
-            return await _jugadores.Find(jugador => true).ToListAsync();
+            List<Jugador> jugadores= await _jugadores.Find(jugador => jugador.Activo==true).ToListAsync();
+            List<ExpandoObject> jugs = new List<ExpandoObject>();
+            foreach (Jugador j in jugadores)
+            {
+                Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
+                dynamic ju = new ExpandoObject();
+                ju.id = j.Id;
+                ju.Nombre = j.Nombre;
+                ju.Apellido = j.Apellido;
+                ju.IdEquipo = e.Id;
+                ju.NombreEquipo = e.NombreEquipo;
+                ju.FechaDeNacimiento = j.FechaDeNacimiento;
+                ju.Activo = j.Activo;
+                ju.Capitan = j.Capitan;
+                ju.Posicion = j.Posicion;
+                ju.NumeroCamiseta = j.NumeroCamiseta;
+                ju.Altura = j.Altura;
+                ju.Peso = j.Peso;         
+                ju.Foto = HelperCloudinary.cloudUrl + "Jugadores/" + j.Id;
+                jugs.Add(ju);
+            }
+            return jugs;
+
         }
 
         public async Task<List<Jugador>> ListarJugadoresPorEquipo(string idEquipo)
         {
-            return await _jugadores.Find(jugador => jugador.IdEquipo==idEquipo).ToListAsync();
+            return await _jugadores.Find(jugador => jugador.IdEquipo==idEquipo && jugador.Activo==true).ToListAsync();
         }
 
         public async Task<Jugador> BuscarJugador(string id)
@@ -70,9 +96,12 @@ namespace BasketJam.Services
             _jugadores.DeleteOne(jugador => jugador.Id == jug.Id);
         }
 
-        public void EliminarJugador(string id)
+        public async void EliminarJugador(string id)
         {
-            _jugadores.DeleteOne(jugador => jugador.Id == id);
+            await _jugadores.UpdateOneAsync(
+                     ju => ju.Id.Equals(id),
+                     Builders<Jugador>.Update.
+                     Set(b => ((MiembroDeEquipo)b).Activo, false));
         }
 
         public void subirImagen(Imagen img)

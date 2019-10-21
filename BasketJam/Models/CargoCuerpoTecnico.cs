@@ -3,7 +3,9 @@ namespace BasketJam.Models
     public enum CargoCuerpoTecnico
     {
         DT, 
-        Aguatero, 
-        AlcanzaPelotas
+        AyudanteTecnico,
+        Planillero,
+        PreparadorFisico,
+        Quinesiologo
     }
 }

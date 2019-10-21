@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BasketJam.Models;
 using System;
+using System.Dynamic;
 
 namespace BasketJam.Controllers
 {
@@ -21,7 +22,7 @@ namespace BasketJam.Controllers
         }
 
        [HttpGet]
-        public async Task<ActionResult<List<Jugador>>> Get()
+        public async Task<ActionResult<List<ExpandoObject>>> Get()
         {
             return await _jugadorService.ListarJugadores();
         }

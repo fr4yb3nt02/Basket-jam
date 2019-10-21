@@ -284,18 +284,27 @@ namespace BasketJam.Controllers
             }
 
         }
+
+        [AllowAnonymous]
+        [HttpPost("subirFoto/")]
+        public IActionResult subirFoto(Imagen img)
+        {
+            try
+            {
+                _usuarioService.subirImagen(img);
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
+        }
     }
 
 
 
 
 }
-
-
-
-
-
-
 
 
 

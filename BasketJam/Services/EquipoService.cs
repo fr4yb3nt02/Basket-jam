@@ -31,6 +31,7 @@ namespace BasketJam.Services
         void ActualizarEquipo(string id, Equipo eq);
         void EliminarEquipo(string id);
         void subirImagen(Imagen img);
+        Task<List<ExpandoObject>> ListarEquiposPorTorneo(string idTorneo);
 
         Task<List<Jugador>> ListarJugadoresEquipo(string id);
     }
@@ -95,7 +96,7 @@ namespace BasketJam.Services
 
         public async Task<List<ExpandoObject>> ListarEquipos()
         {
-            List<Equipo> equipos= await _equipos.Find(equipo => true).ToListAsync();
+            List<Equipo> equipos= await _equipos.Find(equipo => equipo.Activo==true).ToListAsync();
             List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
             foreach(Equipo e in equipos)
             {
@@ -115,7 +116,29 @@ namespace BasketJam.Services
             //return await _equipos.Find(equipo => true).ToListAsync();
         }
 
-                public async Task<List<Jugador>> ListarJugadoresEquipo(string id)
+        public async Task<List<ExpandoObject>> ListarEquiposPorTorneo(string idTorneo)
+        {
+            List<Equipo> equipos = await _equipos.Find(equipo => equipo.Activo == true && idTorneo.Equals(idTorneo)).ToListAsync();
+            List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
+            foreach (Equipo e in equipos)
+            {
+                dynamic eq = new ExpandoObject();
+                dynamic estadio = new ExpandoObject();
+                eq.Id = e.Id;
+                eq.Nombre = e.NombreEquipo;
+                eq.FechaFundacion = e.FechaFundacion;
+                eq.ColorCaracteristico = e.ColorCaracteristico;
+                eq.Categoria = e.Categoria;
+                estadio = e.Estadio;
+                eq.Estadio = estadio;
+                eq.foto = HelperCloudinary.cloudUrl + "Equipos/" + e.Id;
+                eqConFotos.Add(eq);
+            }
+            return eqConFotos;
+            //return await _equipos.Find(equipo => true).ToListAsync();
+        }
+
+        public async Task<List<Jugador>> ListarJugadoresEquipo(string id)
         {
             
             return await _jugadores.Find<Jugador>(e=>e.IdEquipo==id).ToListAsync();
@@ -163,9 +186,13 @@ namespace BasketJam.Services
             _equipos.DeleteOne(equipo => equipo.Id == eq.Id);
         }
 
-        public void EliminarEquipo(string id)
+        public async void EliminarEquipo(string id)
         {
-            _equipos.DeleteOne(equipo => equipo.Id == id);
+            //_equipos.DeleteOne(equipo => equipo.Id == id);
+            await _equipos.UpdateOneAsync(
+                 ju => ju.Id.Equals(id),
+                 Builders<Equipo>.Update.
+                 Set(b => b.Activo, false));
         }
     }
 }

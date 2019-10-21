@@ -28,4 +28,8 @@ public class Juez
     [BsonElement("TipoJuez")]
     public TipoJuez TipoJuez { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("Activo")]
+    public Boolean Activo { get; set; }
+
 }

@@ -4,6 +4,7 @@ using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using System.Dynamic;
 
 namespace BasketJam.Controllers
 {
@@ -20,7 +21,7 @@ namespace BasketJam.Controllers
         }
 
         [HttpGet]
-        public async Task<List<CuerpoTecnico>> Get()
+        public async Task<List<ExpandoObject>> Get()
         {
             return await _cuerpoTecnicoService.ListarMiembroCuerpoTecnico();
         }
