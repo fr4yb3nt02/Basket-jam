@@ -15,7 +15,9 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApi.Helpers;
 using BasketJam.Models;
-
+using RestSharp;
+using Newtonsoft.Json.Linq;
+using System.Dynamic;
 
 namespace BasketJam.Services
 {
@@ -46,6 +48,7 @@ namespace BasketJam.Services
         Task<List<Object>> EstadisticasJugsEquipoPartido(string idPartido, string idEquipo);
         Task<Object> DevolverEstadoPartido(string idPartido);
         Task<List<Partido>> ListarPartidosSinJueces();
+        void ActualizarCuartoPartido(string id, int cuarto);
         //Task<List<String>> DevuelvoListPartidosAndroid();
     }
 
@@ -57,8 +60,12 @@ namespace BasketJam.Services
         private readonly IMongoCollection<Jugador> _jugadores;
         private readonly IMongoCollection<EstadisticasEquipoPartido> _estadisticasEquipoPartido;
         private readonly IMongoCollection<EstadisticasJugadorPartido> _estadisticasJugadorPartido;
+        private readonly IMongoCollection<ConfiguracionUsuarioMovil> _configuracionUsuarioMovil;
         private readonly IMongoCollection<BitacoraPartido> _bitacoraPartido;
         private IVotacionPartidoService _votacionPartidoService;
+        private string urlNotifications = "https://exp.host/--/api/v2/push/send";
+
+
         // private IEstadisticasEquipoPartidoService _estadisticasEquipoPartidoService;
 
         public PartidoService(IConfiguration config, IVotacionPartidoService votacionPartidoService)
@@ -72,7 +79,8 @@ namespace BasketJam.Services
             _estadisticasEquipoPartido = database.GetCollection<EstadisticasEquipoPartido>("EstadisticasEquipoPartido");
             _votacionPartidoService = votacionPartidoService;
             _estadisticasJugadorPartido = database.GetCollection<EstadisticasJugadorPartido>("EstadisticasJugadorPartido");
-            _bitacoraPartido= database.GetCollection<BitacoraPartido>("BitacorasPartidos"); 
+            _bitacoraPartido= database.GetCollection<BitacoraPartido>("BitacorasPartidos");
+            _configuracionUsuarioMovil = database.GetCollection<ConfiguracionUsuarioMovil>("configuracionUsuarioMovil");
             //  _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
 
 
@@ -264,7 +272,7 @@ namespace BasketJam.Services
             try
             {
                 List<Object> dev = new List<Object>();
-                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)0  && partido.fecha>=DateTime.Now).ToListAsync();
+                List<Partido> parts = await _partidos.Find<Partido>(partido => (partido.estado == (EstadoPartido)0 || partido.estado == (EstadoPartido)4) && partido.fecha>=DateTime.Now).ToListAsync();
                 foreach (Partido p in parts)
                 {
                     Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
@@ -303,7 +311,7 @@ namespace BasketJam.Services
             try
             {
                 List<Object> dev = new List<Object>();
-                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)0 && partido.fecha >= DateTime.Now).ToListAsync();
+                List<Partido> parts = await _partidos.Find<Partido>(partido => (partido.estado == (EstadoPartido)0|| partido.estado == (EstadoPartido)4) && partido.fecha >= DateTime.Now).ToListAsync();
                 foreach (Partido p in parts)
                 {
                     if(p.equipos[0].Id.Equals(idEquipo)|| p.equipos[1].Id.Equals(idEquipo))
@@ -380,8 +388,13 @@ namespace BasketJam.Services
         {
             try
             {
+                var client = new RestSharp.RestClient(urlNotifications);
+                var request = new RestRequest(Method.POST);
+                JArray a = new JArray();
 
-                Partido p = await _partidos.Find<Partido>(pa => pa.Id == id).FirstOrDefaultAsync();
+                Partido p = BuscarPartido(id).Result;
+
+                //Partido p = await _partidos.Find<Partido>(pa => pa.Id.Equals(id)).FirstOrDefaultAsync();
                 if(p.estado ==(EstadoPartido)5)
                 {
                     await _partidos.UpdateOneAsync(
@@ -391,6 +404,46 @@ namespace BasketJam.Services
                 }
                 if (p.estado == (EstadoPartido)0 || (p.estado == (EstadoPartido)2 & tiempo == "10:00"))
                 {
+                    if(p.estado == (EstadoPartido)0)
+                    {
+                        //List<Notificacion> n = new List<Notificacion>();
+                        JArray n = new JArray();
+                        /*List<ConfiguracionUsuarioMovil> cumEf = new List<ConfiguracionUsuarioMovil>();
+                        List<ConfiguracionUsuarioMovil> cum = new List<ConfiguracionUsuarioMovil>();*/
+
+                        List<ConfiguracionUsuarioMovil> cumEf = await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(cf => cf.NotificacionEquiposFavoritos == true && (cf.EquiposFavoritos.Contains(p.equipos[0].Id) || cf.EquiposFavoritos.Contains(p.equipos[1].Id))).ToListAsync();
+                        List<ConfiguracionUsuarioMovil> cum = await  _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(cf => cf.NotificacionInicioPartido == true).ToListAsync();
+
+                        foreach (ConfiguracionUsuarioMovil c in cumEf)
+                        {
+                            dynamic no = new ExpandoObject();
+                            no.to = c.Token;
+                            no.title = "!Tu equipo favorito está jugando!☺☺☺";
+                            no.body = "¡Ha dado comienzo al partido entre " + p.equipos[0].NombreEquipo + " y " + p.equipos[1].NombreEquipo + "!";
+                            a.Add(JToken.FromObject(no));
+                        }
+                        foreach (ConfiguracionUsuarioMovil c in cum)
+                        {
+                            if(!cumEf.Contains(c))
+                            {
+                            dynamic no = new ExpandoObject();
+                            no.to = c.Token;
+                            no.title="Comienzo de partido.";
+                            no.body="¡Ha dado comienzo al partido entre "+p.equipos[0].NombreEquipo + " y " + p.equipos[1].NombreEquipo+"!";
+                                a.Add(JToken.FromObject(no));
+                            }
+                        }
+
+                        //var Body = new Object();
+                        request.AddParameter("application/json", a, ParameterType.RequestBody);
+                        //request.AddJsonBody(a);
+                        IRestResponse response = client.Execute(request);
+                        var content = response.Content;
+
+
+
+                    }
+
                     await _partidos.UpdateOneAsync(
                                     pa => pa.Id.Equals(id),
                                     Builders<Partido>.Update.
@@ -401,29 +454,84 @@ namespace BasketJam.Services
                     await _partidos.UpdateOneAsync(
                                                         pa => pa.Id.Equals(id),
                                                         Builders<Partido>.Update.
-                                                        Set(b => b.estado, (EstadoPartido)2));
+                                                        Set(b => b.estado, (EstadoPartido)2).Set(b => b.cuarto,p.cuarto++));
                 }
                 if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto == 4)
                 {
+                    //List<Notificacion> n = new List<Notificacion>();
+                    JArray n = new JArray();
+                    //List<ConfiguracionUsuarioMovil> cumEf = new List<ConfiguracionUsuarioMovil>();
+                    //List<ConfiguracionUsuarioMovil> cum = new List<ConfiguracionUsuarioMovil>();
+                    EstadisticasEquipoPartido est1 =await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(e => e.IdPartido.Equals(p.Id) && e.IdEquipo.Equals(p.equipos[0].Id)).FirstOrDefaultAsync();
+                    EstadisticasEquipoPartido est2 =await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(e => e.IdPartido.Equals(p.Id) && e.IdEquipo.Equals(p.equipos[1].Id)).FirstOrDefaultAsync();
+
+
+                    List<ConfiguracionUsuarioMovil> cumEf = await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(cf => cf.NotificacionEquiposFavoritos == true && (cf.EquiposFavoritos.Contains(p.equipos[0].Id) || cf.EquiposFavoritos.Contains(p.equipos[1].Id))).ToListAsync();
+                    List<ConfiguracionUsuarioMovil> cum = await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(cf => cf.NotificacionFinPartido == true).ToListAsync();
+
+                    foreach (ConfiguracionUsuarioMovil c in cumEf)
+                    {
+                        dynamic no = new ExpandoObject();
+                        no.to = c.Token;
+                        no.title = "¡Ha finalizado el partido entre " + p.equipos[0].NombreEquipo + " y " + p.equipos[0].NombreEquipo + "!";
+                        if(est1.Puntos>est2.Puntos)
+                        no.body = "El equipo de "+p.equipos[0].NombreEquipo +" se impuso a "+p.equipos[1].NombreEquipo+" por "+est1.Puntos+" puntos a "+est2.Puntos;
+                        else
+                            no.body = "El equipo de " + p.equipos[1].NombreEquipo + " se impuso a " + p.equipos[0].NombreEquipo + " por " + est2.Puntos + " puntos a " + est1.Puntos;
+                        a.Add(JToken.FromObject(no));
+                    }
+                    foreach (ConfiguracionUsuarioMovil c in cum)
+                    {
+                        if (!cumEf.Contains(c))
+                        {
+                            dynamic no = new ExpandoObject();
+                            no.to = c.Token;
+                            no.title = "¡Ha finalizado el partido entre " + p.equipos[0].NombreEquipo + " y " + p.equipos[1].NombreEquipo + "!";
+                            if (est1.Puntos > est2.Puntos)
+                                no.body = "El equipo de " + p.equipos[0].NombreEquipo + " se impuso a " + p.equipos[1].NombreEquipo + " por " + est1.Puntos + " puntos a " + est2.Puntos;
+                            else
+                                no.body = "El equipo de " + p.equipos[1].NombreEquipo + " se impuso a " + p.equipos[0].NombreEquipo + " por " + est2.Puntos + " puntos a " + est1.Puntos;
+                            a.Add(JToken.FromObject(no));
+                        }
+                    }
+
+                    request.AddParameter("application/json", a, ParameterType.RequestBody);
+                    IRestResponse response = client.Execute(request);
+                    var content = response.Content;
+                    
                     await _partidos.UpdateOneAsync(
                                                         pa => pa.Id.Equals(id),
                                                         Builders<Partido>.Update.
                                                         Set(b => b.estado, (EstadoPartido)3));
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                throw new Exception("Error al cambiar de estado.");
+                throw new Exception("Error al cambiar de estado: "+ex.Message);
             }
         }
 
         public async void ActualizarTiempoPartido(string id, string tiempo)
         {
 
+            
+
             await _partidos.UpdateOneAsync(
-                a => a.Id.Equals(id),// Filtros para encontrar al jugador y partido correcto
-               Builders<Partido>.Update
-               .Set(b => b.Tiempo, tiempo));
+                 p => p.Id.Equals(id),
+                 Builders<Partido>.Update.
+                 Set(b => b.Tiempo, tiempo));
+
+        }
+
+        public async void ActualizarCuartoPartido(string id, int cuarto)
+        {
+
+
+
+            await _partidos.UpdateOneAsync(
+                 p => p.Id.Equals(id),
+                 Builders<Partido>.Update.
+                 Set(b => b.cuarto, cuarto));
 
         }
 
@@ -904,6 +1012,8 @@ namespace BasketJam.Services
                     {
                         idJugador = j.Id,
                         nombre = j.Nombre,
+                        apellido=j.Apellido,
+                        FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id,
                         numeroCamiseta = j.NumeroCamiseta,
                         puntos = ejp.Puntos,
                         tresPuntosConvertidos = ejp.TresPuntosConvertidos,
@@ -922,8 +1032,38 @@ namespace BasketJam.Services
                         recuperos=ejp.Recuperos,
                         faltasPersonales=ejp.FaltasPersonales
                     };
-                    listReturn.Add(det);
+                        listReturn.Add(det);
                     }
+                    else
+                    {
+                        var det = new
+                        {
+                            idJugador = j.Id,
+                            nombre = j.Nombre,
+                            apellido = j.Apellido,
+                            FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id,
+                            numeroCamiseta = j.NumeroCamiseta,
+                            puntos = 0,
+                            tresPuntosConvertidos = 0,
+                            tresPuntosIntentados = 0,
+                            porcentaje3Puntos = 0,
+                            dosPuntosConvertidos = 0,
+                            dosPuntosIntentados = 0,
+                            dosPuntosPorcentaje = 0,
+                            libresConvertidos = 0,
+                            libresIntentados = 0,
+                            porcentajeLibres = 0,
+                            rebotesOfensivos = 0,
+                            rebotesDefensivos = 0,
+                            rebotesTotales = 0,
+                            asistencias = 0,
+                            recuperos = 0,
+                            faltasPersonales = 0
+                        };
+                        listReturn.Add(det);
+                    }
+
+                    
                 }
 
 

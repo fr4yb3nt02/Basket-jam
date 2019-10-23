@@ -181,10 +181,6 @@ namespace BasketJam.Services
             _equipos.ReplaceOne(equipo => equipo.Id == id, eq);
         }
 
-        public void EliminarEquipo(Equipo eq)
-        {
-            _equipos.DeleteOne(equipo => equipo.Id == eq.Id);
-        }
 
         public async void EliminarEquipo(string id)
         {

@@ -102,7 +102,7 @@ namespace BasketJam.Controllers
                     return NotFound(new { Error = "No se ha encontrado el jugador." });
                 }
 
-            _jugadorService.EliminarJugador(jugador.Id.ToString());
+            _jugadorService.EliminarJugador(id);
 
             return Ok(new { Resultado = true });
             }

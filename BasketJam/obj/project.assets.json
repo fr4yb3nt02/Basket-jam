@@ -2801,6 +2801,15 @@
           "lib/netstandard1.0/Remotion.Linq.dll": {}
         }
       },
+      "RestSharp/106.6.10": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        }
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
         "type": "package",
         "runtimeTargets": {
@@ -7789,6 +7798,21 @@
         "lib/portable-net45+win+wpa81+wp80/Remotion.Linq.xml",
         "remotion.linq.2.2.0.nupkg.sha512",
         "remotion.linq.nuspec"
+      ]
+    },
+    "RestSharp/106.6.10": {
+      "sha512": "MMLyolW6zkWNmEvJrrpTRmNaDRm6/KJBceb15U9uD6ZBEdySXNB3WCP/cWb8YmLUQoRhlIz9hbsnqfI6v3xKgQ==",
+      "type": "package",
+      "path": "restsharp/106.6.10",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net452/RestSharp.dll",
+        "lib/net452/RestSharp.xml",
+        "lib/netstandard2.0/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.xml",
+        "restsharp.106.6.10.nupkg.sha512",
+        "restsharp.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
@@ -13034,6 +13058,7 @@
       "Microsoft.NETCore.App >= 2.1.0",
       "MongoDB.Driver >= 2.8.1",
       "MongoDB.Driver.GridFS >= 2.8.1",
+      "RestSharp >= 106.6.10",
       "Sendgrid >= 9.12.0",
       "System.Drawing.Common >= 4.5.1"
     ]
@@ -13115,6 +13140,10 @@
           "MongoDB.Driver.GridFS": {
             "target": "Package",
             "version": "[2.8.1, )"
+          },
+          "RestSharp": {
+            "target": "Package",
+            "version": "[106.6.10, )"
           },
           "Sendgrid": {
             "target": "Package",

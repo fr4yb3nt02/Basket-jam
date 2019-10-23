@@ -130,7 +130,7 @@ namespace BasketJam.Controllers
                     return NotFound(new { Error = "No se ha encontrado el torneo." });
                 }
 
-                _torneoService.EliminarTorneo(torneo.Id.ToString());
+                _torneoService.EliminarTorneo(id);
 
                 return Ok(new { Resultado = true });
             }

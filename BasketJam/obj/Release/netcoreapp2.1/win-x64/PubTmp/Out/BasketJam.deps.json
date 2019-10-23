@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1/win-x64",
-    "signature": "bb605e38e04c28b6d4a1fdf9f72a91a369759504"
+    "signature": "e169bc2ba9927fbc4ca7c0a83cd0ee74d740fbeb"
   },
   "compilationOptions": {
     "defines": [
@@ -31,6 +31,7 @@
           "Microsoft.NETCore.App": "2.1.9",
           "MongoDB.Driver": "2.8.1",
           "MongoDB.Driver.GridFS": "2.8.1",
+          "RestSharp": "106.6.10",
           "Sendgrid": "9.12.0",
           "System.Drawing.Common": "4.5.1"
         },
@@ -2071,6 +2072,11 @@
           "lib/netstandard1.0/Remotion.Linq.dll": {}
         }
       },
+      "RestSharp/106.6.10": {
+        "compile": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        }
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
       "runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
       "runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
@@ -3171,6 +3177,7 @@
           "Microsoft.NETCore.App": "2.1.9",
           "MongoDB.Driver": "2.8.1",
           "MongoDB.Driver.GridFS": "2.8.1",
+          "RestSharp": "106.6.10",
           "Sendgrid": "9.12.0",
           "System.Drawing.Common": "4.5.1"
         },
@@ -5550,6 +5557,14 @@
           "lib/netstandard1.0/Remotion.Linq.dll": {
             "assemblyVersion": "2.2.0.0",
             "fileVersion": "2.2.0.30000"
+          }
+        }
+      },
+      "RestSharp/106.6.10": {
+        "runtime": {
+          "lib/netstandard2.0/RestSharp.dll": {
+            "assemblyVersion": "106.6.10.0",
+            "fileVersion": "106.6.10.0"
           }
         }
       },
@@ -8735,6 +8750,13 @@
       "sha512": "sha512-fK/76UmpC0FXBlGDFVPLJHQlDLYnGC+XY3eoDgCgbtrhi0vzbXDQ3n/IYHhqSKqXQfGw/u04A1drWs7rFVkRjw==",
       "path": "remotion.linq/2.2.0",
       "hashPath": "remotion.linq.2.2.0.nupkg.sha512"
+    },
+    "RestSharp/106.6.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MMLyolW6zkWNmEvJrrpTRmNaDRm6/KJBceb15U9uD6ZBEdySXNB3WCP/cWb8YmLUQoRhlIz9hbsnqfI6v3xKgQ==",
+      "path": "restsharp/106.6.10",
+      "hashPath": "restsharp.106.6.10.nupkg.sha512"
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
       "type": "package",

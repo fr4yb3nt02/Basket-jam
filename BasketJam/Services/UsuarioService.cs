@@ -85,6 +85,8 @@ namespace BasketJam.Services
                 throw new Exception ( "Usuario aún no ha sido activado." );
             }
 
+
+
             // Retorno nulo si no encuentro el usuario
            
             if (!usuario.Password.Equals(encoded))
@@ -94,7 +96,7 @@ namespace BasketJam.Services
 
                 // si la autenticación es correcta genero el Token JWT 
                 var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);
+            var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);//+usuario.TipoUsuario.ToString()
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -107,6 +109,7 @@ namespace BasketJam.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             usuario.Token = tokenHandler.WriteToken(token);
 
+           
             return usuario;
         }
 

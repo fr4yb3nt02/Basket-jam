@@ -133,7 +133,7 @@ namespace BasketJam.Controllers
                     return NotFound(new { Error = "No se ha encontrado el equipo." });
                 }
 
-                _equipoService.EliminarEquipo(equipo.Id.ToString());
+                _equipoService.EliminarEquipo(id);
 
                 return Ok(new { Resultado = true });
             }

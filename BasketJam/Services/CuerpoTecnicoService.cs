@@ -75,10 +75,6 @@ namespace BasketJam.Services
             _cuerpoTecnico.ReplaceOne(cuerpoTecnico => cuerpoTecnico.Id == id, ct);
         }
 
-        public void EliminarMiembroCuerpoTecnico(CuerpoTecnico eq)
-        {
-            _cuerpoTecnico.DeleteOne(cuerpoTecnico => cuerpoTecnico.Id == eq.Id);
-        }
 
         public async void EliminarMiembroCuerpoTecnico(string id)
         {

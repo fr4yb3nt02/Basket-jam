@@ -89,7 +89,7 @@ namespace BasketJam.Controllers
                     return NotFound();
                 }
 
-                _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(miembroCuerpoTecnico.Id.ToString());
+                _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(id);
 
                 return Ok(new { Resultado = true });
             }

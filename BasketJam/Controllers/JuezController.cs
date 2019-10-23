@@ -103,7 +103,7 @@ namespace BasketJam.Controllers
                     return NotFound(new { Error = "No se ha encontrado el juez." });
                 }
 
-                _juezService.EliminarJuez(juez.Id.ToString());
+                _juezService.EliminarJuez(id);
 
                 return Ok(new { Resultado = true });
             }

@@ -48,7 +48,7 @@ namespace BasketJam.Services
             {
                 idNotificacion=config.Id,
                 idUsuario = config.Usuario,
-                nombreUsuario = u.Nombre,
+                nombreUsuario = u.NomUser,
                 NotificacionEquiposFavoritos = config.NotificacionEquiposFavoritos,
                 EquiposFavoritos = config.EquiposFavoritos,
                 NotificacionTodosLosPartidos = config.NotificacionTodosLosPartidos,

@@ -91,10 +91,6 @@ namespace BasketJam.Services
             _jugadores.ReplaceOne(jugador => jugador.Id == id, jug);
         }
 
-        public void EliminarJugador(Jugador jug)
-        {
-            _jugadores.DeleteOne(jugador => jugador.Id == jug.Id);
-        }
 
         public async void EliminarJugador(string id)
         {

@@ -98,19 +98,43 @@ namespace BasketJam.Controllers
             }
         }
 
-        [HttpPut("ActualizarTiempoPartido/{id:length(24)}")]
-        public IActionResult ActualizarTiempoPartido(string id, string tiempo)
+        [HttpPut("ActualizarTiempoPartido/")]
+        public IActionResult ActualizarTiempoPartido(string idpartido, string tiempo)
         {
             try
             {
-                var partido = _partidoService.BuscarPartido(id);
+                var partido = _partidoService.BuscarPartido(idpartido);
 
                 if (partido == null)
                 {
                     return NotFound(new { Error = "No se ha encontrado el partio." });
                 }
 
-                _partidoService.ActualizarTiempoPartido(id, tiempo);
+                _partidoService.ActualizarTiempoPartido(idpartido, tiempo);
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
+
+        [HttpPut("ActualizarTiempoPartido/")]
+        public IActionResult ActualizarTiempoPartido(string idpartido, int cuarto)
+        {
+            try
+            {
+                var partido = _partidoService.BuscarPartido(idpartido);
+
+                if (partido == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el partio." });
+                }
+
+                _partidoService.ActualizarCuartoPartido(idpartido, cuarto);
                 return Ok(new { Resultado = true });
             }
             catch (Exception ex)

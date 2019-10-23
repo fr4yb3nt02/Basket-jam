@@ -9,6 +9,8 @@ using WebApi.Helpers;
 using BasketJam.Models;
 using System.Net.Http;
 using System.Net;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace BasketJam.Controllers
 {
@@ -18,6 +20,7 @@ namespace BasketJam.Controllers
     public class UsuarioController : ControllerBase
     {
         private IUsuarioService _usuarioService;
+        private object usuario;
 
         public UsuarioController(IUsuarioService usuarioService)
         {
@@ -112,7 +115,15 @@ namespace BasketJam.Controllers
                 if (user == null)
                     return BadRequest(new { result = false, message = "Nombre de usuario o contraseña incorrecta" });
 
-                return Ok(new { result = true, user.Token, idUser = user.Id });
+                byte[] encodedRol = new UTF8Encoding().GetBytes(user.TipoUsuario.ToString());
+                byte[] hashRol = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedRol);
+                string encodedd = BitConverter.ToString(hashRol)
+                   // without dashes
+                   .Replace("-", string.Empty)
+                   // make lowercase
+                   .ToLower();                
+
+                return Ok(new { result = true, user.Token, idUser = user.Id,rolUsuario=encodedd });
             }
             catch (Exception ex)
             {

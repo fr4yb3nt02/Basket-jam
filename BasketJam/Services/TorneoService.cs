@@ -101,10 +101,7 @@ namespace BasketJam.Services
             _torneos.ReplaceOne(torneo => torneo.Id == id, tor);
         }
 
-        public void EliminarTorneo(Torneo tor)
-        {
-            _torneos.DeleteOne(torneo => torneo.Id == tor.Id);
-        }
+       
 
         public async void EliminarTorneo(string id)
         {
