@@ -63,6 +63,7 @@ namespace BasketJam.Services
         private readonly IMongoCollection<ConfiguracionUsuarioMovil> _configuracionUsuarioMovil;
         private readonly IMongoCollection<BitacoraPartido> _bitacoraPartido;
         private IVotacionPartidoService _votacionPartidoService;
+        private readonly IMongoCollection<TablaDePosiciones> _tablaDePosiciones;
         private string urlNotifications = "https://exp.host/--/api/v2/push/send";
 
 
@@ -81,6 +82,7 @@ namespace BasketJam.Services
             _estadisticasJugadorPartido = database.GetCollection<EstadisticasJugadorPartido>("EstadisticasJugadorPartido");
             _bitacoraPartido= database.GetCollection<BitacoraPartido>("BitacorasPartidos");
             _configuracionUsuarioMovil = database.GetCollection<ConfiguracionUsuarioMovil>("configuracionUsuarioMovil");
+            _tablaDePosiciones = database.GetCollection<TablaDePosiciones>("tablaDePosiciones");
             //  _estadisticasEquipoPartidoService = estadisticasEquipoPartidoService;
 
 
@@ -113,7 +115,11 @@ namespace BasketJam.Services
             dynamic part;
 
             bp = await _bitacoraPartido.Find<BitacoraPartido>(bpp => bpp.idPartido.Equals(idPartido)).FirstOrDefaultAsync();
-            string tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+            string tiempo = "10:00";
+            if(bp!=null)
+            { 
+            tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+            }
             int periodo = p.cuarto;
 
             
@@ -393,9 +399,11 @@ namespace BasketJam.Services
                 JArray a = new JArray();
 
                 Partido p = BuscarPartido(id).Result;
+                TablaDePosiciones tp = await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.IdTorneo.Equals(p.IdTorneo)).FirstOrDefaultAsync();
+                List<TablaDePosiciones.EquipoTablaPosicion> etp = new List<TablaDePosiciones.EquipoTablaPosicion>();
 
                 //Partido p = await _partidos.Find<Partido>(pa => pa.Id.Equals(id)).FirstOrDefaultAsync();
-                if(p.estado ==(EstadoPartido)5)
+                if (p.estado ==(EstadoPartido)5)
                 {
                     await _partidos.UpdateOneAsync(
                                                         pa => pa.Id.Equals(id),
@@ -403,7 +411,8 @@ namespace BasketJam.Services
                                                         Set(b => b.estado, (EstadoPartido)0));
                 }
                 if (p.estado == (EstadoPartido)0 || (p.estado == (EstadoPartido)2 & tiempo == "10:00"))
-                {
+                {                    
+
                     if(p.estado == (EstadoPartido)0)
                     {
                         //List<Notificacion> n = new List<Notificacion>();
@@ -464,6 +473,7 @@ namespace BasketJam.Services
                     //List<ConfiguracionUsuarioMovil> cum = new List<ConfiguracionUsuarioMovil>();
                     EstadisticasEquipoPartido est1 =await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(e => e.IdPartido.Equals(p.Id) && e.IdEquipo.Equals(p.equipos[0].Id)).FirstOrDefaultAsync();
                     EstadisticasEquipoPartido est2 =await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(e => e.IdPartido.Equals(p.Id) && e.IdEquipo.Equals(p.equipos[1].Id)).FirstOrDefaultAsync();
+                    
 
 
                     List<ConfiguracionUsuarioMovil> cumEf = await _configuracionUsuarioMovil.Find<ConfiguracionUsuarioMovil>(cf => cf.NotificacionEquiposFavoritos == true && (cf.EquiposFavoritos.Contains(p.equipos[0].Id) || cf.EquiposFavoritos.Contains(p.equipos[1].Id))).ToListAsync();
@@ -503,6 +513,67 @@ namespace BasketJam.Services
                                                         pa => pa.Id.Equals(id),
                                                         Builders<Partido>.Update.
                                                         Set(b => b.estado, (EstadoPartido)3));
+
+                    EstadisticasEquipoPartido est3 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(e => e.IdPartido.Equals(p.Id) && e.IdEquipo.Equals(p.equipos[0].Id)).FirstOrDefaultAsync();
+                    EstadisticasEquipoPartido est4 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(e => e.IdPartido.Equals(p.Id) && e.IdEquipo.Equals(p.equipos[1].Id)).FirstOrDefaultAsync();
+
+                    foreach (Equipo e in p.equipos)
+                    {
+
+                        TablaDePosiciones.EquipoTablaPosicion et = tp.EquiposTablaPosicion.Find(aj => aj.idEquipo.Equals(e.Id));
+                        if (e.Id.Equals(est3.IdEquipo))
+                        {
+
+                            if (est3.Puntos > est4.Puntos)
+                                et.Puntos = et.Puntos + 2;
+                            et.PG++;
+                            if (est3.Puntos < est4.Puntos)
+                                et.PP++;
+                            et.PF = et.PF + est3.Puntos;
+                            et.PC = et.PC + est4.Puntos;
+                            et.DIF = et.PF - et.PC;
+
+
+
+                        }
+                        if (e.Id.Equals(est4.IdEquipo))
+                        {
+
+                            if (est4.Puntos > est3.Puntos)
+                                et.Puntos = et.Puntos + 2;
+                            et.PG++;
+                            if (est4.Puntos < est3.Puntos)
+                                et.PP++;
+                            et.PF = et.PF + est4.Puntos;
+                            et.PC = et.PC + est3.Puntos;
+                            et.DIF = et.PF - et.PC;
+                        }
+
+                        var equipoTablaIndex = await _tablaDePosiciones
+                                       .Find(pa => pa.Id == tp.Id)
+                                       .Project(pa => pa.EquiposTablaPosicion.FindIndex(t => t.idEquipo.Equals(e.Id)))
+                                       .SingleOrDefaultAsync();
+
+                        var UpdateDefinitionBuilder = Builders<TablaDePosiciones>.Update.Set(ta => ta.EquiposTablaPosicion[equipoTablaIndex], et);
+
+                        await _tablaDePosiciones.UpdateOneAsync(pe => pe.Id.Equals(tp.Id), UpdateDefinitionBuilder);
+
+                    }
+
+
+                    tp.EquiposTablaPosicion.OrderByDescending(b => new { b.Puntos, b.DIF, b.PF, b.PC });
+                    int posicion = 0;
+                    foreach (TablaDePosiciones.EquipoTablaPosicion etpp in tp.EquiposTablaPosicion)
+                    {
+
+                        etpp.Posicion = posicion++;
+
+
+                    }
+                    await _tablaDePosiciones.UpdateOneAsync(
+                                    tap => tap.Id.Equals(tp.Id),
+                                    Builders<TablaDePosiciones>.Update.
+                                    Set(b => b.EquiposTablaPosicion, tp.EquiposTablaPosicion));
                 }
             }
             catch(Exception ex)

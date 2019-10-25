@@ -443,6 +443,8 @@ namespace BasketJam.Services
 
                 foreach (BitacoraPartido.BitacoraTimeLine a in btl1)
                 {
+                    if(a.Cuarto==periodo)
+                    { 
                     if (a.Accion == (TipoAccion)0)
                         libresIntentEq1++;
                     if (a.Accion == (TipoAccion)1)
@@ -483,49 +485,53 @@ namespace BasketJam.Services
                         perdidasEq1++;
                     if (a.Accion == (TipoAccion)17)
                         tiempoMuertosEq1++;
+                    }
                 }
 
                 foreach (BitacoraPartido.BitacoraTimeLine a in btl2)
                 {
-                    if (a.Accion == (TipoAccion)0)
-                        libresIntentEq2++;
-                    if (a.Accion == (TipoAccion)1)
+                    if (a.Cuarto == periodo)
                     {
-                        libresAcertadosEq2++;
-                        libresIntentEq2++;
+                        if (a.Accion == (TipoAccion)0)
+                            libresIntentEq2++;
+                        if (a.Accion == (TipoAccion)1)
+                        {
+                            libresAcertadosEq2++;
+                            libresIntentEq2++;
+                        }
+                        if (a.Accion == (TipoAccion)2)
+                        {
+                            dosIntentEq2++;
+                            campoIntentEq2++;
+                        }
+                        if (a.Accion == (TipoAccion)3)
+                        {
+                            dosAcertadosEq2++;
+                            dosIntentEq2++;
+                            campoAcertadosEq2++;
+                        }
+                        if (a.Accion == (TipoAccion)4)
+                        {
+                            tresIntentEq2++;
+                            campoIntentEq2++;
+                        }
+                        if (a.Accion == (TipoAccion)5)
+                        {
+                            tresAcertadosEq2++;
+                            tresIntentEq2++;
+                            campoAcertadosEq2++;
+                        }
+                        if (a.Accion == (TipoAccion)6)
+                            rebotesOfensivosEq2++;
+                        if (a.Accion == (TipoAccion)7)
+                            rebotesDefensivosEq2++;
+                        if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
+                            faltasEq2++;
+                        if (a.Accion == (TipoAccion)10)
+                            perdidasEq2++;
+                        if (a.Accion == (TipoAccion)17)
+                            tiempoMuertosEq2++;
                     }
-                    if (a.Accion == (TipoAccion)2)
-                    {
-                        dosIntentEq2++;
-                        campoIntentEq2++;
-                    }
-                    if (a.Accion == (TipoAccion)3)
-                    {
-                        dosAcertadosEq2++;
-                        dosIntentEq2++;
-                        campoAcertadosEq2++;
-                    }
-                    if (a.Accion == (TipoAccion)4)
-                    {
-                        tresIntentEq2++;
-                        campoIntentEq2++;
-                    }
-                    if (a.Accion == (TipoAccion)5)
-                    {
-                        tresAcertadosEq2++;
-                        tresIntentEq2++;
-                        campoAcertadosEq2++;
-                    }
-                    if (a.Accion == (TipoAccion)6)
-                        rebotesOfensivosEq2++;
-                    if (a.Accion == (TipoAccion)7)
-                        rebotesDefensivosEq2++;
-                    if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
-                        faltasEq2++;
-                    if (a.Accion == (TipoAccion)10)
-                        perdidasEq2++;
-                    if (a.Accion == (TipoAccion)17)
-                        tiempoMuertosEq2++;
                 }
 
                 if (libresIntentEq1 != 0)

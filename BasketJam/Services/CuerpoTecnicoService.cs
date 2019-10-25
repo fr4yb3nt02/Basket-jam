@@ -48,6 +48,7 @@ namespace BasketJam.Services
                 ju.id = j.Id;
                 ju.Nombre = j.Nombre;
                 ju.Apellido = j.Apellido;
+                ju.ci = j.Ci;
                 ju.IdEquipo = e.Id;
                 ju.NombreEquipo = e.NombreEquipo;
                 ju.FechaDeNacimiento = j.FechaDeNacimiento;
