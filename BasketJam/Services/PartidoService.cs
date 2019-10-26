@@ -460,10 +460,12 @@ namespace BasketJam.Services
                 }
                 if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto != 4)
                 {
+                    int cuarto = p.cuarto + 1;
                     await _partidos.UpdateOneAsync(
                                                         pa => pa.Id.Equals(id),
                                                         Builders<Partido>.Update.
-                                                        Set(b => b.estado, (EstadoPartido)2).Set(b => b.cuarto,p.cuarto++));
+                                                        Set(b => b.estado, (EstadoPartido)2)
+                                                        .Set(b => b.cuarto, cuarto));
                 }
                 if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto == 4)
                 {
@@ -565,8 +567,10 @@ namespace BasketJam.Services
                     int posicion = 0;
                     foreach (TablaDePosiciones.EquipoTablaPosicion etpp in tp.EquiposTablaPosicion)
                     {
-
-                        etpp.Posicion = posicion++;
+                        if(posicion==0)
+                            etpp.Posicion = 1;
+                        else
+                            etpp.Posicion = posicion++;
 
 
                     }
@@ -585,12 +589,18 @@ namespace BasketJam.Services
         public async void ActualizarTiempoPartido(string id, string tiempo)
         {
 
-            
+            try
+            { 
 
             await _partidos.UpdateOneAsync(
                  p => p.Id.Equals(id),
                  Builders<Partido>.Update.
                  Set(b => b.Tiempo, tiempo));
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
         }
 

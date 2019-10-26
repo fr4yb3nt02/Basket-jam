@@ -98,6 +98,7 @@ namespace BasketJam.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPut("ActualizarTiempoPartido/")]
         public IActionResult ActualizarTiempoPartido(string idpartido, string tiempo)
         {
@@ -122,8 +123,8 @@ namespace BasketJam.Controllers
             }
         }
 
-        [HttpPut("ActualizarTiempoPartido/")]
-        public IActionResult ActualizarTiempoPartido(string idpartido, int cuarto)
+        [HttpPut("ActualizarCuartoPartido/")]
+        public IActionResult ActualizarCuartoPartido(string idpartido, int cuarto)
         {
             try
             {
