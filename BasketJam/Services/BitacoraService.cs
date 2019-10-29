@@ -408,7 +408,7 @@ namespace BasketJam.Services
 
         }
 
-        public async Task<Object> consultarEstadisticasPeriodo(string idPartido, int periodo)
+        public async Task<Object> consultarEstadisticasPeriodo(string idPartido, int    periodo)
         {
             try
             {

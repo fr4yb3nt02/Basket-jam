@@ -144,23 +144,59 @@ namespace BasketJam.Services
             if(ejp.TirosLibresConvertidos!=0)
             ptos=1;
 
-                     int puntos=EstadisticasEquipoPartido.Puntos+ptos;
-
+                //int puntos=EstadisticasEquipoPartido.Puntos+ptos;
+                int puntos = 0;
+                int puntosTotales = EstadisticasEquipoPartido.Puntos + ptos; ;
                 int puntosPrimerCuarto=0;
                 int puntosSegundoCuarto=0;
                 int puntosTercerCuarto=0;
                 int puntosCuartoCuarto=0;
                 int puntosOverTime=0;
-                if(Partido.cuarto==1)
-                    puntosPrimerCuarto=puntos;
-                if(Partido.cuarto==2)
-                    puntosSegundoCuarto=puntos;
-                if(Partido.cuarto==3)
-                    puntosTercerCuarto=puntos;
-                if(Partido.cuarto==4)
-                    puntosCuartoCuarto=puntos;
-                if(Partido.cuarto==5)
-                    puntosOverTime=puntos;                    
+                if (Partido.cuarto == 1)
+                {
+                    puntos = EstadisticasEquipoPartido.PuntosPrimerCuarto + ptos;
+                    puntosPrimerCuarto = puntos;
+                    puntosSegundoCuarto = EstadisticasEquipoPartido.PuntosSegundoCuarto;
+                    puntosTercerCuarto = EstadisticasEquipoPartido.PuntosTercerCuarto;
+                    puntosCuartoCuarto = EstadisticasEquipoPartido.PuntosCuartoCuarto;
+                    puntosOverTime = EstadisticasEquipoPartido.PuntosOverTime;
+                }
+                if (Partido.cuarto == 2)
+                {
+                    puntos = EstadisticasEquipoPartido.PuntosSegundoCuarto + ptos;
+                    puntosSegundoCuarto = puntos;
+                    puntosPrimerCuarto = EstadisticasEquipoPartido.PuntosPrimerCuarto;
+                    puntosTercerCuarto = EstadisticasEquipoPartido.PuntosTercerCuarto;
+                    puntosCuartoCuarto = EstadisticasEquipoPartido.PuntosCuartoCuarto;
+                    puntosOverTime = EstadisticasEquipoPartido.PuntosOverTime;
+                }
+                if (Partido.cuarto == 3)
+                {
+                    puntos = EstadisticasEquipoPartido.PuntosTercerCuarto + ptos;
+                    puntosTercerCuarto = puntos;
+                    puntosSegundoCuarto = EstadisticasEquipoPartido.PuntosSegundoCuarto;
+                    puntosPrimerCuarto = EstadisticasEquipoPartido.PuntosPrimerCuarto;
+                    puntosCuartoCuarto = EstadisticasEquipoPartido.PuntosCuartoCuarto;
+                    puntosOverTime = EstadisticasEquipoPartido.PuntosOverTime;
+                }
+                if (Partido.cuarto == 4)
+                {
+                    puntos = EstadisticasEquipoPartido.PuntosCuartoCuarto + ptos;
+                    puntosCuartoCuarto = puntos;
+                    puntosSegundoCuarto = EstadisticasEquipoPartido.PuntosSegundoCuarto;
+                    puntosTercerCuarto = EstadisticasEquipoPartido.PuntosTercerCuarto;
+                    puntosPrimerCuarto = EstadisticasEquipoPartido.PuntosPrimerCuarto;
+                    puntosOverTime = EstadisticasEquipoPartido.PuntosOverTime;
+                }
+                if (Partido.cuarto == 5)
+                {
+                    puntos = EstadisticasEquipoPartido.PuntosOverTime + ptos;
+                    puntosOverTime = puntos;
+                    puntosSegundoCuarto = EstadisticasEquipoPartido.PuntosSegundoCuarto;
+                    puntosTercerCuarto = EstadisticasEquipoPartido.PuntosTercerCuarto;
+                    puntosCuartoCuarto = EstadisticasEquipoPartido.PuntosCuartoCuarto;
+                    puntosPrimerCuarto = EstadisticasEquipoPartido.PuntosPrimerCuarto;
+                }
 
 
                 int tirosLibresExitosos= EstadisticasEquipoPartido.TirosLibresExitosos+ejp.TirosLibresConvertidos;
@@ -198,7 +234,7 @@ namespace BasketJam.Services
                 .Set(b => b.RebotesOfensivos,rebotesOfensivos)
                 .Set(c => c.RebotesDefensivos,rebotesDefensivos)
                 .Set(d => d.Faltas,faltas)
-                .Set(f => f.Puntos,puntos)
+                .Set(f => f.Puntos, puntosTotales)
                 .Set(c => c.PuntosPrimerCuarto,puntosPrimerCuarto)
                 .Set(d => d.PuntosSegundoCuarto,puntosSegundoCuarto)
                 .Set(b => b.PuntosTercerCuarto,puntosTercerCuarto)

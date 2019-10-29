@@ -527,10 +527,15 @@ namespace BasketJam.Services
                         {
 
                             if (est3.Puntos > est4.Puntos)
+                            {
                                 et.Puntos = et.Puntos + 2;
-                            et.PG++;
+                                et.PG++;
+                            }
                             if (est3.Puntos < est4.Puntos)
+                            {
                                 et.PP++;
+                                et.Puntos = et.Puntos + 1;
+                            }
                             et.PF = et.PF + est3.Puntos;
                             et.PC = et.PC + est4.Puntos;
                             et.DIF = et.PF - et.PC;
@@ -567,10 +572,16 @@ namespace BasketJam.Services
                     int posicion = 0;
                     foreach (TablaDePosiciones.EquipoTablaPosicion etpp in tp.EquiposTablaPosicion)
                     {
-                        if(posicion==0)
+                        if (posicion == 0)
+                        {
                             etpp.Posicion = 1;
+                            posicion = posicion++;
+                        }
                         else
+                        {
                             etpp.Posicion = posicion++;
+                            posicion = posicion++;
+                        }
 
 
                     }

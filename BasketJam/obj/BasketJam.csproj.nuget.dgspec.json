@@ -77,6 +77,10 @@
               "target": "Package",
               "version": "[2.8.1, )"
             },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[106.6.10, )"
+            },
             "Sendgrid": {
               "target": "Package",
               "version": "[9.12.0, )"
