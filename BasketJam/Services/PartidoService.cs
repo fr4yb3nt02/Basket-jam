@@ -249,6 +249,7 @@ namespace BasketJam.Services
                     dev.Add(new
                     {
                         idPartido = p.Id,
+                        idTorneo=p.IdTorneo,
                         idEquipo1 = Eq1.Id,
                         idEquipo2 = Eq2.Id,
                         estadio = p.estadio,
@@ -427,16 +428,18 @@ namespace BasketJam.Services
                         {
                             dynamic no = new ExpandoObject();
                             no.to = c.Token;
+                            no.sound = "default";
                             no.title = "!Tu equipo favorito está jugando!☺☺☺";
                             no.body = "¡Ha dado comienzo al partido entre " + p.equipos[0].NombreEquipo + " y " + p.equipos[1].NombreEquipo + "!";
                             a.Add(JToken.FromObject(no));
                         }
                         foreach (ConfiguracionUsuarioMovil c in cum)
                         {
-                            if(!cumEf.Contains(c))
+                            if(!cumEf.Contains(c) && c.NotificacionInicioPartido==true)
                             {
                             dynamic no = new ExpandoObject();
                             no.to = c.Token;
+                            no.sound = "default";
                             no.title="Comienzo de partido.";
                             no.body="¡Ha dado comienzo al partido entre "+p.equipos[0].NombreEquipo + " y " + p.equipos[1].NombreEquipo+"!";
                                 a.Add(JToken.FromObject(no));
@@ -485,6 +488,7 @@ namespace BasketJam.Services
                     {
                         dynamic no = new ExpandoObject();
                         no.to = c.Token;
+                        no.sound = "default";
                         no.title = "¡Ha finalizado el partido entre " + p.equipos[0].NombreEquipo + " y " + p.equipos[0].NombreEquipo + "!";
                         if(est1.Puntos>est2.Puntos)
                         no.body = "El equipo de "+p.equipos[0].NombreEquipo +" se impuso a "+p.equipos[1].NombreEquipo+" por "+est1.Puntos+" puntos a "+est2.Puntos;
@@ -494,10 +498,11 @@ namespace BasketJam.Services
                     }
                     foreach (ConfiguracionUsuarioMovil c in cum)
                     {
-                        if (!cumEf.Contains(c))
+                        if (!cumEf.Contains(c) && c.NotificacionFinPartido == true)
                         {
                             dynamic no = new ExpandoObject();
                             no.to = c.Token;
+                            no.sound = "default";
                             no.title = "¡Ha finalizado el partido entre " + p.equipos[0].NombreEquipo + " y " + p.equipos[1].NombreEquipo + "!";
                             if (est1.Puntos > est2.Puntos)
                                 no.body = "El equipo de " + p.equipos[0].NombreEquipo + " se impuso a " + p.equipos[1].NombreEquipo + " por " + est1.Puntos + " puntos a " + est2.Puntos;
@@ -547,10 +552,15 @@ namespace BasketJam.Services
                         {
 
                             if (est4.Puntos > est3.Puntos)
+                            {
                                 et.Puntos = et.Puntos + 2;
-                            et.PG++;
+                                et.PG++;
+                            }
                             if (est4.Puntos < est3.Puntos)
+                            {
                                 et.PP++;
+                                et.Puntos = et.Puntos + 1;
+                            }
                             et.PF = et.PF + est4.Puntos;
                             et.PC = et.PC + est3.Puntos;
                             et.DIF = et.PF - et.PC;
@@ -569,18 +579,21 @@ namespace BasketJam.Services
 
 
                     tp.EquiposTablaPosicion.OrderByDescending(b => new { b.Puntos, b.DIF, b.PF, b.PC });
+                    List<TablaDePosiciones.EquipoTablaPosicion> equiposParaMod = new List<TablaDePosiciones.EquipoTablaPosicion>();
                     int posicion = 0;
                     foreach (TablaDePosiciones.EquipoTablaPosicion etpp in tp.EquiposTablaPosicion)
                     {
                         if (posicion == 0)
                         {
                             etpp.Posicion = 1;
-                            posicion = posicion++;
+                            posicion = posicion + 1;
+                            equiposParaMod.Add(etpp);
                         }
                         else
                         {
-                            etpp.Posicion = posicion++;
-                            posicion = posicion++;
+                            posicion = posicion + 1;
+                            etpp.Posicion = posicion;                            
+                            equiposParaMod.Add(etpp);
                         }
 
 
@@ -588,7 +601,7 @@ namespace BasketJam.Services
                     await _tablaDePosiciones.UpdateOneAsync(
                                     tap => tap.Id.Equals(tp.Id),
                                     Builders<TablaDePosiciones>.Update.
-                                    Set(b => b.EquiposTablaPosicion, tp.EquiposTablaPosicion));
+                                    Set(b => b.EquiposTablaPosicion, equiposParaMod));
                 }
             }
             catch(Exception ex)

@@ -426,7 +426,7 @@ namespace BasketJam.Services
                 List<BitacoraPartido.BitacoraTimeLine> btl2 = new List<BitacoraPartido.BitacoraTimeLine>();
 
 
-                BitacoraPartido estEqPar1 = await _bitacoraPartido.Find<BitacoraPartido>(x => x.idPartido == idPartido).FirstOrDefaultAsync();
+                BitacoraPartido estEqPar1 = await _bitacoraPartido.Find<BitacoraPartido>(x => x.idPartido.Equals(idPartido)).FirstOrDefaultAsync();
                 Equipo equipoDeJugador;
                 Jugador jugador;
                 foreach (BitacoraPartido.BitacoraTimeLine btl in estEqPar1.bitacoraTimeLine)
@@ -443,7 +443,7 @@ namespace BasketJam.Services
 
                 foreach (BitacoraPartido.BitacoraTimeLine a in btl1)
                 {
-                    if(a.Cuarto==periodo)
+                    if(a.Cuarto==periodo || 0 == periodo)
                     { 
                     if (a.Accion == (TipoAccion)0)
                         libresIntentEq1++;
@@ -461,20 +461,22 @@ namespace BasketJam.Services
                     {
                         dosAcertadosEq1++;
                         dosIntentEq1++;
+                        campoIntentEq1++;
                         campoAcertadosEq1++;
                     }
                     if (a.Accion == (TipoAccion)4)
                     {
                         tresIntentEq1++;
-                        campoIntentEq1++;
-                    }
-                    if (a.Accion == (TipoAccion)5)
-                    {
-                        tresAcertadosEq1++;
-                        tresIntentEq1++;
-                        campoAcertadosEq1++;
+                       campoIntentEq1++;
+                        }
+                        if (a.Accion == (TipoAccion)5)
+                        {
+                            tresAcertadosEq1++;
+                            tresIntentEq1++;
+                            campoAcertadosEq1++;
+                            campoIntentEq1++;
 
-                    }
+                        }
                     if (a.Accion == (TipoAccion)6)
                         rebotesOfensivosEq1++;
                     if (a.Accion == (TipoAccion)7)
@@ -490,7 +492,7 @@ namespace BasketJam.Services
 
                 foreach (BitacoraPartido.BitacoraTimeLine a in btl2)
                 {
-                    if (a.Cuarto == periodo)
+                    if (a.Cuarto == periodo || 0 == periodo)
                     {
                         if (a.Accion == (TipoAccion)0)
                             libresIntentEq2++;
@@ -502,13 +504,14 @@ namespace BasketJam.Services
                         if (a.Accion == (TipoAccion)2)
                         {
                             dosIntentEq2++;
-                            campoIntentEq2++;
+                            campoIntentEq2++; 
                         }
                         if (a.Accion == (TipoAccion)3)
                         {
                             dosAcertadosEq2++;
                             dosIntentEq2++;
                             campoAcertadosEq2++;
+                            campoIntentEq2++;
                         }
                         if (a.Accion == (TipoAccion)4)
                         {
@@ -520,6 +523,7 @@ namespace BasketJam.Services
                             tresAcertadosEq2++;
                             tresIntentEq2++;
                             campoAcertadosEq2++;
+                            campoIntentEq2++;
                         }
                         if (a.Accion == (TipoAccion)6)
                             rebotesOfensivosEq2++;
@@ -688,16 +692,16 @@ namespace BasketJam.Services
                                          puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                          //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                      }
-).Take(10);
+).Take(10).OrderByDescending(x => x.puntos);
 
                        // datos = cosos;
                         foreach(var v in cosos)
                             {
 
                         datos.Add(v);                        
-                        }
+                        }                    
 
-                    }
+                }
                 if (rubro == 1)
                 {
                     int counter = 1;
@@ -717,7 +721,7 @@ namespace BasketJam.Services
                                      puntos = jugGroup.Sum(x => x.statJugP.TirosLibresConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                  }
-).Take(10);
+).Take(10).OrderByDescending(x => x.puntos); 
 
                     // datos = cosos;
                     foreach (Object v in cosos)
@@ -747,7 +751,7 @@ namespace BasketJam.Services
                                      puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                  }
-).Take(10);
+).Take(10).OrderByDescending(x => x.puntos); ;
 
                     // datos = cosos;
                     foreach (Object v in cosos)
@@ -776,7 +780,7 @@ namespace BasketJam.Services
                                      puntos = jugGroup.Sum(x => x.statJugP.TresPuntosConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                  }
-).Take(10);
+).Take(10).OrderByDescending(x => x.puntos); ;
 
                     // datos = cosos;
                     foreach (Object v in cosos)

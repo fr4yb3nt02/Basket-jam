@@ -231,10 +231,12 @@ namespace BasketJam.Services
                 //return usuario;
             }
             catch (MongoWriteException ex)
-            {
-                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI"))
-                    return (new {result=false,mensaje= "Ya existe un usuario con la C.I ingresada." });
-                else if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueNombreUser"))
+            {                
+                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI") && usuario.TipoUsuario!=(TipoUsuario)2)
+                    return (new { result = false, mensaje = "Ya existe un usuario con la C.I ingresada." });                
+                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI") && usuario.TipoUsuario.Equals((TipoUsuario)2))
+                    return (new { result = false, mensaje = "Ya existe un usuario el mail ingresado." });
+                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueNombreUser"))
                     //throw new AppException("Ya existe un usuario con el nombre de usuario ingresado.");
                     return (new { result=false,mensaje="Ya existe un usuario con el nombre de usuario ingresado." });
                 else
