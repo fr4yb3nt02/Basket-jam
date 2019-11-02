@@ -135,8 +135,9 @@ namespace BasketJam.Services
                 int perdidas=EstadisticasJugadorPartido.Perdidas+ejp.Perdidas;
                 int recuperos=EstadisticasJugadorPartido.Recuperos+ejp.Recuperos;
                 int faltasPersonales=EstadisticasJugadorPartido.FaltasPersonales+ejp.FaltasPersonales;
-                int faltasRecibidas=EstadisticasJugadorPartido.FaltasRecibidas+ejp.FaltasRecibidas;
+                int faltasAntideportivas=EstadisticasJugadorPartido.FaltasAntideportivas+ejp.FaltasAntideportivas;
                 int faltasCometidas=EstadisticasJugadorPartido.FaltasCometidas+ejp.FaltasCometidas;
+                int faltasTecnicas = EstadisticasJugadorPartido.FaltasTecnicas + ejp.FaltasTecnicas;
 
                Coordenada unaCoor= ejp.CoordenadasAcciones[0];
                /* unaCoor.X = ejp.CoordenadasAcciones[0].X;
@@ -161,7 +162,8 @@ namespace BasketJam.Services
                 .Set(c => c.Asistencias,asistencias)
                 .Set(d => d.Perdidas,perdidas)
                 .Set(d => d.FaltasPersonales,faltasPersonales)
-                .Set(b => b.FaltasRecibidas,faltasRecibidas)
+                .Set(b => b.FaltasAntideportivas,faltasAntideportivas)
+                .Set(b => b.FaltasTecnicas,faltasTecnicas)
                 .Set(c => c.FaltasCometidas,faltasCometidas)
                 .Set(d => d.Recuperos,recuperos)
                 .Set(e => e.Puntos,puntos)

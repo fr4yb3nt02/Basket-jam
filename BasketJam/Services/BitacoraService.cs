@@ -136,9 +136,11 @@ namespace BasketJam.Services
                         if (b.Accion == (TipoAccion)12)
                             ejb.FaltasPersonales = 1;
                         if (b.Accion == (TipoAccion)13)
-                            ejb.FaltasRecibidas = 1;
+                            ejb.FaltasAntideportivas = 1;
                         if (b.Accion == (TipoAccion)14)
                             ejb.FaltasCometidas = 1;
+                        if (b.Accion == (TipoAccion)18)
+                            ejb.FaltasTecnicas = 1;
 
                         if (b.CoordenadasAcciones != null)
                         {
@@ -248,9 +250,11 @@ namespace BasketJam.Services
                         if (b.Accion == (TipoAccion)12)
                             ejb.FaltasPersonales = 1;
                         if (b.Accion == (TipoAccion)13)
-                            ejb.FaltasRecibidas = 1;
+                            ejb.FaltasAntideportivas = 1;
                         if (b.Accion == (TipoAccion)14)
                             ejb.FaltasCometidas = 1;
+                        if (b.Accion == (TipoAccion)18)
+                            ejb.FaltasTecnicas = 1;
 
                         if (b.CoordenadasAcciones != null)
                         {
@@ -388,9 +392,11 @@ namespace BasketJam.Services
                     if (b.Accion == (TipoAccion)12)
                         ejb.FaltasPersonales = 1;
                     if (b.Accion == (TipoAccion)13)
-                        ejb.FaltasRecibidas = 1;
+                        ejb.FaltasAntideportivas = 1;
                     if (b.Accion == (TipoAccion)14)
                         ejb.FaltasCometidas = 1;
+                    if (b.Accion == (TipoAccion)18)
+                        ejb.FaltasTecnicas = 1;
 
                     coordenadas.Add(b.CoordenadasAcciones);
 
@@ -481,7 +487,8 @@ namespace BasketJam.Services
                         rebotesOfensivosEq1++;
                     if (a.Accion == (TipoAccion)7)
                         rebotesDefensivosEq1++;
-                    if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
+                        //if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
+                    if (a.Accion == (TipoAccion)14) //|| a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)18)
                         faltasEq1++;
                     if (a.Accion == (TipoAccion)10)
                         perdidasEq1++;
@@ -529,7 +536,7 @@ namespace BasketJam.Services
                             rebotesOfensivosEq2++;
                         if (a.Accion == (TipoAccion)7)
                             rebotesDefensivosEq2++;
-                        if (a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)14)
+                        if (a.Accion == (TipoAccion)14) //|| a.Accion == (TipoAccion)13 || a.Accion == (TipoAccion)18)
                             faltasEq2++;
                         if (a.Accion == (TipoAccion)10)
                             perdidasEq2++;

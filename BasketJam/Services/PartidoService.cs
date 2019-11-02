@@ -115,10 +115,13 @@ namespace BasketJam.Services
             dynamic part;
 
             bp = await _bitacoraPartido.Find<BitacoraPartido>(bpp => bpp.idPartido.Equals(idPartido)).FirstOrDefaultAsync();
+            
             string tiempo = "10:00";
             if(bp!=null)
-            { 
-            tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+            {
+                //tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+                List<BitacoraPartido.BitacoraTimeLine> btl = bp.bitacoraTimeLine.OrderBy(b => b.Cuarto).ToList();
+                tiempo = btl.Last().Tiempo;
             }
             int periodo = p.cuarto;
 
@@ -470,6 +473,13 @@ namespace BasketJam.Services
                                                         Set(b => b.estado, (EstadoPartido)2)
                                                         .Set(b => b.cuarto, cuarto));
                 }
+                if (p.estado == (EstadoPartido)2 & tiempo != "00:00")
+                {
+                    await _partidos.UpdateOneAsync(
+                                                        pa => pa.Id.Equals(id),
+                                                        Builders<Partido>.Update.
+                                                        Set(b => b.estado, (EstadoPartido)1));                                                        
+                }
                 if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto == 4)
                 {
                     //List<Notificacion> n = new List<Notificacion>();
@@ -764,6 +774,17 @@ namespace BasketJam.Services
 
             foreach (Partido p in part)
             {
+
+               BitacoraPartido bp = await _bitacoraPartido.Find<BitacoraPartido>(bpp => bpp.idPartido.Equals(p.Id)).FirstOrDefaultAsync();
+
+                string tiempo = "10:00";
+                if (bp != null)
+                {
+                    //tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+                    List<BitacoraPartido.BitacoraTimeLine> btl = bp.bitacoraTimeLine.OrderBy(b => b.Cuarto).ToList();
+                    tiempo = btl.Last().Tiempo;
+                }
+
                 EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == p.Id && x.IdEquipo == p.equipos[0].Id).FirstOrDefaultAsync();
                 EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == p.Id && x.IdEquipo == p.equipos[1].Id).FirstOrDefaultAsync();
                 int puntosEq1 = 0, puntosEq2 = 0;
@@ -787,7 +808,7 @@ namespace BasketJam.Services
                     hora = p.fecha.ToShortTimeString(),
                     estado = ((EstadoPartido)p.estado).ToString(),
                     cuarto = p.cuarto,
-                    tiempo = p.Tiempo,
+                    tiempo = tiempo,
                 });
             }
 
@@ -803,6 +824,15 @@ namespace BasketJam.Services
                 //  List<EstadisticasEquipoPartido> estEqPar = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => true).ToListAsync();
                 // List<Equipo> equi = await _equipos.Find<Equipo>(x => true).ToListAsync();
                 Object devv = new Object();
+
+               BitacoraPartido bp = await _bitacoraPartido.Find<BitacoraPartido>(bpp => bpp.idPartido.Equals(idPartido)).FirstOrDefaultAsync();
+                string tiempo = "10:00";
+                if (bp != null)
+                {
+                    //tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+                    List<BitacoraPartido.BitacoraTimeLine> btl = bp.bitacoraTimeLine.OrderBy(b => b.Cuarto).ToList();
+                    tiempo = btl.Last().Tiempo;
+                }
 
                 /*foreach(Partido p in part)
                 {*/
@@ -826,7 +856,7 @@ namespace BasketJam.Services
                     ptosequipo1 = puntosEq1,
                     ptosequipo2 = puntosEq2,
                     cuartoenjuego = p.cuarto,
-                    tiempoDeJuego = p.Tiempo,
+                    tiempoDeJuego = tiempo,
                     Estadio = p.estadio,
                     fecha = p.fecha.ToString("dd/MM/yyyy"),
                     statuspartido = ((EstadoPartido)p.estado).ToString()
@@ -1135,7 +1165,9 @@ namespace BasketJam.Services
                         rebotesTotales=ejp.RebotesTotales,
                         asistencias=ejp.Asistencias,
                         recuperos=ejp.Recuperos,
-                        faltasPersonales=ejp.FaltasPersonales
+                        faltasPersonales=ejp.FaltasPersonales,
+                        faltasAntideportivas=ejp.FaltasAntideportivas,
+                        faltasTecnicas=ejp.FaltasTecnicas
                     };
                         listReturn.Add(det);
                     }
@@ -1163,7 +1195,9 @@ namespace BasketJam.Services
                             rebotesTotales = 0,
                             asistencias = 0,
                             recuperos = 0,
-                            faltasPersonales = 0
+                            faltasPersonales = 0,
+                            faltastAntideportivas=0,
+                            faltasTecnicas=0
                         };
                         listReturn.Add(det);
                     }

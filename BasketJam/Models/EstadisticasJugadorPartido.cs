@@ -97,8 +97,12 @@ public class EstadisticasJugadorPartido
         public int FaltasPersonales { get; set; }
 
         [BsonRequired]
-        [BsonElement("FaltasRecibidas")]
-        public int FaltasRecibidas { get; set; }
+        [BsonElement("FaltasAntideportivas")]
+        public int FaltasAntideportivas { get; set; }
+
+        [BsonRequired]
+        [BsonElement("FaltasTecnicas")]
+        public int FaltasTecnicas { get; set; }
 
         [BsonRequired]
         [BsonElement("FaltasCometidas")]

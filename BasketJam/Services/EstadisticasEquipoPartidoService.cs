@@ -120,7 +120,7 @@ namespace BasketJam.Services
                     PorcentajeCanastas3Puntos=porcentajeCanastas3Puntos,
                     RebotesDefensivos=ejp.RebotesDefensivos,
                     RebotesOfensivos=ejp.RebotesOfensivos,
-                    Faltas=ejp.FaltasCometidas+ejp.FaltasPersonales,
+                    Faltas=ejp.FaltasCometidas,//+ejp.FaltasPersonales+ejp.FaltasAntideportivas+ejp.FaltasTecnicas,
                     Perdidas=ejp.Perdidas
 
                 });
@@ -216,7 +216,7 @@ namespace BasketJam.Services
                  porcentajeCanastas3Puntos=(canasta3PuntosExitosas*100)/totalCanastas3Puntos;
                 int rebotesDefensivos=EstadisticasEquipoPartido.RebotesDefensivos+ ejp.RebotesDefensivos;
                 int rebotesOfensivos=EstadisticasEquipoPartido.RebotesDefensivos+ ejp.RebotesOfensivos;
-                int faltas=EstadisticasEquipoPartido.Faltas+ ejp.FaltasCometidas+ejp.FaltasPersonales;
+                int faltas = EstadisticasEquipoPartido.Faltas + ejp.FaltasCometidas;//+ ejp.FaltasCometidas+ejp.FaltasPersonales+ejp.FaltasAntideportivas+ejp.FaltasTecnicas;
                 int perdidas=EstadisticasEquipoPartido.Perdidas+ ejp.Perdidas;
 
                   await _estadisticasEquipoPartido.UpdateOneAsync(

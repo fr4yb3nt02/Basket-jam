@@ -13,10 +13,10 @@ public enum TipoAccion
   Perdida,
   Recupero,
   FaltaPersonal,
-  FaltaRecibida,
+  FaltaAntideportiva,
   FaltaCometida,
   PasaATitular,
   PasaASuplente,
-  TiempoMuerto
-
+  TiempoMuerto,  
+  FaltaTecnica
 }
