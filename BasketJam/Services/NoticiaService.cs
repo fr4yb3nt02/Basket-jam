@@ -44,17 +44,19 @@ namespace BasketJam.Services
         {
             List<Noticia> noticias= await _noticias.Find(noticia => true).ToListAsync();
             List<dynamic> paraDev = new List<dynamic>();
+            //HelperCloudinary.cloudUrl + entidadImagen + "/" + id;
             foreach (Noticia no in noticias)
             {
+                string imgUrl = ImagenService.buscarImagen(no.Id, "Noticias");
                 var dat = new
                 {
-
+                    
                     id = no.Id,
                     titulo = no.Titulo,
                     contenidoAbreviado = no.ContenidoAbreviado,
                     contenido = no.Contenido,
                     fecha = no.Fecha,
-                    imagen = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/" + no.Id
+                    imagen = imgUrl
                 };
                 paraDev.Add(dat);
             }
@@ -67,6 +69,7 @@ namespace BasketJam.Services
             List<Object> paraDev = new List<Object>();
             foreach (Noticia no in noticias)
             {
+                string imgUrl = ImagenService.buscarImagen(no.Id, "Noticias");
                 var dat = new
                 {
 
@@ -75,7 +78,7 @@ namespace BasketJam.Services
                     contenidoAbreviado = no.ContenidoAbreviado,
                     contenido = no.Contenido,
                     fecha = no.Fecha,
-                    imagen = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/" + no.Id
+                    imagen = imgUrl
                 };
                 paraDev.Add(dat);
             }
@@ -92,6 +95,7 @@ namespace BasketJam.Services
                             ).Take(10);
             foreach (Noticia no in ultimas10)
             {
+                string imgUrl = ImagenService.buscarImagen(no.Id, "Noticias");
                 var dat = new
                 {
 
@@ -100,7 +104,7 @@ namespace BasketJam.Services
                     contenidoAbreviado = no.ContenidoAbreviado,
                     contenido = no.Contenido,
                     fecha = no.Fecha,
-                    imagen = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/" + no.Id
+                    imagen = imgUrl
                 };
             paraDev.Add(dat);
             }
@@ -116,7 +120,7 @@ namespace BasketJam.Services
         public async Task<dynamic> BuscarNoticia(string id)
         {
            dynamic Object = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
-            Object.foto = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Noticias/"+id;            
+            Object.foto = ImagenService.buscarImagen(id, "Noticias");
             return Object;
         }
         public void ActualizarNoticia(string id, Noticia not)

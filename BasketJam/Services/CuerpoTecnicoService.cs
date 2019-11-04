@@ -1,4 +1,5 @@
 using BasketJam.Helper;
+using BasketJam.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +23,7 @@ namespace BasketJam.Services
         Task<CuerpoTecnico> CrearMiembroCuerpoTecnico(CuerpoTecnico equipo);
         void ActualizarMiembroCuerpoTecnico(string id, CuerpoTecnico eq);
         void EliminarMiembroCuerpoTecnico(string id);
+        void subirImagen(Imagen img);
     }
 
     public class CuerpoTecnicoService : ICuerpoTecnicoService
@@ -42,7 +44,7 @@ namespace BasketJam.Services
             List<CuerpoTecnico> cuerpoTecnico=await _cuerpoTecnico.Find(ct => ct.Activo==true).ToListAsync();
             List<ExpandoObject> ctt = new List<ExpandoObject>();
             foreach (CuerpoTecnico j in cuerpoTecnico)
-            {
+            {                
                 Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
                 dynamic ju = new ExpandoObject();
                 ju.id = j.Id;
@@ -54,7 +56,7 @@ namespace BasketJam.Services
                 ju.FechaDeNacimiento = j.FechaDeNacimiento;
                 ju.Activo = j.Activo;
                 ju.Cargo = j.Cargo.ToString();
-                ju.Foto = HelperCloudinary.cloudUrl + "CuerpoTecnico/" + j.Id;
+                ju.Foto = ImagenService.buscarImagen(j.Id, "CuerpoTecnico"); 
                 ctt.Add(ju);
             }
             return ctt;
@@ -83,6 +85,20 @@ namespace BasketJam.Services
                    ju => ju.Id.Equals(id),
                    Builders<CuerpoTecnico>.Update.
                    Set(b => ((MiembroDeEquipo)b).Activo, false));
+        }
+
+        public void subirImagen(Imagen img)
+        {
+
+            try
+            {
+                string claseImagen = "CuerpoTecnico";
+                ImagenService.subirImagen(img, claseImagen);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

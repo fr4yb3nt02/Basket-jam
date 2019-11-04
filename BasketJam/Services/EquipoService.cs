@@ -100,6 +100,7 @@ namespace BasketJam.Services
             List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
             foreach(Equipo e in equipos)
             {
+                string imgUrl = ImagenService.buscarImagen(e.Id, "Equipos");
                 dynamic eq = new ExpandoObject();
                 dynamic estadio = new ExpandoObject();
                 eq.Id = e.Id;
@@ -109,7 +110,7 @@ namespace BasketJam.Services
                 eq.Categoria = e.Categoria;
                 estadio = e.Estadio;
                 eq.Estadio = estadio;
-                eq.foto= HelperCloudinary.cloudUrl + "Equipos/" + e.Id;
+                eq.foto= imgUrl;
                 eqConFotos.Add(eq);
             }
             return eqConFotos;
@@ -122,6 +123,7 @@ namespace BasketJam.Services
             List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
             foreach (Equipo e in equipos)
             {
+                string imgUrl = ImagenService.buscarImagen(e.Id, "Equipos");
                 dynamic eq = new ExpandoObject();
                 dynamic estadio = new ExpandoObject();
                 eq.Id = e.Id;
@@ -131,7 +133,7 @@ namespace BasketJam.Services
                 eq.Categoria = e.Categoria;
                 estadio = e.Estadio;
                 eq.Estadio = estadio;
-                eq.foto = HelperCloudinary.cloudUrl + "Equipos/" + e.Id;
+                eq.foto = imgUrl;
                 eqConFotos.Add(eq);
             }
             return eqConFotos;

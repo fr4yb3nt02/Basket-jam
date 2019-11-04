@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.Dynamic;
+using BasketJam.Models;
 
 namespace BasketJam.Controllers
 {
@@ -91,6 +92,21 @@ namespace BasketJam.Controllers
 
                 _cuerpoTecnicoService.EliminarMiembroCuerpoTecnico(id);
 
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("subirFoto/")]
+        public IActionResult subirFoto(Imagen img)
+        {
+            try
+            {
+                _cuerpoTecnicoService.subirImagen(img);
                 return Ok(new { Resultado = true });
             }
             catch (Exception ex)

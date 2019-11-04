@@ -50,6 +50,8 @@ namespace BasketJam.Services
             foreach (Jugador j in jugadores)
             {
                 Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
+                string imgUrl = ImagenService.buscarImagen(j.Id, "Jugadores");
+
                 dynamic ju = new ExpandoObject();
                 ju.id = j.Id;
                 ju.Nombre = j.Nombre;
@@ -63,7 +65,7 @@ namespace BasketJam.Services
                 ju.NumeroCamiseta = j.NumeroCamiseta;
                 ju.Altura = j.Altura;
                 ju.Peso = j.Peso;         
-                ju.Foto = HelperCloudinary.cloudUrl + "Jugadores/" + j.Id;
+                ju.Foto = imgUrl;
                 jugs.Add(ju);
             }
             return jugs;

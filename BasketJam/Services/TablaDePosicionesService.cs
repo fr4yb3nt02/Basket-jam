@@ -71,7 +71,7 @@ namespace BasketJam.Services
                     equipo.PF = e.PF;
                     equipo.PC = e.PC;
                     equipo.DIF = e.DIF;
-                    equipo.Foto = HelperCloudinary.cloudUrl + "Equipos/" + e.idEquipo;
+                    equipo.Foto = ImagenService.buscarImagen(e.idEquipo, "Equipos");
                     equiposTablaPos.Add(equipo);
                 }
                 tabla.EquiposTablaPosicion = equiposTablaPos;

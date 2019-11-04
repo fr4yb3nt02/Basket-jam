@@ -28,7 +28,18 @@ namespace BasketJam.Services
                                      HelperCloudinary.apiKey,
                                       HelperCloudinary.apiSecret);
 
+
+
                 Cloudinary cloudinary = new Cloudinary(account);
+
+
+                var delParams = new DelResParams()
+                {
+                    PublicIds = new List<string>() { entidadImagen + "/" + img.Nombre },
+                    Invalidate = true
+                };
+                var delResult = cloudinary.DeleteResources(delParams);
+
                 var uploadParams = new ImageUploadParams()
                 {
 
@@ -38,6 +49,29 @@ namespace BasketJam.Services
 
                 };
                 var uploadResult = cloudinary.Upload(uploadParams);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        internal static string buscarImagen(string id, string entidadImagen)
+        {
+            try
+            {
+                Account account = new Account(
+                                     HelperCloudinary.secretName,
+                                     HelperCloudinary.apiKey,
+                                      HelperCloudinary.apiSecret);
+
+                Cloudinary cloudinary = new Cloudinary(account);
+
+                SearchResult result = cloudinary.Search().Expression(id).Execute();
+                if (result.TotalCount != 0)
+                    return HelperCloudinary.cloudUrl + entidadImagen + "/" + id + "." + result.Resources[0].Format;
+                else
+                    return HelperCloudinary.cloudUrl + "default_tnhqrz";//entidadImagen + "/" + id;
             }
             catch (Exception ex)
             {

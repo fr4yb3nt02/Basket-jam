@@ -330,8 +330,9 @@ namespace BasketJam.Services
 
             }
 
-            catch
+            catch(Exception ex)
             {
+                string msg = ex.Message;
                 return false;
             }
 

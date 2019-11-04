@@ -165,7 +165,7 @@ namespace BasketJam.Services
                                     Camiseta = je.nroCamiseta,
                                     EsTitular = je.esTitular,
                                     EsCapitan = je.esCapitan,
-                                    FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id
+                                    FotoJugador = ImagenService.buscarImagen(j.Id, "Jugadores")
                                 });
                             }
                         }
@@ -176,7 +176,7 @@ namespace BasketJam.Services
                     {
                         Equipo = e.Id,
                         NombreEquipo = e.NombreEquipo,
-                        FotoEquipo = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Equipos/" + e.Id,
+                        FotoEquipo = ImagenService.buscarImagen(e.Id, "Equipos"),
                         PuntosEnPartido = puntosEquipoPartido,
                         Entrenador = tecnico.Nombre + " " + tecnico.Apellido,
                         IdEntrenador = tecnico.Id,
@@ -846,11 +846,14 @@ namespace BasketJam.Services
 
                 devv = (new
                 {
+                    
                     idPartido = p.Id,
                     idEquipo1 = p.equipos[0].Id,
                     idEquipo2 = p.equipos[1].Id,
-                    fotoEquipo1 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[0].Id,
-                    fotoEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[1].Id,
+                    /*fotoEquipo1 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[0].Id,
+                    fotoEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[1].Id,*/
+                    fotoEquipo1 = ImagenService.buscarImagen(p.equipos[0].Id, "Equipos"),
+                    fotoEquipo2 = ImagenService.buscarImagen(p.equipos[1].Id, "Equipos"),
                     equipo1 = p.equipos[0].NombreEquipo,
                     equipo2 = p.equipos[1].NombreEquipo,
                     ptosequipo1 = puntosEq1,
@@ -1148,7 +1151,7 @@ namespace BasketJam.Services
                         idJugador = j.Id,
                         nombre = j.Nombre,
                         apellido=j.Apellido,
-                        FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id,
+                        FotoJugador = ImagenService.buscarImagen(j.Id, "Jugadores"),
                         numeroCamiseta = j.NumeroCamiseta,
                         puntos = ejp.Puntos,
                         tresPuntosConvertidos = ejp.TresPuntosConvertidos,
@@ -1178,7 +1181,7 @@ namespace BasketJam.Services
                             idJugador = j.Id,
                             nombre = j.Nombre,
                             apellido = j.Apellido,
-                            FotoJugador = "https://res.cloudinary.com/dregj5syg/image/upload/v1567135827/Jugadores/" + j.Id,
+                            FotoJugador = ImagenService.buscarImagen(j.Id, "Jugadores"),
                             numeroCamiseta = j.NumeroCamiseta,
                             puntos = 0,
                             tresPuntosConvertidos = 0,
