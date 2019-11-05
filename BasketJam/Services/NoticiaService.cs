@@ -46,8 +46,7 @@ namespace BasketJam.Services
             List<dynamic> paraDev = new List<dynamic>();
             //HelperCloudinary.cloudUrl + entidadImagen + "/" + id;
             foreach (Noticia no in noticias)
-            {
-                string imgUrl = ImagenService.buscarImagen(no.Id, "Noticias");
+            {                
                 var dat = new
                 {
                     
@@ -56,7 +55,7 @@ namespace BasketJam.Services
                     contenidoAbreviado = no.ContenidoAbreviado,
                     contenido = no.Contenido,
                     fecha = no.Fecha,
-                    imagen = imgUrl
+                    imagen = no.UrlFoto
                 };
                 paraDev.Add(dat);
             }
@@ -68,8 +67,7 @@ namespace BasketJam.Services
             List<Noticia> noticias= await _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToListAsync();
             List<Object> paraDev = new List<Object>();
             foreach (Noticia no in noticias)
-            {
-                string imgUrl = ImagenService.buscarImagen(no.Id, "Noticias");
+            {                
                 var dat = new
                 {
 
@@ -78,7 +76,7 @@ namespace BasketJam.Services
                     contenidoAbreviado = no.ContenidoAbreviado,
                     contenido = no.Contenido,
                     fecha = no.Fecha,
-                    imagen = imgUrl
+                    imagen = no.UrlFoto
                 };
                 paraDev.Add(dat);
             }
@@ -94,8 +92,7 @@ namespace BasketJam.Services
                              select n
                             ).Take(10);
             foreach (Noticia no in ultimas10)
-            {
-                string imgUrl = ImagenService.buscarImagen(no.Id, "Noticias");
+            {                
                 var dat = new
                 {
 
@@ -104,7 +101,7 @@ namespace BasketJam.Services
                     contenidoAbreviado = no.ContenidoAbreviado,
                     contenido = no.Contenido,
                     fecha = no.Fecha,
-                    imagen = imgUrl
+                    imagen = no.UrlFoto
                 };
             paraDev.Add(dat);
             }
@@ -138,13 +135,16 @@ namespace BasketJam.Services
             _noticias.DeleteOne(noticia => noticia.Id == id);
         }
 
-        public void subirImagen(Imagen img)
+        public async void subirImagen(Imagen img)
         {
 
             try
             {
                 string claseImagen = "Noticias";
-                ImagenService.subirImagen(img, claseImagen);
+                string url=ImagenService.subirImagen(img, claseImagen);
+                await _noticias.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
+                       Builders<Noticia>.Update.
+                       Set(b => b.UrlFoto, url));
             }
             catch (Exception ex)
             {

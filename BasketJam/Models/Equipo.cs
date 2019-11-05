@@ -34,6 +34,10 @@ public class Equipo
     [BsonElement("Activo")]
     public Boolean Activo { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("UrlFoto")]
+    public string UrlFoto { get; set; }
+
     /* [BsonRequired]
      [BsonElement("CuerpoTecnico")]
      public List<CuerpoTecnico> CuerpoTecnico { get; set; }

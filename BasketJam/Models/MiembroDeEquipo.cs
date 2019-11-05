@@ -35,4 +35,8 @@ public class MiembroDeEquipo
     [BsonElement("Activo")]
     public Boolean Activo { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("UrlFoto")]
+    public string UrlFoto { get; set; }
+
 }

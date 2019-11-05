@@ -688,14 +688,14 @@ namespace BasketJam.Services
                                      join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
                                      join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
                                      orderby statJugP.Puntos descending
-                                     group new { statJugP, jugTor,eqt } by new { jugTor.Id , eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                     group new { statJugP, jugTor,eqt } by new { jugTor.Id , eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido,jugTor.UrlFoto } into jugGroup
                                      //group statJugP by statJugP.IdJugador into jugGroup
                                      select new
                                      {
                                          posicion = counter++,
                                          jugador =jugGroup.Key.Id,
                                          nombreJugador= jugGroup.Key.Nombre+" "+jugGroup.Key.Apellido,
-                                         foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                         foto = jugGroup.Key.UrlFoto,
                                          equipo = jugGroup.Key.NombreEquipo,
                                          puntos = jugGroup.Sum(x => x.statJugP.Puntos),
                                          //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
@@ -717,14 +717,14 @@ namespace BasketJam.Services
                                  join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
                                  join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
                                  orderby statJugP.TirosLibresConvertidos descending
-                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido,jugTor.UrlFoto } into jugGroup
                                  //group statJugP by statJugP.IdJugador into jugGroup
                                  select new
                                  {
                                      posicion = counter++,
                                      jugador = jugGroup.Key.Id,
                                      nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
-                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     foto = jugGroup.Key.UrlFoto,
                                      equipo = jugGroup.Key.NombreEquipo,
                                      puntos = jugGroup.Sum(x => x.statJugP.TirosLibresConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
@@ -747,14 +747,14 @@ namespace BasketJam.Services
                                  join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
                                  join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
                                  orderby statJugP.DosPuntosConvertidos descending
-                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido,jugTor.UrlFoto } into jugGroup
                                  //group statJugP by statJugP.IdJugador into jugGroup
                                  select new
                                  {
                                      posicion = counter++,
                                      jugador = jugGroup.Key.Id,
                                      nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
-                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     foto =jugGroup.Key.UrlFoto,
                                      equipo = jugGroup.Key.NombreEquipo,
                                      puntos = jugGroup.Sum(x => x.statJugP.DosPuntosConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
@@ -776,14 +776,14 @@ namespace BasketJam.Services
                                  join jugTor in jugTorneo on statJugP.IdJugador equals jugTor.Id
                                  join eqt in equiposTorneo on jugTor.IdEquipo equals eqt.Id
                                  orderby statJugP.TresPuntosConvertidos descending
-                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido } into jugGroup
+                                 group new { statJugP, jugTor, eqt } by new { jugTor.Id, eqt.NombreEquipo, jugTor.Nombre, jugTor.Apellido,jugTor.UrlFoto } into jugGroup
                                  //group statJugP by statJugP.IdJugador into jugGroup
                                  select new
                                  {
                                      posicion = counter++,
                                      jugador = jugGroup.Key.Id,
                                      nombreJugador = jugGroup.Key.Nombre + " " + jugGroup.Key.Apellido,
-                                     foto = HelperCloudinary.cloudUrl + "Jugadores/" + jugGroup.Key.Id,
+                                     foto = jugGroup.Key.UrlFoto,
                                      equipo = jugGroup.Key.NombreEquipo,
                                      puntos = jugGroup.Sum(x => x.statJugP.TresPuntosConvertidos),
                                      //puntos = jugGroup.Sum(x => x.statJugP.Puntos),
@@ -841,7 +841,7 @@ namespace BasketJam.Services
                         dynamic statEjp = new ExpandoObject();
                         statEjp.idJugador = j.Id;
                         statEjp.nombreJugador = j.Nombre + " " + j.Apellido;
-                        statEjp.foto = HelperCloudinary.cloudUrl + "Jugadores/" + j.Id;
+                        statEjp.foto = j.UrlFoto;
                         statEjp.equipo = e.NombreEquipo;
                         statEjp.puntos = 0.0;
                         //statEjp.partidos = 0;

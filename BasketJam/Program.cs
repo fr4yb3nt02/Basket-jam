@@ -19,7 +19,7 @@ namespace BasketJam
 
 
 
-
+  
 
   
                             public static void Main(string[] args)
@@ -31,16 +31,16 @@ namespace BasketJam
                                        WebHost.CreateDefaultBuilder(args)
                                            .UseStartup<Startup>();
         /*
-public static void Main(string[] args)
-                   {
-                       BuildWebHost(args).Run();
-                   }
+     public static void Main(string[] args)
+                {
+                    BuildWebHost(args).Run();
+                }
 
-                   public static IWebHost BuildWebHost(string[] args) =>
-                       WebHost.CreateDefaultBuilder(args)
-                           .UseStartup<Startup>()
-                           .UseUrls("http://localhost:5001")
-                           .Build();
+                public static IWebHost BuildWebHost(string[] args) =>
+                    WebHost.CreateDefaultBuilder(args)
+                        .UseStartup<Startup>()
+                        .UseUrls("http://localhost:5001")
+                        .Build();
 */
 
 

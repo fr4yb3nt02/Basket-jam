@@ -59,12 +59,15 @@ namespace BasketJam.Services
         }
 
         //string idEquipo,string image
-        public void subirImagen(Imagen img)
+        public async void subirImagen(Imagen img)
         {
             try
             {
                 string claseImagen = "Equipos";
-                ImagenService.subirImagen(img,claseImagen);
+               string url= ImagenService.subirImagen(img,claseImagen);
+                await _equipos.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
+                                                      Builders<Equipo>.Update.
+                                                      Set(b => b.UrlFoto, url));
             }
             catch(Exception ex)
             {
@@ -100,7 +103,7 @@ namespace BasketJam.Services
             List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
             foreach(Equipo e in equipos)
             {
-                string imgUrl = ImagenService.buscarImagen(e.Id, "Equipos");
+               
                 dynamic eq = new ExpandoObject();
                 dynamic estadio = new ExpandoObject();
                 eq.Id = e.Id;
@@ -110,7 +113,7 @@ namespace BasketJam.Services
                 eq.Categoria = e.Categoria;
                 estadio = e.Estadio;
                 eq.Estadio = estadio;
-                eq.foto= imgUrl;
+                eq.foto= e.UrlFoto;
                 eqConFotos.Add(eq);
             }
             return eqConFotos;
@@ -123,7 +126,7 @@ namespace BasketJam.Services
             List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
             foreach (Equipo e in equipos)
             {
-                string imgUrl = ImagenService.buscarImagen(e.Id, "Equipos");
+                
                 dynamic eq = new ExpandoObject();
                 dynamic estadio = new ExpandoObject();
                 eq.Id = e.Id;
@@ -133,7 +136,7 @@ namespace BasketJam.Services
                 eq.Categoria = e.Categoria;
                 estadio = e.Estadio;
                 eq.Estadio = estadio;
-                eq.foto = imgUrl;
+                eq.foto = e.UrlFoto;
                 eqConFotos.Add(eq);
             }
             return eqConFotos;

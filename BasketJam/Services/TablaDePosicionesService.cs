@@ -71,7 +71,7 @@ namespace BasketJam.Services
                     equipo.PF = e.PF;
                     equipo.PC = e.PC;
                     equipo.DIF = e.DIF;
-                    equipo.Foto = ImagenService.buscarImagen(e.idEquipo, "Equipos");
+                    equipo.Foto = equi.UrlFoto;
                     equiposTablaPos.Add(equipo);
                 }
                 tabla.EquiposTablaPosicion = equiposTablaPos;
@@ -93,7 +93,8 @@ namespace BasketJam.Services
                 List<String> stringFotos = new List<string>();
                 foreach(TablaDePosiciones.EquipoTablaPosicion e in tabla.EquiposTablaPosicion)
                 {
-                    stringFotos.Add(HelperCloudinary.cloudUrl + "Equipos/" + e.idEquipo);
+                    Equipo equi = await _equipos.Find<Equipo>(eq => eq.Id == e.idEquipo).FirstOrDefaultAsync();
+                    stringFotos.Add(equi.UrlFoto);
                 }
                 return stringFotos;
             }

@@ -19,7 +19,7 @@ namespace BasketJam.Services
     {
 
 
-        internal static void subirImagen(Imagen img,string entidadImagen)
+        internal static string subirImagen(Imagen img,string entidadImagen)
         {
             try
             {
@@ -48,7 +48,8 @@ namespace BasketJam.Services
                     Overwrite = true,
 
                 };
-                var uploadResult = cloudinary.Upload(uploadParams);
+                // var uploadResult = cloudinary.Upload(uploadParams).Uri;
+                return cloudinary.Upload(uploadParams).Uri.ToString();
             }
             catch (Exception ex)
             {

@@ -28,6 +28,9 @@ public class Noticia
     [BsonElement("Fecha")]
     public DateTime Fecha { get; set; }
 
+    [BsonRequired()]
+    [BsonElement("UrlFoto")]
+    public string UrlFoto { get; set; }
 
 
 }

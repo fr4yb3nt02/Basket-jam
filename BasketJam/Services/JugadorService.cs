@@ -49,8 +49,7 @@ namespace BasketJam.Services
             List<ExpandoObject> jugs = new List<ExpandoObject>();
             foreach (Jugador j in jugadores)
             {
-                Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
-                string imgUrl = ImagenService.buscarImagen(j.Id, "Jugadores");
+                Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();                
 
                 dynamic ju = new ExpandoObject();
                 ju.id = j.Id;
@@ -65,7 +64,7 @@ namespace BasketJam.Services
                 ju.NumeroCamiseta = j.NumeroCamiseta;
                 ju.Altura = j.Altura;
                 ju.Peso = j.Peso;         
-                ju.Foto = imgUrl;
+                ju.Foto = j.UrlFoto;
                 jugs.Add(ju);
             }
             return jugs;
@@ -102,13 +101,16 @@ namespace BasketJam.Services
                      Set(b => ((MiembroDeEquipo)b).Activo, false));
         }
 
-        public void subirImagen(Imagen img)
+        public async void subirImagen(Imagen img)
         {
 
             try
             {
                 string claseImagen = "Jugadores";
-                ImagenService.subirImagen(img, claseImagen);
+                string url=ImagenService.subirImagen(img, claseImagen);
+                await _jugadores.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
+                                                       Builders<Jugador>.Update.
+                                                       Set(b => b.UrlFoto, url));                                                       
             }
             catch (Exception ex)
             {

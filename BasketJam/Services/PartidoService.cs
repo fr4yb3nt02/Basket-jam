@@ -165,7 +165,7 @@ namespace BasketJam.Services
                                     Camiseta = je.nroCamiseta,
                                     EsTitular = je.esTitular,
                                     EsCapitan = je.esCapitan,
-                                    FotoJugador = ImagenService.buscarImagen(j.Id, "Jugadores")
+                                    FotoJugador =j.UrlFoto
                                 });
                             }
                         }
@@ -176,7 +176,7 @@ namespace BasketJam.Services
                     {
                         Equipo = e.Id,
                         NombreEquipo = e.NombreEquipo,
-                        FotoEquipo = ImagenService.buscarImagen(e.Id, "Equipos"),
+                        FotoEquipo = e.UrlFoto,
                         PuntosEnPartido = puntosEquipoPartido,
                         Entrenador = tecnico.Nombre + " " + tecnico.Apellido,
                         IdEntrenador = tecnico.Id,
@@ -293,10 +293,10 @@ namespace BasketJam.Services
                         idPartido = p.Id,
                         idEquipo1 = Eq1.Id,
                         nombreEquipo1=Eq1.NombreEquipo,
-                        banderaEquipo1= HelperCloudinary.cloudUrl + "Equipos/" + Eq1.Id,
+                        banderaEquipo1= Eq1.UrlFoto,
                         idEquipo2 = Eq2.Id,
                         nombreEquipo2=Eq2.NombreEquipo,
-                        banderaEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + Eq2.Id,
+                        banderaEquipo2 = Eq2.UrlFoto,
                         estadio = p.estadio,
                         categoria = Eq1.Categoria,
                         fecha = p.fecha.ToString("dd/MM/yyyy"),
@@ -334,10 +334,10 @@ namespace BasketJam.Services
                         idPartido = p.Id,
                         idEquipo1 = Eq1.Id,
                         nombreEquipo1 = Eq1.NombreEquipo,
-                        banderaEquipo1 = HelperCloudinary.cloudUrl + "Equipos/" + Eq1.Id,
+                        banderaEquipo1 = Eq1.UrlFoto,
                         idEquipo2 = Eq2.Id,
                         nombreEquipo2 = Eq2.NombreEquipo,
-                        banderaEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + Eq2.Id,
+                        banderaEquipo2 = Eq2.UrlFoto,
                         estadio = p.estadio,
                         categoria = Eq1.Categoria,
                         fecha = p.fecha.ToString("dd/MM/yyyy"),
@@ -852,8 +852,8 @@ namespace BasketJam.Services
                     idEquipo2 = p.equipos[1].Id,
                     /*fotoEquipo1 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[0].Id,
                     fotoEquipo2 = HelperCloudinary.cloudUrl + "Equipos/" + p.equipos[1].Id,*/
-                    fotoEquipo1 = ImagenService.buscarImagen(p.equipos[0].Id, "Equipos"),
-                    fotoEquipo2 = ImagenService.buscarImagen(p.equipos[1].Id, "Equipos"),
+                    fotoEquipo1 = p.equipos[0].UrlFoto,
+                    fotoEquipo2 = p.equipos[1].UrlFoto,
                     equipo1 = p.equipos[0].NombreEquipo,
                     equipo2 = p.equipos[1].NombreEquipo,
                     ptosequipo1 = puntosEq1,
@@ -1151,7 +1151,7 @@ namespace BasketJam.Services
                         idJugador = j.Id,
                         nombre = j.Nombre,
                         apellido=j.Apellido,
-                        FotoJugador = ImagenService.buscarImagen(j.Id, "Jugadores"),
+                        FotoJugador = j.UrlFoto,
                         numeroCamiseta = j.NumeroCamiseta,
                         puntos = ejp.Puntos,
                         tresPuntosConvertidos = ejp.TresPuntosConvertidos,
@@ -1181,7 +1181,7 @@ namespace BasketJam.Services
                             idJugador = j.Id,
                             nombre = j.Nombre,
                             apellido = j.Apellido,
-                            FotoJugador = ImagenService.buscarImagen(j.Id, "Jugadores"),
+                            FotoJugador = j.UrlFoto,
                             numeroCamiseta = j.NumeroCamiseta,
                             puntos = 0,
                             tresPuntosConvertidos = 0,

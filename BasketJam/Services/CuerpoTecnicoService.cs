@@ -56,7 +56,7 @@ namespace BasketJam.Services
                 ju.FechaDeNacimiento = j.FechaDeNacimiento;
                 ju.Activo = j.Activo;
                 ju.Cargo = j.Cargo.ToString();
-                ju.Foto = ImagenService.buscarImagen(j.Id, "CuerpoTecnico"); 
+                ju.Foto = j.UrlFoto; 
                 ctt.Add(ju);
             }
             return ctt;
@@ -87,13 +87,16 @@ namespace BasketJam.Services
                    Set(b => ((MiembroDeEquipo)b).Activo, false));
         }
 
-        public void subirImagen(Imagen img)
+        public async void subirImagen(Imagen img)
         {
 
             try
             {
                 string claseImagen = "CuerpoTecnico";
-                ImagenService.subirImagen(img, claseImagen);
+                string url=ImagenService.subirImagen(img, claseImagen);
+                await _cuerpoTecnico.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
+                                       Builders<CuerpoTecnico>.Update.
+                                       Set(b => b.UrlFoto, url));
             }
             catch (Exception ex)
             {
