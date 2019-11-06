@@ -30,7 +30,7 @@ namespace BasketJam.Services
         Task<Equipo> CrearEquipo(Equipo equipo);
         void ActualizarEquipo(string id, Equipo eq);
         void EliminarEquipo(string id);
-        void subirImagen(Imagen img);
+        Task<string> subirImagen(Imagen img);
         Task<List<ExpandoObject>> ListarEquiposPorTorneo(string idTorneo);
 
         Task<List<Jugador>> ListarJugadoresEquipo(string id);
@@ -59,7 +59,7 @@ namespace BasketJam.Services
         }
 
         //string idEquipo,string image
-        public async void subirImagen(Imagen img)
+        public async Task<string> subirImagen(Imagen img)
         {
             try
             {
@@ -68,6 +68,7 @@ namespace BasketJam.Services
                 await _equipos.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                                                       Builders<Equipo>.Update.
                                                       Set(b => b.UrlFoto, url));
+                return url;
             }
             catch(Exception ex)
             {

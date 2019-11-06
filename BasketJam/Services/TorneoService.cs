@@ -57,12 +57,13 @@ namespace BasketJam.Services
         {
             try
             {
-                try
-                { 
+                //try
+                //{ 
                 Torneo torneoAnio = await _torneos.Find<Torneo>(t => t.Anio == torneo.Anio).FirstOrDefaultAsync();
-                }
-                catch
+                //}
+                //catch
                 //if (torneo != null)
+                if(torneoAnio!=null)
                 { 
                     throw new Exception("Ya existe un torneo para el año ingresado.");
                 }

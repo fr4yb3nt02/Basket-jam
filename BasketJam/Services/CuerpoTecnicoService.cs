@@ -23,7 +23,7 @@ namespace BasketJam.Services
         Task<CuerpoTecnico> CrearMiembroCuerpoTecnico(CuerpoTecnico equipo);
         void ActualizarMiembroCuerpoTecnico(string id, CuerpoTecnico eq);
         void EliminarMiembroCuerpoTecnico(string id);
-        void subirImagen(Imagen img);
+        Task<string> subirImagen(Imagen img);
     }
 
     public class CuerpoTecnicoService : ICuerpoTecnicoService
@@ -87,7 +87,7 @@ namespace BasketJam.Services
                    Set(b => ((MiembroDeEquipo)b).Activo, false));
         }
 
-        public async void subirImagen(Imagen img)
+        public async Task<string> subirImagen(Imagen img)
         {
 
             try
@@ -97,6 +97,7 @@ namespace BasketJam.Services
                 await _cuerpoTecnico.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                                        Builders<CuerpoTecnico>.Update.
                                        Set(b => b.UrlFoto, url));
+                return url;
             }
             catch (Exception ex)
             {

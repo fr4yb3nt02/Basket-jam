@@ -151,8 +151,16 @@ namespace BasketJam.Services
 
 
                         await _estadisticasJugadorPartido.CargarEstadistica(ejb);
+
                         //return true;
                     }
+
+                    string tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+                    await _partido.UpdateOneAsync(
+                                         pa => pa.Id.Equals(bp.idPartido),
+                                         Builders<Partido>.Update.
+                                         Set(b => b.Tiempo, tiempo));
+
                     return true;
 
                 }
@@ -268,6 +276,11 @@ namespace BasketJam.Services
 
                         // return true;
                     }
+                    string tiempo = bp.bitacoraTimeLine.Last().Tiempo;
+                    await _partido.UpdateOneAsync(
+                                         pa => pa.Id.Equals(bp.idPartido),
+                                         Builders<Partido>.Update.
+                                         Set(b => b.Tiempo, tiempo));
                     //cargoStatDesdeBitacora(bp);
                     //return true;
                     return await _partidoService.ConsultarHeaderPartido(bp.idPartido);

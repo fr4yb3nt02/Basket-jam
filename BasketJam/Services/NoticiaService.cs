@@ -26,7 +26,7 @@ namespace BasketJam.Services
         void ActualizarNoticia(string id, Noticia not);
         void EliminarNoticia(string id);
         Task<List<Object>> ListarUltimasDiezNoticias();
-        void subirImagen(Imagen img);
+        Task<string> subirImagen(Imagen img);
     }
 
     public class NoticiaService : INoticiaService
@@ -135,7 +135,7 @@ namespace BasketJam.Services
             _noticias.DeleteOne(noticia => noticia.Id == id);
         }
 
-        public async void subirImagen(Imagen img)
+        public async Task<string> subirImagen(Imagen img)
         {
 
             try
@@ -145,6 +145,7 @@ namespace BasketJam.Services
                 await _noticias.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                        Builders<Noticia>.Update.
                        Set(b => b.UrlFoto, url));
+                return url;
             }
             catch (Exception ex)
             {

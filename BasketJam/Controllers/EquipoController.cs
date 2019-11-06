@@ -149,8 +149,9 @@ namespace BasketJam.Controllers
         {
             try
             {
-                _equipoService.subirImagen(img);
-                return Ok(new { Resultado = true });
+                
+                return Ok(new { Resultado = _equipoService.subirImagen(img).Result
+            });
             }
             catch (Exception ex)
             {

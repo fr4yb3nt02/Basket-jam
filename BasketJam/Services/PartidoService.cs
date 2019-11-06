@@ -187,7 +187,8 @@ namespace BasketJam.Services
 
             part = new
             {
-                tiempo = tiempo,
+                //tiempo = tiempo,
+                tiempo=p.Tiempo,
                 periodo = periodo,
                 jugEq=jugEq
             };
@@ -365,6 +366,11 @@ namespace BasketJam.Services
         public async Task<Partido> CrearPartido(Partido partido)
         {
 
+            if(partido.fecha<DateTime.Now)
+            {
+                throw new Exception("No puede ingresar un partido con fecha anterior a la actual.");
+            }
+
             partido.EquipoJugador = new List<EquipoJugador>();
             partido.jueces = new List<Juez>();
             await _partidos.InsertOneAsync(partido);
@@ -391,6 +397,10 @@ namespace BasketJam.Services
 
         public void ActualizarPartido(string id, Partido pa)
         {
+            if (pa.fecha < DateTime.Now)
+            {
+                throw new Exception("No puede ingresar un partido con fecha anterior a la actual.");
+            }
             _partidos.ReplaceOne(partido => partido.Id == id, pa);
         }
 

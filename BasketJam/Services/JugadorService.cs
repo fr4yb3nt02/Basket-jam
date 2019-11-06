@@ -26,7 +26,7 @@ namespace BasketJam.Services
         void ActualizarJugador(string id, Jugador jug);
         void EliminarJugador(string id);
         Task<List<Jugador>> ListarJugadoresPorEquipo(string idEquipo);
-         void subirImagen(Imagen img);
+        Task<string> subirImagen(Imagen img);
     }
 
     public class JugadorService : IJugadorService
@@ -53,6 +53,7 @@ namespace BasketJam.Services
 
                 dynamic ju = new ExpandoObject();
                 ju.id = j.Id;
+                ju.Ci = j.Ci;
                 ju.Nombre = j.Nombre;
                 ju.Apellido = j.Apellido;
                 ju.IdEquipo = e.Id;
@@ -101,7 +102,7 @@ namespace BasketJam.Services
                      Set(b => ((MiembroDeEquipo)b).Activo, false));
         }
 
-        public async void subirImagen(Imagen img)
+        public async Task<string> subirImagen(Imagen img)
         {
 
             try
@@ -110,7 +111,8 @@ namespace BasketJam.Services
                 string url=ImagenService.subirImagen(img, claseImagen);
                 await _jugadores.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                                                        Builders<Jugador>.Update.
-                                                       Set(b => b.UrlFoto, url));                                                       
+                                                       Set(b => b.UrlFoto, url));
+                return url;
             }
             catch (Exception ex)
             {
