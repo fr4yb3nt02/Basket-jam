@@ -84,8 +84,36 @@ namespace BasketJam.Services
 
         public async Task<Jugador> CrearJugador(Jugador jugador)
         {
-            await _jugadores.InsertOneAsync(jugador);
-            return jugador;
+            try
+            {
+                /*Inicio creación de índices*/
+                /*IndexKeysDefinition<Jugador> keysCi =
+                Builders<Jugador>.IndexKeys.Ascending("CI");
+                var optionsCi = new CreateIndexOptions { Name = "IndexUniqueCIJugador", Unique = true };
+                var indexModelCiJugador = new CreateIndexModel<Jugador>(keysCi, optionsCi);
+                await _jugadores.Indexes.CreateOneAsync(indexModelCiJugador);*/
+                /*Fin creación de índices*/
+                Jugador j = await _jugadores.Find<Jugador>(jug => jug.Ci.Equals(jugador.Ci)).FirstOrDefaultAsync();
+                if(j!=null)
+                {
+                    throw new Exception("Ya existe un jugador con la C.I ingresada.");
+                }
+
+                await _jugadores.InsertOneAsync(jugador);
+                return jugador;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+          /*  catch(MongoWriteException ex)
+            {
+                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCIJugador"))
+                    //return (new { result = false, mensaje = "Ya existe un usuario con la C.I ingresada." });
+                    throw new Exception("Ya existe un jugador con la C.I ingresada.");
+                else
+                    throw new Exception(ex.Message);
+            }*/
         }
 
         public void ActualizarJugador(string id, Jugador jug)

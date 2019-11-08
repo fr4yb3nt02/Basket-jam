@@ -64,7 +64,10 @@ namespace BasketJam.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+             /*   if(ex.Message.Contains("IndexUniqueCI"))
+                    return BadRequest(new { Error = "Ya existe un jugador con la C.I ingresada." });
+                else*/
+                    return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
         }
 
