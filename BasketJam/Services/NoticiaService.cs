@@ -21,7 +21,7 @@ namespace BasketJam.Services
     {
         Task<List<dynamic>> ListarNoticias();
         Task<List<Object>> ListarNoticiasPorFecha(DateTime fecha);
-        Task<dynamic> BuscarNoticia(string id);
+        Task<Noticia> BuscarNoticia(string id);
         Task<Noticia> CrearNoticia(Noticia noticia);
         void ActualizarNoticia(string id, Noticia not);
         void EliminarNoticia(string id);
@@ -114,21 +114,22 @@ namespace BasketJam.Services
             return noticia;
         }
 
-        public async Task<dynamic> BuscarNoticia(string id)
+        public async Task<Noticia> BuscarNoticia(string id)
         {
-           dynamic Object = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
-            Object.foto = ImagenService.buscarImagen(id, "Noticias");
-            return Object;
+           //dynamic Object = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
+            //Object.foto = ImagenService.buscarImagen(id, "Noticias");
+            Noticia not = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
+            return not;
         }
         public void ActualizarNoticia(string id, Noticia not)
         {
             _noticias.ReplaceOne(noticia => noticia.Id == id, not);
         }
 
-        public void EliminarNoticia(Noticia not)
+        /*public void EliminarNoticia(Noticia not)
         {
             _noticias.DeleteOne(noticia => noticia.Id == not.Id);
-        }
+        }*/
 
         public void EliminarNoticia(string id)
         {

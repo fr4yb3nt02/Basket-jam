@@ -716,6 +716,18 @@ namespace BasketJam.Services
              .Filter.Eq(e => e.Id, id);
                 //EquipoJugador existe ;
 
+                List<EquipoJugador> je = new List<EquipoJugador>();
+
+                await _partidos.UpdateOneAsync(
+                                                      pa => pa.Id.Equals(id),
+                                                      Builders<Partido>.Update.
+                                                      Set(b => b.EquipoJugador, je));
+
+
+                /*await _partidos.UpdateOneAsync(
+                                                      pa => pa.Id.Equals(id),
+                                                      Builders<Partido>.Update.
+                                                      Set(b => b.EquipoJugador[1], null));*/
 
                 foreach (EquipoJugador j in jugadores)
                 {

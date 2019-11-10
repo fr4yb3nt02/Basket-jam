@@ -417,7 +417,8 @@ namespace BasketJam.Controllers
             try
             {
                 _partidoService.ActualizarEstadoPartido(id, tiempo);
-                return Ok(new { Resultado = true });
+                Partido p = _partidoService.BuscarPartido(id).Result;
+                return Ok(new { Resultado = true,CuartoPartido=p.cuarto });
             }
             catch (Exception ex)
             {

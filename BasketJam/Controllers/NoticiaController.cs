@@ -117,14 +117,14 @@ namespace BasketJam.Controllers
         {
             try
             {
-                var noticia = _noticiaService.BuscarNoticia(id);
+                Noticia noticia = _noticiaService.BuscarNoticia(id).Result;
 
                 if (noticia == null)
                 {
                     return NotFound(new { Error = "No se ha encontrado la noticia." });
                 }
 
-                _noticiaService.EliminarNoticia(noticia.Id.ToString());
+                _noticiaService.EliminarNoticia(noticia.Id);
 
                 return Ok(new { Resultado = true });
             }

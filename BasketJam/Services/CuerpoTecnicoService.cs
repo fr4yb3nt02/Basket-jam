@@ -69,8 +69,20 @@ namespace BasketJam.Services
 
         public async Task<CuerpoTecnico> CrearMiembroCuerpoTecnico(CuerpoTecnico cuerpoTecnico)
         {
-           await  _cuerpoTecnico.InsertOneAsync(cuerpoTecnico);
-            return cuerpoTecnico;
+            try
+            {
+                CuerpoTecnico j = await _cuerpoTecnico.Find<CuerpoTecnico>(ct => ct.Ci.Equals(cuerpoTecnico.Ci)).FirstOrDefaultAsync();
+                if (j != null)
+                {
+                    throw new Exception("Ya existe un miembro del cuerpopo técnico con la C.I ingresada.");
+                }
+                await _cuerpoTecnico.InsertOneAsync(cuerpoTecnico);
+                return cuerpoTecnico;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public void ActualizarMiembroCuerpoTecnico(string id, CuerpoTecnico ct)

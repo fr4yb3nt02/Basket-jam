@@ -123,7 +123,7 @@ namespace BasketJam.Controllers
                    // make lowercase
                    .ToLower();                
 
-                return Ok(new { result = true, user.Token, idUser = user.Id,rolUsuario=encodedd });
+                return Ok(new { result = true, user.Token, idUser = user.Id,rolUsuario=encodedd,email=user.NomUser });
             }
             catch (Exception ex)
             {

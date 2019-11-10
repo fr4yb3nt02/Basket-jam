@@ -80,8 +80,20 @@ namespace BasketJam.Services
 
         public async Task<Juez> CrearJuez(Juez juez)
         {
-            await _jueces.InsertOneAsync(juez);
-            return juez;
+            try
+            {
+                Juez ju = await _jueces.Find<Juez>(j => j.Ci.Equals(juez.Ci)).FirstOrDefaultAsync();
+                if (ju != null)
+                {
+                    throw new Exception("Ya existe un juez con la C.I ingresada.");
+                }
+                await _jueces.InsertOneAsync(juez);
+                return juez;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public void ActualizarJuez(string id, Juez eq)

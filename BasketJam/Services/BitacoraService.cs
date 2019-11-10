@@ -161,7 +161,8 @@ namespace BasketJam.Services
                                          Builders<Partido>.Update.
                                          Set(b => b.Tiempo, tiempo));
 
-                    return true;
+                    //return true;
+                    return await _partidoService.ConsultarHeaderPartido(bp.idPartido);
 
                 }
                 else
