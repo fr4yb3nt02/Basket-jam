@@ -33,6 +33,7 @@ namespace BasketJam.Services
         //private readonly IMongoCollection<EstadisticasJugadorPartido> _estadisticasJugadorPartido;
 
         private readonly IEstadisticasJugadorPartidoService _estadisticasJugadorPartido;
+        private readonly IEstadisticasEquipoPartidoService _estadisticasEquipoPartido;
         private readonly IPartidoService _partidoService;
 
         private readonly IMongoCollection<Partido> _partido;
@@ -43,8 +44,10 @@ namespace BasketJam.Services
 
         private readonly IMongoCollection<EstadisticasJugadorPartido> _statsJugadorPartidos;
 
+        
 
-        public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido, IPartidoService partidoService)
+
+        public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido, IPartidoService partidoService,IEstadisticasEquipoPartidoService estadisticasEquipoPartido)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
@@ -55,6 +58,7 @@ namespace BasketJam.Services
             _jugadores = database.GetCollection<Jugador>("jugadores");
             _statsJugadorPartidos = database.GetCollection<EstadisticasJugadorPartido>("EstadisticasJugadorPartido");
             _estadisticasJugadorPartido = estadisticasJugadorPartido;
+            _estadisticasEquipoPartido = estadisticasEquipoPartido;
             _partidoService = partidoService;
 
         }
@@ -71,8 +75,10 @@ namespace BasketJam.Services
                 BitacoraPartido bitacoraPartido = BuscarBitacoraPartido(bp.idPartido);
                 Partido par = await _partido.Find<Partido>(a => a.Id == bp.idPartido).FirstOrDefaultAsync();
                 EstadisticasJugadorPartido ejb = new EstadisticasJugadorPartido();
+                EstadisticasEquipoPartido eep = new EstadisticasEquipoPartido();
                 List<Coordenada> coordenadas = new List<Coordenada>();
                 EstadisticasJugadorPartido ejb2;
+                EstadisticasEquipoPartido eep2;
 
                 if (bitacoraPartido == null)
                 {
@@ -167,8 +173,8 @@ namespace BasketJam.Services
                 }
                 else
                 {
-
-                    var filter = Builders<BitacoraPartido>
+                  
+                        var filter = Builders<BitacoraPartido>
                     .Filter.Eq(e => e.idPartido, bp.idPartido);
 
                     Equipo equipoDeJugador;
@@ -176,7 +182,9 @@ namespace BasketJam.Services
 
                     foreach (BitacoraPartido.BitacoraTimeLine b in bp.bitacoraTimeLine)
                     {
-                        ejb = new EstadisticasJugadorPartido();
+                        if (b.Accion != (TipoAccion)17)
+                        { 
+                            ejb = new EstadisticasJugadorPartido();
                         var update = Builders<BitacoraPartido>.Update
                                     .Push<BitacoraPartido.BitacoraTimeLine>(e => e.bitacoraTimeLine, b);
                         await _bitacoraPartido.FindOneAndUpdateAsync(filter, update);
@@ -272,8 +280,17 @@ namespace BasketJam.Services
                         }
 
                         await _estadisticasJugadorPartido.CargarEstadistica(ejb);
-                        //Object eep = await _partidoService.ConsultaDetallesPartido(bp.idPartido);
-
+                            //Object eep = await _partidoService.ConsultaDetallesPartido(bp.idPartido);
+                        }
+                        else
+                        {
+                            //Jugador jugEq = await _jugadores.Find<Jugador>(jue => jue.Id.Equals(b.idJugador)).FirstOrDefaultAsync();
+                            eep = new EstadisticasEquipoPartido();
+                            eep2 = _estadisticasEquipoPartido.BuscarEstadisticasEquipoPartido(bp.idPartido, b.idJugador);
+                            eep2.TiemposMuertos = eep.TiemposMuertos + 1;
+                            int tiemposMuertos= eep.TiemposMuertos + 1;
+                            await _estadisticasEquipoPartido.CargarTiempoMueto(bp.idPartido,b.idJugador,tiemposMuertos);
+                        }
 
                         // return true;
                     }

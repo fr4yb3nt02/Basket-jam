@@ -20,7 +20,7 @@ namespace BasketJam.Controllers
             _votacionPartidoService = votacionPartidoService;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost("Votar")]
         public async Task<ActionResult> GenerarBitacora(VotacionPartido ve)
         {
@@ -28,7 +28,7 @@ namespace BasketJam.Controllers
             return Ok(new { resultado = await _votacionPartidoService.votarEquipoPartido(ve) });
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("ConsultarVotacion/{idPartido:length(24)}")]
         public async Task<VotacionPartido> consultarVotacionPartido(string idPartido)
         {
@@ -36,7 +36,7 @@ namespace BasketJam.Controllers
             return await _votacionPartidoService.BuscarVotacionPartido(idPartido);
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("UsuarioYaVoto/")]
         public async Task<Boolean> UsuarioYaVoto(string usuario, string idPartido)
         {

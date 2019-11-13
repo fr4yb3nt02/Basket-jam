@@ -20,7 +20,7 @@ namespace BasketJam.Controllers
             _tablaDePosicionesService = tablaDePosicionesService;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost("CrearTablaDePosiciones")]
         public async Task<ActionResult> CrearTablaDePosiciones(TablaDePosiciones tp)
         {

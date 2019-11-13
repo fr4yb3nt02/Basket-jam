@@ -22,6 +22,7 @@ namespace BasketJam.Services
         Task<Boolean> CargarEstadistica(EstadisticasJugadorPartido ejp);
         EstadisticasEquipoPartido BuscarEstadisticasEquipoPartido(string IdPartido, string IdEquipo);
         Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string IdPartido);
+        Task<Boolean> CargarTiempoMueto(string IdPartido, string IdEquipo, int tiempoMuerto);
     }
 
     public class EstadisticasEquipoPartidoService : IEstadisticasEquipoPartidoService
@@ -267,6 +268,33 @@ namespace BasketJam.Services
                 await _estadisticasEquipoPartido.UpdateOneAsync(
     a => a.IdEquipo.Equals(IdEquipo)&& a.IdPartido.Equals(IdPartido), // find this match
     Builders<EstadisticasEquipoPartido>.Update.Set(c => c.Puntos,EstadisticasEquipoPartido.Puntos+ptos));     // -1 means update first matching array element
+                //await _estadisticasEquipoPartido.UpdateOneAsync(a => a.IdEquipo.Equals(eep.IdEquipo)&& a.IdPartido==eep.IdPartido,{$set});
+                return true;
+            }
+        }
+
+        public async Task<Boolean> CargarTiempoMueto(string IdPartido, string IdEquipo,int tiempoMuerto)
+        {
+            EstadisticasEquipoPartido EstadisticasEquipoPartido = BuscarEstadisticasEquipoPartido(IdPartido, IdEquipo);
+            Partido Partido = await _partidoService.BuscarPartido(IdPartido);
+            if (EstadisticasEquipoPartido == null)
+            {
+
+                await _estadisticasEquipoPartido.InsertOneAsync(new EstadisticasEquipoPartido
+                {
+                    IdPartido = IdPartido,
+                    IdEquipo = IdEquipo,
+                    TiemposMuertos = tiempoMuerto
+                });
+                //await _estadisticasEquipoPartido.InsertOneAsync(eep);
+                return true;
+            }
+            else
+            {
+                int tm = EstadisticasEquipoPartido.TiemposMuertos;
+                await _estadisticasEquipoPartido.UpdateOneAsync(
+    a => a.IdEquipo.Equals(IdEquipo) && a.IdPartido.Equals(IdPartido), // find this match
+    Builders<EstadisticasEquipoPartido>.Update.Set(c => c.TiemposMuertos, EstadisticasEquipoPartido.TiemposMuertos + tiempoMuerto));     // -1 means update first matching array element
                 //await _estadisticasEquipoPartido.UpdateOneAsync(a => a.IdEquipo.Equals(eep.IdEquipo)&& a.IdPartido==eep.IdPartido,{$set});
                 return true;
             }

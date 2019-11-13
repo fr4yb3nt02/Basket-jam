@@ -98,7 +98,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("ActualizarTiempoPartido/")]
         public IActionResult ActualizarTiempoPartido(string idpartido, string tiempo)
         {
@@ -256,7 +256,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("ListPartidosProgOJug")]
         public async Task<ActionResult> ListarPartidosProgOJug()
         {
@@ -273,7 +273,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("ListarPartidosPorEstado")]
         public async Task<ActionResult> ListarPartidosPorEstado(int estado)
         {
@@ -290,7 +290,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("ListarPartidosSinJueces")]
         public async Task<ActionResult> ListarPartidosSinJueces()
         {
@@ -410,7 +410,7 @@ namespace BasketJam.Controllers
 
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("ActualizarestadoPartido/")]
         public IActionResult ActualizarEstadoPartido(string id, string tiempo)
         {

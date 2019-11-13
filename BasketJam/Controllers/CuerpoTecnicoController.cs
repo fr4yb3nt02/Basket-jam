@@ -100,7 +100,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost("subirFoto/")]
         public IActionResult subirFoto(Imagen img)
         {

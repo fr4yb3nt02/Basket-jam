@@ -35,7 +35,7 @@ namespace BasketJam.Controllers
             return Ok();
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("EstadisticasEquipoPorPartido/{id:length(24)}")]
         public async Task<List<EstadisticasEquipoPartido>> EstadisticasEquipoPorPartido(string id)
         {

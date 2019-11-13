@@ -21,7 +21,7 @@ namespace BasketJam.Controllers
             _configuracionUsuarioMovilService = configuracionUsuarioMovilService;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("ModoficarConfiguracionUsuarioMovil/{id:length(24)}")]
         public async Task<Object> ModoficarConfiguracionUsuarioMovil(string id, ConfiguracionUsuarioMovil conf)
         {
@@ -37,7 +37,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("BuscarConfiguracionUsuarioMovil/{id:length(24)}")]
         public async Task<Object> BuscarConfiguracionUsuarioMovil(string id)
         {
@@ -53,7 +53,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("AgregarEquipoFavorito/{id:length(24)}")]
         public async Task<IActionResult> AgregarEquipoFavorito(string id, string equipo)
         {
@@ -69,7 +69,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("QuitarEquipoFavorito/{id:length(24)}")]
         public async Task<IActionResult> QuitarEquipoFavorito(string id, string equipo)
         {
@@ -85,7 +85,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("EquipoEsFavorito/")]
         public async Task<IActionResult> EquipoEsFavorito(string idUsuario, string idEquipo)
         {
@@ -99,7 +99,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("ListarEquiposFavoritos/{id:length(24)}")]
         public async Task<IActionResult> ListarEquiposFavoritos(string id)
         {

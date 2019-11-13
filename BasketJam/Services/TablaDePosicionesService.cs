@@ -52,7 +52,7 @@ namespace BasketJam.Services
         {
             try
             {
-               TablaDePosiciones t=  await _tablaDePosiciones.Find<TablaDePosiciones>(to => to.IdTorneo == id).FirstOrDefaultAsync();
+               TablaDePosiciones t=  await _tablaDePosiciones.Find<TablaDePosiciones>(to => to.IdTorneo.Equals(id)).FirstOrDefaultAsync();
                 dynamic tabla =new ExpandoObject();
 
                 tabla.Id = t.Id;

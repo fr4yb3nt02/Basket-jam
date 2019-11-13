@@ -61,7 +61,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Usuario>>> Get()
         {
@@ -80,7 +80,6 @@ namespace BasketJam.Controllers
         }
 
         [HttpGet("{id:length(24)}", Name = "GetUsuario")]
-
         public async Task<ActionResult<Usuario>> Get(string id)
         {
             try
@@ -296,7 +295,7 @@ namespace BasketJam.Controllers
 
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost("subirFoto/")]
         public IActionResult subirFoto(Imagen img)
         {

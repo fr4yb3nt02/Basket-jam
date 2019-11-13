@@ -59,7 +59,8 @@ namespace BasketJam.Services
             {
                 //try
                 //{ 
-                Torneo torneoAnio = await _torneos.Find<Torneo>(t => t.Anio == torneo.Anio).FirstOrDefaultAsync();
+                Torneo torneoAnio = new Torneo();
+                torneoAnio = await _torneos.Find<Torneo>(t => t.Anio == torneo.Anio).FirstOrDefaultAsync();
                 //}
                 //catch
                 //if (torneo != null)
@@ -89,9 +90,9 @@ namespace BasketJam.Services
                 await _tablaDePosicionesService.CrearTablaDePosiciones(tp);
             return torneo;
             }
-            catch
+            catch(Exception ex)
             {
-                return null;
+                throw new Exception(ex.Message);
             }
 
         }

@@ -216,7 +216,9 @@ namespace BasketJam.Services
                     {
                         idPartido = p.Id,
                         idEquipo1 = Eq1.Id,
+                        fotoEq1 = Eq1.UrlFoto,
                         idEquipo2 = Eq2.Id,
+                        fotoEq2 = Eq2.UrlFoto,
                         estadio = p.estadio,
                         categoria = Eq1.Categoria,
                         equipo1 = Eq1.NombreEquipo,
@@ -244,7 +246,12 @@ namespace BasketJam.Services
             try
             {
                 List<Object> dev = new List<Object>();
-                List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)estado).ToListAsync();
+                List<Partido> parts = new List<Partido>();
+                if(estado==1)
+                     parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)estado || partido.estado == (EstadoPartido)2 ).ToListAsync();
+                else
+                     parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)estado).ToListAsync();
+
                 foreach (Partido p in parts)
                 {
                     Equipo Eq1 = await _equipos.Find<Equipo>(x => x.Id == p.equipos[0].Id).FirstOrDefaultAsync();
@@ -255,7 +262,9 @@ namespace BasketJam.Services
                         idPartido = p.Id,
                         idTorneo=p.IdTorneo,
                         idEquipo1 = Eq1.Id,
+                        fotoEq1=Eq1.UrlFoto,
                         idEquipo2 = Eq2.Id,
+                        fotoEq2=Eq2.UrlFoto,
                         estadio = p.estadio,
                         categoria = Eq1.Categoria,
                         equipo1 = Eq1.NombreEquipo,
@@ -1115,12 +1124,15 @@ namespace BasketJam.Services
                             idJugadir = j.Id,
                             nombre = j.Nombre,
                             apellido = j.Apellido,
-                            posicion = j.Posicion
+                            posicion = j.Posicion,
+                            foto=j.UrlFoto
                         });
                     }
                     devv.Add(new
                     {
                         equipo = e.Id,
+                        fotoEquipo=e.UrlFoto,
+                        nombreEquipo=e.NombreEquipo,
                         jugadores = listaJugadores
                     });
 
@@ -1165,34 +1177,57 @@ namespace BasketJam.Services
 
                 foreach(Jugador j in jugadoresEquipo)
                 {
+                    Equipo equipoDeJugador;
+                    Jugador jugador;
+
+                    bool esTitular;
+                    jugador = await _jugadores.Find<Jugador>(ju => ju.Id == j.Id).FirstOrDefaultAsync();
+                    equipoDeJugador = await _equipos.Find<Equipo>(e => e.Id == jugador.IdEquipo).FirstOrDefaultAsync();
+
+                    var equipoJugadorIndex = await _partidos
+                     .Find(p => p.Id == part.Id)
+                     .Project(p => p.EquipoJugador.FindIndex(t => t.idEquipo == equipoDeJugador.Id))
+                     .SingleOrDefaultAsync();
+
+
+                    var jugadorEquipoIndex = await _partidos
+                     .Find(p => p.Id == part.Id)
+                     .Project(p => p.EquipoJugador[equipoJugadorIndex].jugadorEquipo.FindIndex(t => t.idJugador == j.Id))
+                     .SingleOrDefaultAsync();
+
+
+                    EquipoJugador.JugadorEquipo je = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo[jugadorEquipoIndex];
+                    //int indexJugador = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo.IndexOf(je);
+
                     EstadisticasJugadorPartido ejp = await _estadisticasJugadorPartido.Find<EstadisticasJugadorPartido>(p => p.IdPartido.Equals(idPartido) && p.IdJugador.Equals(j.Id)).FirstOrDefaultAsync();
                     if(ejp!=null)
-                    { 
-                    var det = new
                     {
-                        idJugador = j.Id,
-                        nombre = j.Nombre,
-                        apellido=j.Apellido,
-                        FotoJugador = j.UrlFoto,
-                        numeroCamiseta = j.NumeroCamiseta,
-                        puntos = ejp.Puntos,
-                        tresPuntosConvertidos = ejp.TresPuntosConvertidos,
-                        tresPuntosIntentados=ejp.TresPuntosIntentados,
-                        porcentaje3Puntos=ejp.TresPuntosPorcentaje,
-                        dosPuntosConvertidos=ejp.DosPuntosConvertidos,
-                        dosPuntosIntentados=ejp.DosPuntosIntentados,
-                        dosPuntosPorcentaje=ejp.DosPuntosPorcentaje,
-                        libresConvertidos=ejp.TirosLibresConvertidos,
-                        libresIntentados=ejp.TirosLibresIntentados,
-                        porcentajeLibres=ejp.TirosLibresPorcentaje,
-                        rebotesOfensivos=ejp.RebotesOfensivos,
-                        rebotesDefensivos=ejp.RebotesDefensivos,
-                        rebotesTotales=ejp.RebotesTotales,
-                        asistencias=ejp.Asistencias,
-                        recuperos=ejp.Recuperos,
-                        faltasPersonales=ejp.FaltasPersonales,
-                        faltasAntideportivas=ejp.FaltasAntideportivas,
-                        faltasTecnicas=ejp.FaltasTecnicas
+                        var det = new
+                        {
+                            idJugador = j.Id,
+                            nombre = j.Nombre,
+                            apellido = j.Apellido,
+                            FotoJugador = j.UrlFoto,
+                            numeroCamiseta = j.NumeroCamiseta,
+                            puntos = ejp.Puntos,
+                            tresPuntosConvertidos = ejp.TresPuntosConvertidos,
+                            tresPuntosIntentados = ejp.TresPuntosIntentados,
+                            porcentaje3Puntos = ejp.TresPuntosPorcentaje,
+                            dosPuntosConvertidos = ejp.DosPuntosConvertidos,
+                            dosPuntosIntentados = ejp.DosPuntosIntentados,
+                            dosPuntosPorcentaje = ejp.DosPuntosPorcentaje,
+                            libresConvertidos = ejp.TirosLibresConvertidos,
+                            libresIntentados = ejp.TirosLibresIntentados,
+                            porcentajeLibres = ejp.TirosLibresPorcentaje,
+                            rebotesOfensivos = ejp.RebotesOfensivos,
+                            rebotesDefensivos = ejp.RebotesDefensivos,
+                            rebotesTotales = ejp.RebotesTotales,
+                            asistencias = ejp.Asistencias,
+                            recuperos = ejp.Recuperos,
+                            faltasPersonales = ejp.FaltasPersonales,
+                            faltasAntideportivas = ejp.FaltasAntideportivas,
+                            faltasTecnicas = ejp.FaltasTecnicas,
+                            jugando = je.esTitular
                     };
                         listReturn.Add(det);
                     }
