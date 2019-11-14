@@ -33,8 +33,9 @@ namespace BasketJam.Services
         Task<Object> VerificarCuenta(string activationCode);
         void SendPassReset(string emailId);
         void SendPassResetMovil(string emailId,string nuevaPass);
-        Task<Boolean> CambiarPassword(string email, string password);
+        Task<Boolean> CambiarPassword(string email, string password, string oldPassword);
         void subirImagen(Imagen img);
+        Task<Usuario> BuscarUsuarioPorUser(string email);
         //IEnumerable<Usuario> GetAll();
     }
 
@@ -141,10 +142,28 @@ namespace BasketJam.Services
 
         }
 
-        public async Task<Boolean> CambiarPassword(string email , string password)
+        public async Task<Usuario> BuscarUsuarioPorUser(string email)
+        {
+            return await _usuarios.Find<Usuario>(usuario => usuario.NomUser.Equals(email)).FirstOrDefaultAsync();
+
+        }
+
+        public async Task<Boolean> CambiarPassword(string email , string password, string oldPassword)
         {
             try
             {
+                // Encripto la password con MD5
+                byte[] encodedPassword1 = new UTF8Encoding().GetBytes(oldPassword);
+                byte[] hash1 = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword1);
+                string encoded1 = BitConverter.ToString(hash1)
+                   // without dashes
+                   .Replace("-", string.Empty)
+                   // make lowercase
+                   .ToLower();
+
+                Usuario u = await _usuarios.Find<Usuario>(us => us.NomUser.Equals(email) && us.Password.Equals(encoded1)).FirstOrDefaultAsync();
+                if(u!=null)
+                { 
                 // Encripto la password con MD5
                 byte[] encodedPassword = new UTF8Encoding().GetBytes(password);
                 byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
@@ -164,10 +183,15 @@ namespace BasketJam.Services
                await _usuarios.FindOneAndUpdateAsync(us => us.NomUser.Equals(email), UpdateDefinitionBuilder);
 
                 return true;
+                }
+                else
+                {
+                    throw new Exception("La contraseña anterior no coincide con el usuario.");
+                }
             }
             catch(Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
 
         }
@@ -289,7 +313,17 @@ namespace BasketJam.Services
              _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
             BasketJam.Models.RandomNumberGenerator generator = new BasketJam.Models.RandomNumberGenerator();
             string pass = generator.RandomPassword();
-            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, pass);
+
+            // Encripto la password con MD5
+            byte[] encodedPassword = new UTF8Encoding().GetBytes(pass);
+            byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
+            string encoded = BitConverter.ToString(hash)
+               // without dashes
+               .Replace("-", string.Empty)
+               // make lowercase
+               .ToLower();
+
+            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, encoded);
 
              _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
 

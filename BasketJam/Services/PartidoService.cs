@@ -49,6 +49,7 @@ namespace BasketJam.Services
         Task<Object> DevolverEstadoPartido(string idPartido);
         Task<List<Partido>> ListarPartidosSinJueces();
         void ActualizarCuartoPartido(string id, int cuarto);
+        void DevolverPartidoEstadoInicial(string idPartido);
         //Task<List<String>> DevuelvoListPartidosAndroid();
     }
 
@@ -607,10 +608,16 @@ namespace BasketJam.Services
                     }
 
 
-                    tp.EquiposTablaPosicion.OrderByDescending(b => new { b.Puntos, b.DIF, b.PF, b.PC });
+                    //tp.EquiposTablaPosicion.OrderByDescending(b => new { b.Puntos, b.DIF, b.PF, b.PC });
+                    //TablaDePosiciones.EquipoTablaPosicion coso=  tp.EquiposTablaPosicion.OrderByDescending(b=> b.Puntos);
+                    List<TablaDePosiciones.EquipoTablaPosicion> tablaOrdenada = (from tabla in tp.EquiposTablaPosicion
+                                                                                 select tabla
+                                 ).OrderByDescending(x => x.Puntos).ToList();
+                    //).OrderByDescending(b => new { b.Puntos, b.DIF, b.PF, b.PC }).ToList();
+
                     List<TablaDePosiciones.EquipoTablaPosicion> equiposParaMod = new List<TablaDePosiciones.EquipoTablaPosicion>();
                     int posicion = 0;
-                    foreach (TablaDePosiciones.EquipoTablaPosicion etpp in tp.EquiposTablaPosicion)
+                    foreach (TablaDePosiciones.EquipoTablaPosicion etpp in tablaOrdenada)
                     {
                         if (posicion == 0)
                         {
@@ -892,6 +899,7 @@ namespace BasketJam.Services
                     cuartoenjuego = p.cuarto,
                     tiempoDeJuego = tiempo,
                     Estadio = p.estadio,
+                    Estado=p.estado,
                     fecha = p.fecha.ToString("dd/MM/yyyy"),
                     statuspartido = ((EstadoPartido)p.estado).ToString()
                 });
@@ -1190,14 +1198,23 @@ namespace BasketJam.Services
                      .SingleOrDefaultAsync();
 
 
-                    var jugadorEquipoIndex = await _partidos
+                    /*var jugadorEquipoIndex = await _partidos
                      .Find(p => p.Id == part.Id)
                      .Project(p => p.EquipoJugador[equipoJugadorIndex].jugadorEquipo.FindIndex(t => t.idJugador == j.Id))
                      .SingleOrDefaultAsync();
 
 
-                    EquipoJugador.JugadorEquipo je = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo[jugadorEquipoIndex];
+                    EquipoJugador.JugadorEquipo je = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo[jugadorEquipoIndex];*/
+                    EquipoJugador.JugadorEquipo je = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo.Find(t => t.idJugador.Equals(j.Id));
                     //int indexJugador = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo.IndexOf(je);
+                    if(je==null)
+                    {
+                        esTitular = false;
+                    }
+                    else
+                    {
+                        esTitular = je.esTitular;
+                    }
 
                     EstadisticasJugadorPartido ejp = await _estadisticasJugadorPartido.Find<EstadisticasJugadorPartido>(p => p.IdPartido.Equals(idPartido) && p.IdJugador.Equals(j.Id)).FirstOrDefaultAsync();
                     if(ejp!=null)
@@ -1227,8 +1244,8 @@ namespace BasketJam.Services
                             faltasPersonales = ejp.FaltasPersonales,
                             faltasAntideportivas = ejp.FaltasAntideportivas,
                             faltasTecnicas = ejp.FaltasTecnicas,
-                            jugando = je.esTitular
-                    };
+                            jugando = esTitular
+                        };
                         listReturn.Add(det);
                     }
                     else
@@ -1257,7 +1274,8 @@ namespace BasketJam.Services
                             recuperos = 0,
                             faltasPersonales = 0,
                             faltastAntideportivas=0,
-                            faltasTecnicas=0
+                            faltasTecnicas=0,
+                            jugando = esTitular
                         };
                         listReturn.Add(det);
                     }
@@ -1290,11 +1308,37 @@ namespace BasketJam.Services
             }
         }
 
+        public async void DevolverPartidoEstadoInicial(string idPartido)
+        {
+            try
+            {
+                Partido p = await _partidos.Find<Partido>(partido => partido.Id == idPartido).FirstOrDefaultAsync();
+                List<Juez> juecesPartido = new List<Juez>();
+                List<EquipoJugador> eqJug = new List<EquipoJugador>();
+                if (p != null)
+                {
+                    await _partidos.UpdateOneAsync(
+                                                      pa => pa.Id.Equals(p.Id),
+                                                      Builders<Partido>.Update.
+                                                      Set(b => b.jueces, juecesPartido)
+                                                      .Set(b => b.EquipoJugador,eqJug)
+                                                      .Set(b => b.estado, (EstadoPartido)4));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Se ha producido un error: " + ex.Message);
+            }
+        }
+
+
         public async Task<List<Partido>> ListarPartidosSinJueces()
         {
             List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)4).ToListAsync();
             return parts;
         }
+
+
 
 
 

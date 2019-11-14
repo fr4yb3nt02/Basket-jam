@@ -251,13 +251,13 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
-        [HttpPost("CambiarPassowrd/")]
-        public async Task<IActionResult> CambiarPassowrd(string email, string password)
+        [HttpPut("CambiarPassowrd/")]
+        public async Task<IActionResult> CambiarPassowrd(string email, string password,string oldPassword)
         {
             try
             {
 
-                await _usuarioService.CambiarPassword(email, password);
+                await _usuarioService.CambiarPassword(email, password,oldPassword);
                 return Ok(new { resultado = true });
                 //return Ok();
 
@@ -274,13 +274,13 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
-        [HttpGet("CambiarPasswordMovil/")]
+        [HttpPut("CambiarPasswordMovil/")]
         public async Task<IActionResult> CambiarPasswordMovil(string email, string password)
         {
             try
             {
-
-                await _usuarioService.CambiarPassword(email, password);
+                Usuario u = await _usuarioService.BuscarUsuarioPorUser(email);
+                await _usuarioService.CambiarPassword(email, password,u.Password);
                 return Ok(new { resultado = true });
                 //return Ok();
 

@@ -410,7 +410,7 @@ namespace BasketJam.Controllers
 
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPut("ActualizarestadoPartido/")]
         public IActionResult ActualizarEstadoPartido(string id, string tiempo)
         {
@@ -502,7 +502,22 @@ namespace BasketJam.Controllers
             }
         }
 
-
+        [HttpPut("DevolverPartidoEstadoInicial/")]
+        public IActionResult DevolverPartidoEstadoInicial(string idpartido)
+        {
+            try
+            {
+                _partidoService.DevolverPartidoEstadoInicial(idpartido);
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "Se ha producido un error: " + ex.Message
+                });
+            }
+        }
 
 
 
