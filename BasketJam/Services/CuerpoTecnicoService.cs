@@ -27,7 +27,7 @@ namespace BasketJam.Services
     }
 
     public class CuerpoTecnicoService : ICuerpoTecnicoService
-{
+    {
         private readonly IMongoCollection<CuerpoTecnico> _cuerpoTecnico;
         private readonly IMongoCollection<Equipo> _equipos;
 
@@ -35,16 +35,16 @@ namespace BasketJam.Services
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-             _cuerpoTecnico=database.GetCollection<CuerpoTecnico>("cuerpoTecnico");
+            _cuerpoTecnico = database.GetCollection<CuerpoTecnico>("cuerpoTecnico");
             _equipos = database.GetCollection<Equipo>("equipos");
 
         }
         public async Task<List<ExpandoObject>> ListarMiembroCuerpoTecnico()
         {
-            List<CuerpoTecnico> cuerpoTecnico=await _cuerpoTecnico.Find(ct => ct.Activo==true).ToListAsync();
+            List<CuerpoTecnico> cuerpoTecnico = await _cuerpoTecnico.Find(ct => ct.Activo == true).ToListAsync();
             List<ExpandoObject> ctt = new List<ExpandoObject>();
             foreach (CuerpoTecnico j in cuerpoTecnico)
-            {                
+            {
                 Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
                 dynamic ju = new ExpandoObject();
                 ju.id = j.Id;
@@ -56,7 +56,7 @@ namespace BasketJam.Services
                 ju.FechaDeNacimiento = j.FechaDeNacimiento;
                 ju.Activo = j.Activo;
                 ju.Cargo = j.Cargo.ToString();
-                ju.Foto = j.UrlFoto; 
+                ju.Foto = j.UrlFoto;
                 ctt.Add(ju);
             }
             return ctt;
@@ -79,7 +79,7 @@ namespace BasketJam.Services
                 await _cuerpoTecnico.InsertOneAsync(cuerpoTecnico);
                 return cuerpoTecnico;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -105,7 +105,7 @@ namespace BasketJam.Services
             try
             {
                 string claseImagen = "CuerpoTecnico";
-                string url=ImagenService.subirImagen(img, claseImagen);
+                string url = ImagenService.subirImagen(img, claseImagen);
                 await _cuerpoTecnico.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                                        Builders<CuerpoTecnico>.Update.
                                        Set(b => b.UrlFoto, url));

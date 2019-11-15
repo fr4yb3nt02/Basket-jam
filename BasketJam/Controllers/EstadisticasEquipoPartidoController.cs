@@ -25,7 +25,6 @@ namespace BasketJam.Controllers
         {
             await _estadisticasEquipoPartidoService.Save(eep);
             return Ok();
-            //  return Ok(new{si=true,eep});
         }
 
         [HttpPost("CargarEstadistica")]

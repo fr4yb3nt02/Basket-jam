@@ -32,28 +32,17 @@ namespace BasketJam.Services
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-             _tablaDePosiciones=database.GetCollection<TablaDePosiciones>("tablaDePosiciones");
+            _tablaDePosiciones = database.GetCollection<TablaDePosiciones>("tablaDePosiciones");
             _equipos = database.GetCollection<Equipo>("equipos");
 
         }
 
-        /*   public async Task<TablaDePosiciones> BuscarTablaDePosiciones(string id)
-           {
-               try
-               { 
-               return await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.IdTorneo == id).FirstOrDefaultAsync();
-               }
-               catch(Exception ex)
-               {
-                   throw new Exception(ex.Message);
-               }
-           }*/
         public async Task<Object> BuscarTablaDePosiciones(string id)
         {
             try
             {
-               TablaDePosiciones t=  await _tablaDePosiciones.Find<TablaDePosiciones>(to => to.IdTorneo.Equals(id)).FirstOrDefaultAsync();
-                dynamic tabla =new ExpandoObject();
+                TablaDePosiciones t = await _tablaDePosiciones.Find<TablaDePosiciones>(to => to.IdTorneo.Equals(id)).FirstOrDefaultAsync();
+                dynamic tabla = new ExpandoObject();
 
                 tabla.Id = t.Id;
                 tabla.IdTorneo = t.IdTorneo;
@@ -88,17 +77,17 @@ namespace BasketJam.Services
         public async Task<List<String>> ListarFotosEquiposTorneo(string idTorneo)
         {
             try
-            { 
-            TablaDePosiciones tabla = await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.Id == idTorneo).FirstOrDefaultAsync();
+            {
+                TablaDePosiciones tabla = await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.Id == idTorneo).FirstOrDefaultAsync();
                 List<String> stringFotos = new List<string>();
-                foreach(TablaDePosiciones.EquipoTablaPosicion e in tabla.EquiposTablaPosicion)
+                foreach (TablaDePosiciones.EquipoTablaPosicion e in tabla.EquiposTablaPosicion)
                 {
                     Equipo equi = await _equipos.Find<Equipo>(eq => eq.Id == e.idEquipo).FirstOrDefaultAsync();
                     stringFotos.Add(equi.UrlFoto);
                 }
                 return stringFotos;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -112,33 +101,29 @@ namespace BasketJam.Services
 
         public async Task<Boolean> ActualizarTablaDePosiciones(string id, List<TablaDePosiciones.EquipoTablaPosicion> tp)
         {
-                  
-                  try
-                  {
-                      foreach(TablaDePosiciones.EquipoTablaPosicion etp in tp)
-                      {               
-                    Equipo equipo= await _equipos.Find<Equipo>(e => e.Id==etp.idEquipo).FirstOrDefaultAsync();
+
+            try
+            {
+                foreach (TablaDePosiciones.EquipoTablaPosicion etp in tp)
+                {
+                    Equipo equipo = await _equipos.Find<Equipo>(e => e.Id == etp.idEquipo).FirstOrDefaultAsync();
                     TablaDePosiciones tabla = await _tablaDePosiciones.Find<TablaDePosiciones>(t => t.Id == id).FirstOrDefaultAsync();
 
-                    /* var posicionEquipoIndex = await _tablaDePosiciones
-                      .Find(t => t.Id == id)
-                      .Project(ta => ta.EquiposTablaPosicion.FindIndex(e => e.idEquipo==etp.idEquipo))
-                      .SingleOrDefaultAsync();*/
 
                     int indexEquipo = tabla.EquiposTablaPosicion.IndexOf(etp);
 
                     var UpdateDefinitionBuilder = Builders<TablaDePosiciones>.Update.Set(t => t.EquiposTablaPosicion[indexEquipo], etp);
 
-                    await _tablaDePosiciones.UpdateOneAsync(t=> t.Id == id, UpdateDefinitionBuilder);
-                       }
+                    await _tablaDePosiciones.UpdateOneAsync(t => t.Id == id, UpdateDefinitionBuilder);
+                }
                 return true;
-                    }                                               
-            
+            }
+
             catch
             {
                 return false;
             }
-            //_jueces.ReplaceOne(tablaDePosiciones => tablaDePosiciones.Id == id, tp);
+
         }
 
     }

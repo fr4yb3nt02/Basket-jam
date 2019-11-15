@@ -14,14 +14,14 @@ namespace BasketJam.Controllers
     [Route("[controller]")]
     public class JugadorController : ControllerBase
     {
-      private IJugadorService _jugadorService;
+        private IJugadorService _jugadorService;
 
         public JugadorController(IJugadorService jugadorService)
         {
             _jugadorService = jugadorService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<ExpandoObject>>> Get()
         {
             return await _jugadorService.ListarJugadores();
@@ -37,15 +37,15 @@ namespace BasketJam.Controllers
         public async Task<ActionResult<Jugador>> Get(string id)
         {
             try
-            { 
-            var jugador = await _jugadorService.BuscarJugador(id);
-
-            if (jugador == null)
             {
-                return NotFound(new { Error = "No se ha encontrado el jugador." });
-            }
+                var jugador = await _jugadorService.BuscarJugador(id);
 
-            return jugador;
+                if (jugador == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el jugador." });
+                }
+
+                return jugador;
             }
             catch (Exception ex)
             {
@@ -62,12 +62,9 @@ namespace BasketJam.Controllers
 
                 return CreatedAtRoute("ObtenerJugador", new { id = jugador.Id.ToString() }, jugador);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-             /*   if(ex.Message.Contains("IndexUniqueCI"))
-                    return BadRequest(new { Error = "Ya existe un jugador con la C.I ingresada." });
-                else*/
-                    return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
         }
 
@@ -75,15 +72,15 @@ namespace BasketJam.Controllers
         public IActionResult Update(string id, Jugador jugadorIn)
         {
             try
-            { 
-            var jugador = _jugadorService.BuscarJugador(id);
-
-            if (jugador == null)
             {
+                var jugador = _jugadorService.BuscarJugador(id);
+
+                if (jugador == null)
+                {
                     return NotFound(new { Error = "No se ha encontrado el jugador." });
                 }
 
-            _jugadorService.ActualizarJugador(id,jugadorIn);
+                _jugadorService.ActualizarJugador(id, jugadorIn);
 
                 return Ok(new { Resultado = true });
             }
@@ -97,19 +94,19 @@ namespace BasketJam.Controllers
         public IActionResult Delete(string id)
         {
             try
-            { 
-            var jugador = _jugadorService.BuscarJugador(id);
-
-            if (jugador == null)
             {
+                var jugador = _jugadorService.BuscarJugador(id);
+
+                if (jugador == null)
+                {
                     return NotFound(new { Error = "No se ha encontrado el jugador." });
                 }
 
-            _jugadorService.EliminarJugador(id);
+                _jugadorService.EliminarJugador(id);
 
-            return Ok(new { Resultado = true });
+                return Ok(new { Resultado = true });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
@@ -121,9 +118,11 @@ namespace BasketJam.Controllers
         {
             try
             {
-                
-                return Ok(new { Resultado = _jugadorService.subirImagen(img).Result
-            });
+
+                return Ok(new
+                {
+                    Resultado = _jugadorService.subirImagen(img).Result
+                });
             }
             catch (Exception ex)
             {

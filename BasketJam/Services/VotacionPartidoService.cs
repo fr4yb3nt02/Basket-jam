@@ -14,59 +14,60 @@ namespace BasketJam.Services
     }
 
     public class VotacionPartidoService : IVotacionPartidoService
-{
-        private readonly IMongoCollection<VotacionPartido> _votacionPartido;      
+    {
+        private readonly IMongoCollection<VotacionPartido> _votacionPartido;
 
         public VotacionPartidoService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-            _votacionPartido=database.GetCollection<VotacionPartido>("votacionPartido");
+            _votacionPartido = database.GetCollection<VotacionPartido>("votacionPartido");
         }
 
 
-        public  async Task<Boolean> votarEquipoPartido(VotacionPartido votacionPartido)
+        public async Task<Boolean> votarEquipoPartido(VotacionPartido votacionPartido)
         {
-            try{
-                VotacionPartido vp= await BuscarVotacionPartido(votacionPartido.IdPartido);
-        if(vp != null)
-        {
-                var equipoVotadoIndex = await _votacionPartido
-                    .Find(p => p.IdPartido == votacionPartido.IdPartido)
-                    .Project(p => p.Contenido_Votacion.FindIndex(t => t.idEquipo == votacionPartido.Contenido_Votacion[0].idEquipo))
-                    .SingleOrDefaultAsync();
-               
-               if(vp.Usuarios.Any(v => v == votacionPartido.Usuarios[0]))
-               {
-                   return false;
-               }
-               else
-               {
-                              int votos =vp.Contenido_Votacion[equipoVotadoIndex].votos;
+            try
+            {
+                VotacionPartido vp = await BuscarVotacionPartido(votacionPartido.IdPartido);
+                if (vp != null)
+                {
+                    var equipoVotadoIndex = await _votacionPartido
+                        .Find(p => p.IdPartido == votacionPartido.IdPartido)
+                        .Project(p => p.Contenido_Votacion.FindIndex(t => t.idEquipo == votacionPartido.Contenido_Votacion[0].idEquipo))
+                        .SingleOrDefaultAsync();
 
-             var UpdateDefinitionBuilder = Builders<VotacionPartido>.Update.Set(p => p.Contenido_Votacion[equipoVotadoIndex].votos, votos+1).Push(p => p.Usuarios,votacionPartido.Usuarios[0]);
+                    if (vp.Usuarios.Any(v => v == votacionPartido.Usuarios[0]))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        int votos = vp.Contenido_Votacion[equipoVotadoIndex].votos;
 
-                    await _votacionPartido.UpdateOneAsync(p=> p.IdPartido == vp.IdPartido, UpdateDefinitionBuilder); 
+                        var UpdateDefinitionBuilder = Builders<VotacionPartido>.Update.Set(p => p.Contenido_Votacion[equipoVotadoIndex].votos, votos + 1).Push(p => p.Usuarios, votacionPartido.Usuarios[0]);
+
+                        await _votacionPartido.UpdateOneAsync(p => p.IdPartido == vp.IdPartido, UpdateDefinitionBuilder);
+                        return true;
+                    }
+
+
+                }
+                else
+                {
+                    await _votacionPartido.InsertOneAsync(votacionPartido);
                     return true;
-               }
-
-    
-        }
-        else
-        {
-            await _votacionPartido.InsertOneAsync(votacionPartido);
-            return true;
-        }
+                }
 
             }
             catch
             {
                 return false;
             }
-            
+
         }
 
-        public async Task<Boolean> usuarioYaVoto(string usuario,string idPartido)
+        public async Task<Boolean> usuarioYaVoto(string usuario, string idPartido)
         {
             try
             {
@@ -81,9 +82,9 @@ namespace BasketJam.Services
                         return false;
                 }
                 else
-                return false;
+                    return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -93,6 +94,6 @@ namespace BasketJam.Services
         {
             return await _votacionPartido.Find<VotacionPartido>(VotacionPartido => VotacionPartido.IdPartido == id).FirstOrDefaultAsync();
         }
-       
-        }
+
+    }
 }

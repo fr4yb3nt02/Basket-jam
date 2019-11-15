@@ -284,6 +284,9 @@ namespace BasketJam.Services
                         }
                         else
                         {
+                            var update = Builders<BitacoraPartido>.Update
+                      .Push<BitacoraPartido.BitacoraTimeLine>(e => e.bitacoraTimeLine, b);
+                            await _bitacoraPartido.FindOneAndUpdateAsync(filter, update);
                             //Jugador jugEq = await _jugadores.Find<Jugador>(jue => jue.Id.Equals(b.idJugador)).FirstOrDefaultAsync();
                             eep = new EstadisticasEquipoPartido();
                             eep2 = _estadisticasEquipoPartido.BuscarEstadisticasEquipoPartido(bp.idPartido, b.idJugador);

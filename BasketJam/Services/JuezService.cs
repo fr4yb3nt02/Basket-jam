@@ -21,57 +21,25 @@ namespace BasketJam.Services
         Task<Juez> CrearJuez(Juez equipo);
         void ActualizarJuez(string id, Juez eq);
         void EliminarJuez(string id);
-
-       // Task<List<Juez>> ListarJuecesSinPartidoAsignado(Partido p);
     }
 
     public class JuezService : IJuezService
-{
+    {
         private readonly IMongoCollection<Juez> _jueces;
-        private readonly IMongoCollection<Partido> _partidos;      
+        private readonly IMongoCollection<Partido> _partidos;
 
         public JuezService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-             _jueces=database.GetCollection<Juez>("jueces");
-             _partidos=database.GetCollection<Partido>("partidos");
+            _jueces = database.GetCollection<Juez>("jueces");
+            _partidos = database.GetCollection<Partido>("partidos");
 
         }
         public async Task<List<Juez>> ListarJueces()
         {
-            return await _jueces.Find(juez => juez.Activo==true).ToListAsync();
+            return await _jueces.Find(juez => juez.Activo == true).ToListAsync();
         }
-
-        /*public async Task<List<Juez>> ListarJuecesSinPartidoAsignado(Partido p)
-        {
-            return await _jueces.Find(juez => true).ToListAsync();
-
-            List<Partido> juecesPartidosFecha=await _partidos<Partido>.Find(pa => pa.fecha==p.fecha).ToListAsync();*/
-
-             /*var query = from juez in _jueces.AsQueryable()
-                         join partido in _partidos.AsQueryable()
-                             on juez equals ((Juez)partido.jueces).Id
-                into CityExtendedMatchingItems
-                where (travelItem.City not in == cityName)
-                select new
-                {
-                    Action = travelItem.Action,
-                    Name = travelItem.Name,
-                    FirstCityMatched = CityExtendedMatchingItems.First(),
-                }; */
-
-          /*  var query = from partido in _partidos.AsQueryable()
-                        where partido.fecha == p.fecha
-                        select partido;
-
-            foreach(var partido in juecesPartidosFecha)
-            {
-
-            }
-
-   // return await query.Take(10).ToListAsync();
-        }*/
 
         public async Task<Juez> BuscarJuez(string id)
         {
@@ -90,7 +58,7 @@ namespace BasketJam.Services
                 await _jueces.InsertOneAsync(juez);
                 return juez;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -103,16 +71,12 @@ namespace BasketJam.Services
 
         public async void EliminarJuez(string id)
         {
-            //_jueces.DeleteOne(juez => juez.Id == eq.Id);
+
             await _jueces.UpdateOneAsync(
                              ju => ju.Id.Equals(id),
                              Builders<Juez>.Update.
                              Set(b => b.Activo, false));
         }
 
-       /* public void EliminarJuez(string id)
-        {
-            _jueces.DeleteOne(juez => juez.Id == id);
-        }*/
     }
 }

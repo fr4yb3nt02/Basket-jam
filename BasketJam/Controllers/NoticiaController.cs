@@ -13,14 +13,14 @@ namespace BasketJam.Controllers
     [Route("[controller]")]
     public class NoticiaController : ControllerBase
     {
-      private INoticiaService _noticiaService;
+        private INoticiaService _noticiaService;
 
         public NoticiaController(INoticiaService noticiaService)
         {
             _noticiaService = noticiaService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<Object>>> Get()
         {
             try
@@ -144,8 +144,8 @@ namespace BasketJam.Controllers
         {
             try
             {
-                
-                return Ok(new { Resultado= _noticiaService.subirImagen(img).Result});
+
+                return Ok(new { Resultado = _noticiaService.subirImagen(img).Result });
             }
             catch (Exception ex)
             {

@@ -80,23 +80,22 @@ namespace BasketJam.Controllers
         [HttpPost]
         public async Task<ActionResult<Equipo>> Create(Equipo equipo)
         {
-            try
-            {
-                // Estadio e=new Estadio();
-                // e.Nombre=equipo.Estadio.Nombre;
-                // e.Direccion=equipo.Estadio.Direccion;
-                // e.Id=equipo.Estadio.Id;
-                //Estadio estadio=new Estadio(equipo.Estadio.Id,equipo.Estadio.Nombre,equipo.Estadio.Nombre);
+                try
+                {
 
-                await _equipoService.CrearEquipo(equipo);
 
-                return CreatedAtRoute("ObtenerEquipo", new { id = equipo.Id.ToString() }, equipo);
+                    await _equipoService.CrearEquipo(equipo);
+
+                    return CreatedAtRoute("ObtenerEquipo", new { id = equipo.Id.ToString() }, equipo);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+                }
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
-            }
-        }
+          
+        
+        
 
 
         [HttpPut("{id:length(24)}")]

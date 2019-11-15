@@ -30,26 +30,26 @@ namespace BasketJam.Services
     }
 
     public class NoticiaService : INoticiaService
-{
-        private readonly IMongoCollection<Noticia> _noticias;      
+    {
+        private readonly IMongoCollection<Noticia> _noticias;
 
         public NoticiaService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-            _noticias=database.GetCollection<Noticia>("noticias");
+            _noticias = database.GetCollection<Noticia>("noticias");
 
         }
         public async Task<List<dynamic>> ListarNoticias()
         {
-            List<Noticia> noticias= await _noticias.Find(noticia => true).ToListAsync();
+            List<Noticia> noticias = await _noticias.Find(noticia => true).ToListAsync();
             List<dynamic> paraDev = new List<dynamic>();
-            //HelperCloudinary.cloudUrl + entidadImagen + "/" + id;
+
             foreach (Noticia no in noticias)
-            {                
+            {
                 var dat = new
                 {
-                    
+
                     id = no.Id,
                     titulo = no.Titulo,
                     contenidoAbreviado = no.ContenidoAbreviado,
@@ -64,10 +64,10 @@ namespace BasketJam.Services
 
         public async Task<List<Object>> ListarNoticiasPorFecha(DateTime fecha)
         {
-            List<Noticia> noticias= await _noticias.Find<Noticia>(noticia => noticia.Fecha==fecha).ToListAsync();
+            List<Noticia> noticias = await _noticias.Find<Noticia>(noticia => noticia.Fecha == fecha).ToListAsync();
             List<Object> paraDev = new List<Object>();
             foreach (Noticia no in noticias)
-            {                
+            {
                 var dat = new
                 {
 
@@ -92,7 +92,7 @@ namespace BasketJam.Services
                              select n
                             ).Take(10);
             foreach (Noticia no in ultimas10)
-            {                
+            {
                 var dat = new
                 {
 
@@ -103,7 +103,7 @@ namespace BasketJam.Services
                     fecha = no.Fecha,
                     imagen = no.UrlFoto
                 };
-            paraDev.Add(dat);
+                paraDev.Add(dat);
             }
             return paraDev;
         }
@@ -116,8 +116,7 @@ namespace BasketJam.Services
 
         public async Task<Noticia> BuscarNoticia(string id)
         {
-           //dynamic Object = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
-            //Object.foto = ImagenService.buscarImagen(id, "Noticias");
+
             Noticia not = await _noticias.Find<Noticia>(noticia => noticia.Id == id).FirstOrDefaultAsync();
             return not;
         }
@@ -126,10 +125,6 @@ namespace BasketJam.Services
             _noticias.ReplaceOne(noticia => noticia.Id == id, not);
         }
 
-        /*public void EliminarNoticia(Noticia not)
-        {
-            _noticias.DeleteOne(noticia => noticia.Id == not.Id);
-        }*/
 
         public void EliminarNoticia(string id)
         {
@@ -142,7 +137,7 @@ namespace BasketJam.Services
             try
             {
                 string claseImagen = "Noticias";
-                string url=ImagenService.subirImagen(img, claseImagen);
+                string url = ImagenService.subirImagen(img, claseImagen);
                 await _noticias.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                        Builders<Noticia>.Update.
                        Set(b => b.UrlFoto, url));

@@ -23,7 +23,7 @@ namespace BasketJam.Services
     public interface IUsuarioService
     {
         Task<Usuario> Autenticar(string nomUser, string password);
-        //List<Usuario> GetAll();
+
         Task<Object> Create(Usuario usuario);
         Task<Usuario> Get(string id);
 
@@ -32,11 +32,14 @@ namespace BasketJam.Services
         bool BuscarUsuarioPorCI(string ci);
         Task<Object> VerificarCuenta(string activationCode);
         void SendPassReset(string emailId);
-        void SendPassResetMovil(string emailId,string nuevaPass);
+        void SendPassResetMovil(string emailId, string nuevaPass);
         Task<Boolean> CambiarPassword(string email, string password, string oldPassword);
         void subirImagen(Imagen img);
         Task<Usuario> BuscarUsuarioPorUser(string email);
-        //IEnumerable<Usuario> GetAll();
+        void ActualizarUsuario(string id,Usuario usu);
+
+
+
     }
 
     public class UsuarioService : IUsuarioService
@@ -81,22 +84,22 @@ namespace BasketJam.Services
             if (usuario == null || usuario.EmailValidado == false)
                 return null;
 
-            if (usuario.EmailValidado==false)
+            if (usuario.EmailValidado == false)
             {
-                throw new Exception ( "Usuario aún no ha sido activado." );
+                throw new Exception("Usuario aún no ha sido activado.");
             }
 
 
 
             // Retorno nulo si no encuentro el usuario
-           
+
             if (!usuario.Password.Equals(encoded))
             {
                 throw new Exception("Contraseña incorrecta.");
             }
 
-                // si la autenticación es correcta genero el Token JWT 
-                var tokenHandler = new JwtSecurityTokenHandler();
+            // si la autenticación es correcta genero el Token JWT 
+            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.TopSecret);//+usuario.TipoUsuario.ToString()
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -110,7 +113,7 @@ namespace BasketJam.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             usuario.Token = tokenHandler.WriteToken(token);
 
-           
+
             return usuario;
         }
 
@@ -124,7 +127,6 @@ namespace BasketJam.Services
         public bool BuscarUsuarioPorCI(string ci)
         {
             var _usuario = _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
-            // return  _usuarios.Find<Usuario>(usuario => usuario.CI == ci).FirstOrDefaultAsync();
             if (_usuario != null)
             {
                 return true;
@@ -148,10 +150,13 @@ namespace BasketJam.Services
 
         }
 
-        public async Task<Boolean> CambiarPassword(string email , string password, string oldPassword)
+        public async Task<Boolean> CambiarPassword(string email, string password, string oldPassword)
         {
             try
             {
+                if (password.Length < 5 || password.Length > 20)
+                    throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
+
                 // Encripto la password con MD5
                 byte[] encodedPassword1 = new UTF8Encoding().GetBytes(oldPassword);
                 byte[] hash1 = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword1);
@@ -162,34 +167,28 @@ namespace BasketJam.Services
                    .ToLower();
 
                 Usuario u = await _usuarios.Find<Usuario>(us => us.NomUser.Equals(email) && us.Password.Equals(encoded1)).FirstOrDefaultAsync();
-                if(u!=null)
-                { 
-                // Encripto la password con MD5
-                byte[] encodedPassword = new UTF8Encoding().GetBytes(password);
-                byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
-                string encoded = BitConverter.ToString(hash)
-                   // without dashes
-                   .Replace("-", string.Empty)
-                   // make lowercase
-                   .ToLower();
-                var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(user => user.Password, encoded);
+                if (u != null)
+                {
+                    // Encripto la password con MD5
+                    byte[] encodedPassword = new UTF8Encoding().GetBytes(password);
+                    byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
+                    string encoded = BitConverter.ToString(hash)
+                       // without dashes
+                       .Replace("-", string.Empty)
+                       // make lowercase
+                       .ToLower();
+                    var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(user => user.Password, encoded);
 
-           // await _usuarios.UpdateOneAsync(u => u.NomUser == email, UpdateDefinitionBuilder);
+                    await _usuarios.FindOneAndUpdateAsync(us => us.NomUser.Equals(email), UpdateDefinitionBuilder);
 
-           /* Usuario user =  _usuarios.Find<Usuario>(u => u.NomUser.Equals(email)).FirstOrDefault();
-                user.Password = password;
-                 _usuarios.ReplaceOne(u => u.NomUser.Equals(email), user);*/
-
-               await _usuarios.FindOneAndUpdateAsync(us => us.NomUser.Equals(email), UpdateDefinitionBuilder);
-
-                return true;
+                    return true;
                 }
                 else
                 {
                     throw new Exception("La contraseña anterior no coincide con el usuario.");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -199,8 +198,21 @@ namespace BasketJam.Services
 
         public async Task<Object> Create(Usuario usuario)
         {
-            try
+
+                try
             {
+                /*Controles del model*/
+                if (usuario.NomUser.Length < 5 || usuario.NomUser.Length > 20)
+                    throw new Exception("El nombre de usuario debe tener como mínimo 5 caracateres , y 20 como máximo.");
+                if (usuario.Password.Length < 5 || usuario.Password.Length > 20)
+                    throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
+                if (usuario.Nombre.Length > 20)
+                    throw new Exception("El nombre debe tener 20 caracteres como máximo.");
+                if (usuario.Apellido.Length > 20)
+                    throw new Exception("El apellido debe tener 20 caracteres como máximo.");
+
+                /*Controles del model*/
+
                 string host = "54.208.166.6";
                 string scheme = "http";
                 string port = "";
@@ -249,20 +261,20 @@ namespace BasketJam.Services
                 }
 
                 SendVerificationLinkEmail(usuario.NomUser, usuario.CodigoAutenticacion.ToString(), scheme, host, port);
-                string mensaje="El registro se ha realizado correctamente ,se ha enviado un link de activación a tu mail: " + usuario.NomUser;
+                string mensaje = "El registro se ha realizado correctamente ,se ha enviado un link de activación a tu mail: " + usuario.NomUser;
                 return new { result = true, mensaje = mensaje };
 
                 //return usuario;
             }
             catch (MongoWriteException ex)
-            {                
-                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI") && usuario.TipoUsuario!=(TipoUsuario)2)
-                    return (new { result = false, mensaje = "Ya existe un usuario con la C.I ingresada." });                
+            {
+                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI") && usuario.TipoUsuario != (TipoUsuario)2)
+                    return (new { result = false, mensaje = "Ya existe un usuario con la C.I ingresada." });
                 if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCI") && usuario.TipoUsuario.Equals((TipoUsuario)2))
                     return (new { result = false, mensaje = "Ya existe un usuario el mail ingresado." });
                 if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueNombreUser"))
                     //throw new AppException("Ya existe un usuario con el nombre de usuario ingresado.");
-                    return (new { result=false,mensaje="Ya existe un usuario con el nombre de usuario ingresado." });
+                    return (new { result = false, mensaje = "Ya existe un usuario con el nombre de usuario ingresado." });
                 else
                     throw ex;
 
@@ -306,11 +318,7 @@ namespace BasketJam.Services
             string host = "54.208.166.6";
             string scheme = "http";
             string port = "";
-            //var varifyUrl = scheme + "://" + host + ":" + port + "/usuario/ActivateAccount/" + codigoActivacion;//esto es para pruebas locales
-            /* var usuario =  _usuarios.Find<Usuario>(u => u.NomUser == emailId).FirstOrDefaultAsync();
-             usuario..Password = null;
-             _usuarios.ReplaceOne(user => user.NomUser == emailId, usuario.Result);
-             _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
+
             BasketJam.Models.RandomNumberGenerator generator = new BasketJam.Models.RandomNumberGenerator();
             string pass = generator.RandomPassword();
 
@@ -325,7 +333,7 @@ namespace BasketJam.Services
 
             var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, encoded);
 
-             _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
+            _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
 
             // var varifyUrl = scheme + "://" + host + "/usuario/resetearContraseña/?" + emailId;
             //var varifyUrl= "http://basketjam.s3.us-east-2.amazonaws.com/Bjam/restarurarContrase%C3%B1a.html"+"?mail="+emailId;
@@ -333,7 +341,7 @@ namespace BasketJam.Services
             var toMail = new MailAddress(emailId);
             var frontEmailPassowrd = "BasketJam2019";
             string subject = "¡Se ha reseteado tu contraseña!";
-            string body = "<br/><br/>Se le ha asignado la siguiente contraseña: <b>"+pass +"</b>"+
+            string body = "<br/><br/>Se le ha asignado la siguiente contraseña: <b>" + pass + "</b>" +
         " <br/><br/>por favor loguearse en Basket Jam con su usuario y contraseña proporcionada y cambiarla por una nueva. ";
 
             var smtp = new SmtpClient
@@ -360,18 +368,12 @@ namespace BasketJam.Services
             string host = "54.208.166.6";
             string scheme = "http";
             string port = "";
-            //var varifyUrl = scheme + "://" + host + ":" + port + "/usuario/ActivateAccount/" + codigoActivacion;//esto es para pruebas locales
-            /* var usuario =  _usuarios.Find<Usuario>(u => u.NomUser == emailId).FirstOrDefaultAsync();
-             usuario..Password = null;
-             _usuarios.ReplaceOne(user => user.NomUser == emailId, usuario.Result);
-             _usuarios.FindOneAndReplace<Usuario>(us => us.NomUser = emailId, usuario);*/
 
             var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, null);
 
             _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
-            /*string email, string password*/
-            // var varifyUrl = scheme + "://" + host + "/usuario/resetearContraseña/?" + emailId;
-            var varifyUrl = "http://54.208.166.6/usuario/CambiarPasswordMovil" + "?email=" + emailId+"&password="+nuevaPass;
+
+            var varifyUrl = "http://54.208.166.6/usuario/CambiarPasswordMovil" + "?email=" + emailId + "&password=" + nuevaPass;
             var fromMail = new MailAddress("basketjam2019@gmail.com", "Basket Jam Team");
             var toMail = new MailAddress(emailId);
             var frontEmailPassowrd = "BasketJam2019";
@@ -405,21 +407,20 @@ namespace BasketJam.Services
             try
             {
                 string str = "";
-               
-                /*objEntity.Configuration.ValidateOnSaveEnabled = false;            
-                var value = objEntity.RegDetails.Where(a => a.ActivateionCode == new Guid(activationCode)).FirstOrDefault();*/
+
+
                 var usuario = await _usuarios.Find<Usuario>(x => x.CodigoAutenticacion == activationCode).FirstOrDefaultAsync();
                 if (usuario != null)
                 {
-                      await _usuarios.UpdateOneAsync(
-                                       us => us.CodigoAutenticacion.Equals(activationCode),
-                                       Builders<Usuario>.Update.
-                                       Set(b => b.EmailValidado, true));
+                    await _usuarios.UpdateOneAsync(
+                                     us => us.CodigoAutenticacion.Equals(activationCode),
+                                     Builders<Usuario>.Update.
+                                     Set(b => b.EmailValidado, true));
 
 
-                      str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
-                      return new { result = true, mensaje = str };
-                   // return usuario;
+                    str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
+                    return new { result = true, mensaje = str };
+                    // return usuario;
                 }
                 else
                 {
@@ -448,6 +449,25 @@ namespace BasketJam.Services
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        public void ActualizarUsuario(string id,Usuario usu)
+        {
+            try
+            {
+                /*Controles del model*/
+                if (usu.Nombre.Length > 20)
+                    throw new Exception("El nombre debe tener 20 caracteres como máximo.");
+                if (usu.Apellido.Length > 20)
+                    throw new Exception("El apellido debe tener 20 caracteres como máximo.");
+
+                /*Controles del model*/
+                _usuarios.ReplaceOne(equipo => equipo.Id.Equals(id), usu);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

@@ -7,19 +7,19 @@ using System;
 
 namespace BasketJam.Controllers
 {
-   // [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class TorneoController : ControllerBase
     {
-      private ITorneoService _torneoService;
+        private ITorneoService _torneoService;
 
         public TorneoController(ITorneoService torneoService)
         {
             _torneoService = torneoService;
         }
 
-       [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<Torneo>>> Get()
         {
             try
@@ -107,7 +107,7 @@ namespace BasketJam.Controllers
 
                 _torneoService.ActualizarTorneo(id, torneoIn);
 
-                return Ok(new { Resultado= true});
+                return Ok(new { Resultado = true });
             }
             catch (Exception ex)
             {

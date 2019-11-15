@@ -176,7 +176,6 @@ namespace BasketJam.Controllers
 
 
         [HttpPut("AgregarJuezAPartido/{id:length(24)}")]
-        // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
         public async Task<ActionResult<bool>> AgregarJuezAPartido(string id, [FromBody]List<Juez> jueces)
         {
             try
@@ -206,7 +205,6 @@ namespace BasketJam.Controllers
         }
 
         [HttpPut("AgregarJugadoresAPartido/{id:length(24)}")]
-        // [HttpPut("{id:length(24)}", Name = "AgregarJuezAPartido")]
         public async Task<ActionResult<bool>> AgregarJugadoresAPartido(string id, [FromBody]List<EquipoJugador> jugadores)
         {
             try
@@ -418,7 +416,7 @@ namespace BasketJam.Controllers
             {
                 _partidoService.ActualizarEstadoPartido(id, tiempo);
                 Partido p = _partidoService.BuscarPartido(id).Result;
-                return Ok(new { Resultado = true,CuartoPartido=p.cuarto });
+                return Ok(new { Resultado = true, CuartoPartido = p.cuarto });
             }
             catch (Exception ex)
             {
@@ -472,7 +470,7 @@ namespace BasketJam.Controllers
         {
             try
             {
-                return await _partidoService.EstadisticasJugsEquipoPartido(idPartido,idEquipo);
+                return await _partidoService.EstadisticasJugsEquipoPartido(idPartido, idEquipo);
 
             }
             catch (Exception ex)
@@ -490,7 +488,7 @@ namespace BasketJam.Controllers
         {
             try
             {
-                
+
                 return Ok(await _partidoService.DevolverEstadoPartido(id));
             }
             catch (Exception ex)
@@ -518,9 +516,6 @@ namespace BasketJam.Controllers
                 });
             }
         }
-
-
-
 
     }
 }

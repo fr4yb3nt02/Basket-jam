@@ -25,16 +25,16 @@ namespace BasketJam.Services
     }
 
     public class TorneoService : ITorneoService
-{
+    {
         private readonly IMongoCollection<Torneo> _torneos;
 
-       private readonly ITablaDePosicionesService _tablaDePosicionesService;
+        private readonly ITablaDePosicionesService _tablaDePosicionesService;
 
-        public TorneoService(IConfiguration config,ITablaDePosicionesService tablaDePosicionesService)
+        public TorneoService(IConfiguration config, ITablaDePosicionesService tablaDePosicionesService)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-             _torneos=database.GetCollection<Torneo>("torneos");
+            _torneos = database.GetCollection<Torneo>("torneos");
             _tablaDePosicionesService = tablaDePosicionesService;
 
         }
@@ -45,8 +45,8 @@ namespace BasketJam.Services
 
         public async Task<Torneo> TorneoActual()
         {
-            return await _torneos.Find(torneo => torneo.Anio==(Convert.ToInt32(DateTime.Now.Year))).FirstOrDefaultAsync();
-        }   
+            return await _torneos.Find(torneo => torneo.Anio == (Convert.ToInt32(DateTime.Now.Year))).FirstOrDefaultAsync();
+        }
 
         public async Task<Torneo> BuscarTorneo(string id)
         {
@@ -57,15 +57,12 @@ namespace BasketJam.Services
         {
             try
             {
-                //try
-                //{ 
+
                 Torneo torneoAnio = new Torneo();
                 torneoAnio = await _torneos.Find<Torneo>(t => t.Anio == torneo.Anio).FirstOrDefaultAsync();
-                //}
-                //catch
-                //if (torneo != null)
-                if(torneoAnio!=null)
-                { 
+
+                if (torneoAnio != null)
+                {
                     throw new Exception("Ya existe un torneo para el año ingresado.");
                 }
 
@@ -88,9 +85,9 @@ namespace BasketJam.Services
                     tp.EquiposTablaPosicion.Add(etp);
                 }
                 await _tablaDePosicionesService.CrearTablaDePosiciones(tp);
-            return torneo;
+                return torneo;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -103,13 +100,13 @@ namespace BasketJam.Services
             _torneos.ReplaceOne(torneo => torneo.Id == id, tor);
         }
 
-       
+
 
         public async void EliminarTorneo(string id)
         {
             await _torneos.UpdateOneAsync(
                  ju => ju.Id.Equals(id),
-                 Builders < Torneo>.Update.
+                 Builders<Torneo>.Update.
                  Set(b => b.Activo, false));
         }
     }

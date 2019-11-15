@@ -9,17 +9,12 @@ using System.Threading.Tasks;
 
 namespace BasketJam.Services
 {
-    /*public interface IImagenService
-    {
-       static void subirImagen(Imagen img, string entidadImagen);
-       // Task<Imagen> BuscarImagen(string id);       
-    }*/
 
     internal class ImagenService //: IImagenService
     {
 
 
-        internal static string subirImagen(Imagen img,string entidadImagen)
+        internal static string subirImagen(Imagen img, string entidadImagen)
         {
             try
             {
@@ -44,11 +39,10 @@ namespace BasketJam.Services
                 {
 
                     File = new FileDescription(img.ImgBase64),
-                    PublicId = entidadImagen+"/" + img.Nombre,
+                    PublicId = entidadImagen + "/" + img.Nombre,
                     Overwrite = true,
 
                 };
-                // var uploadResult = cloudinary.Upload(uploadParams).Uri;
                 return cloudinary.Upload(uploadParams).Uri.ToString();
             }
             catch (Exception ex)

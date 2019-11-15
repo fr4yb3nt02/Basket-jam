@@ -30,7 +30,7 @@ namespace BasketJam.Services
     }
 
     public class JugadorService : IJugadorService
-{
+    {
         private readonly IMongoCollection<Jugador> _jugadores;
         private readonly IMongoCollection<Equipo> _equipos;
 
@@ -38,18 +38,18 @@ namespace BasketJam.Services
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
-            _jugadores=database.GetCollection<Jugador>("jugadores");
+            _jugadores = database.GetCollection<Jugador>("jugadores");
             _equipos = database.GetCollection<Equipo>("equipos");
 
 
         }
         public async Task<List<ExpandoObject>> ListarJugadores()
         {
-            List<Jugador> jugadores= await _jugadores.Find(jugador => jugador.Activo==true).ToListAsync();
+            List<Jugador> jugadores = await _jugadores.Find(jugador => jugador.Activo == true).ToListAsync();
             List<ExpandoObject> jugs = new List<ExpandoObject>();
             foreach (Jugador j in jugadores)
             {
-                Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();                
+                Equipo e = await _equipos.Find<Equipo>(eq => eq.Id.Equals(j.IdEquipo)).FirstOrDefaultAsync();
 
                 dynamic ju = new ExpandoObject();
                 ju.id = j.Id;
@@ -64,7 +64,7 @@ namespace BasketJam.Services
                 ju.Posicion = j.Posicion;
                 ju.NumeroCamiseta = j.NumeroCamiseta;
                 ju.Altura = j.Altura;
-                ju.Peso = j.Peso;         
+                ju.Peso = j.Peso;
                 ju.Foto = j.UrlFoto;
                 jugs.Add(ju);
             }
@@ -74,27 +74,20 @@ namespace BasketJam.Services
 
         public async Task<List<Jugador>> ListarJugadoresPorEquipo(string idEquipo)
         {
-            return await _jugadores.Find(jugador => jugador.IdEquipo==idEquipo && jugador.Activo==true).ToListAsync();
+            return await _jugadores.Find(jugador => jugador.IdEquipo == idEquipo && jugador.Activo == true).ToListAsync();
         }
 
         public async Task<Jugador> BuscarJugador(string id)
         {
-            return await _jugadores.Find<Jugador>(jugador =>jugador.Id == id).FirstOrDefaultAsync();
+            return await _jugadores.Find<Jugador>(jugador => jugador.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Jugador> CrearJugador(Jugador jugador)
         {
             try
             {
-                /*Inicio creación de índices*/
-                /*IndexKeysDefinition<Jugador> keysCi =
-                Builders<Jugador>.IndexKeys.Ascending("CI");
-                var optionsCi = new CreateIndexOptions { Name = "IndexUniqueCIJugador", Unique = true };
-                var indexModelCiJugador = new CreateIndexModel<Jugador>(keysCi, optionsCi);
-                await _jugadores.Indexes.CreateOneAsync(indexModelCiJugador);*/
-                /*Fin creación de índices*/
                 Jugador j = await _jugadores.Find<Jugador>(jug => jug.Ci.Equals(jugador.Ci)).FirstOrDefaultAsync();
-                if(j!=null)
+                if (j != null)
                 {
                     throw new Exception("Ya existe un jugador con la C.I ingresada.");
                 }
@@ -102,18 +95,10 @@ namespace BasketJam.Services
                 await _jugadores.InsertOneAsync(jugador);
                 return jugador;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-          /*  catch(MongoWriteException ex)
-            {
-                if (ex.WriteError.Category == ServerErrorCategory.DuplicateKey && ex.Message.Contains("IndexUniqueCIJugador"))
-                    //return (new { result = false, mensaje = "Ya existe un usuario con la C.I ingresada." });
-                    throw new Exception("Ya existe un jugador con la C.I ingresada.");
-                else
-                    throw new Exception(ex.Message);
-            }*/
         }
 
         public void ActualizarJugador(string id, Jugador jug)
@@ -136,7 +121,7 @@ namespace BasketJam.Services
             try
             {
                 string claseImagen = "Jugadores";
-                string url=ImagenService.subirImagen(img, claseImagen);
+                string url = ImagenService.subirImagen(img, claseImagen);
                 await _jugadores.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                                                        Builders<Jugador>.Update.
                                                        Set(b => b.UrlFoto, url));
@@ -147,29 +132,6 @@ namespace BasketJam.Services
                 throw new Exception(ex.Message);
             }
         }
-                /*
-                try
-                {
-                    Account account = new Account(
-                                         "dregj5syg",
-                                         "373562826237252",
-                                          "pyLkt3TJd5dlmm1krFbwkb1g5Ws");
 
-
-                    Cloudinary cloudinary = new Cloudinary(account);
-                    var uploadParams = new ImageUploadParams()
-                    {
-
-                        File = new FileDescription(img.ImgBase64),
-                        PublicId = "Equipos/" + img.Nombre,
-                        Overwrite = true,
-
-                    };
-                    var uploadResult = cloudinary.Upload(uploadParams);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }*/
-            }
     }
+}

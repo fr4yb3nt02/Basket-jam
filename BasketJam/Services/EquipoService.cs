@@ -37,97 +37,49 @@ namespace BasketJam.Services
     }
 
     public class EquipoService : IEquipoService
-{
+    {
         private readonly IMongoCollection<Equipo> _equipos;
         private readonly IMongoCollection<Jugador> _jugadores;
-      
-        private readonly  IGridFSBucket _bucket;
+
+        private readonly IGridFSBucket _bucket;
         private readonly string entidadParaImagen = "Equipos";
 
-        //private readonly IMongoCollection<Estadio> _estadios;
         public EquipoService(IConfiguration config)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));
             var database = client.GetDatabase("BasketJam");
             var bucket = new GridFSBucket(database);
-            _bucket=bucket;
-             _equipos=database.GetCollection<Equipo>("equipos");
-             _jugadores=database.GetCollection<Jugador>("jugadores");
-            // _estadios=database.GetCollection<Estadio>("estadios");
-
+            _bucket = bucket;
+            _equipos = database.GetCollection<Equipo>("equipos");
+            _jugadores = database.GetCollection<Jugador>("jugadores");
 
         }
 
-        //string idEquipo,string image
         public async Task<string> subirImagen(Imagen img)
         {
             try
             {
                 string claseImagen = "Equipos";
-               string url= ImagenService.subirImagen(img,claseImagen);
+                string url = ImagenService.subirImagen(img, claseImagen);
                 await _equipos.UpdateOneAsync(pa => pa.Id.Equals(img.Nombre),
                                                       Builders<Equipo>.Update.
                                                       Set(b => b.UrlFoto, url));
                 return url;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-           /* try
-            {
-                Account account = new Account(
-                                     HelperCloudinary.secretName,
-                                     HelperCloudinary.apiKey,
-                                      HelperCloudinary.apiSecret);
 
-                Cloudinary cloudinary = new Cloudinary(account);
-                var uploadParams = new ImageUploadParams()
-                {
-
-                    File = new FileDescription(img.ImgBase64),
-                    PublicId = "Equipos/"+img.Nombre,
-                    Overwrite = true,
-
-                };
-                var uploadResult = cloudinary.Upload(uploadParams);
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }*/
         }
 
         public async Task<List<ExpandoObject>> ListarEquipos()
         {
-            List<Equipo> equipos= await _equipos.Find(equipo => equipo.Activo==true).ToListAsync();
-            List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
-            foreach(Equipo e in equipos)
-            {
-               
-                dynamic eq = new ExpandoObject();
-                dynamic estadio = new ExpandoObject();
-                eq.Id = e.Id;
-                eq.Nombre = e.NombreEquipo;
-                eq.FechaFundacion = e.FechaFundacion;
-                eq.ColorCaracteristico = e.ColorCaracteristico;
-                eq.Categoria = e.Categoria;
-                estadio = e.Estadio;
-                eq.Estadio = estadio;
-                eq.foto= e.UrlFoto;
-                eqConFotos.Add(eq);
-            }
-            return eqConFotos;
-            //return await _equipos.Find(equipo => true).ToListAsync();
-        }
-
-        public async Task<List<ExpandoObject>> ListarEquiposPorTorneo(string idTorneo)
-        {
-            List<Equipo> equipos = await _equipos.Find(equipo => equipo.Activo == true && idTorneo.Equals(idTorneo)).ToListAsync();
+            List<Equipo> equipos = await _equipos.Find(equipo => equipo.Activo == true).ToListAsync();
             List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
             foreach (Equipo e in equipos)
             {
-                
+
                 dynamic eq = new ExpandoObject();
                 dynamic estadio = new ExpandoObject();
                 eq.Id = e.Id;
@@ -141,56 +93,77 @@ namespace BasketJam.Services
                 eqConFotos.Add(eq);
             }
             return eqConFotos;
-            //return await _equipos.Find(equipo => true).ToListAsync();
+        }
+
+        public async Task<List<ExpandoObject>> ListarEquiposPorTorneo(string idTorneo)
+        {
+            List<Equipo> equipos = await _equipos.Find(equipo => equipo.Activo == true && idTorneo.Equals(idTorneo)).ToListAsync();
+            List<ExpandoObject> eqConFotos = new List<ExpandoObject>();
+            foreach (Equipo e in equipos)
+            {
+
+                dynamic eq = new ExpandoObject();
+                dynamic estadio = new ExpandoObject();
+                eq.Id = e.Id;
+                eq.Nombre = e.NombreEquipo;
+                eq.FechaFundacion = e.FechaFundacion;
+                eq.ColorCaracteristico = e.ColorCaracteristico;
+                eq.Categoria = e.Categoria;
+                estadio = e.Estadio;
+                eq.Estadio = estadio;
+                eq.foto = e.UrlFoto;
+                eqConFotos.Add(eq);
+            }
+            return eqConFotos;
+
         }
 
         public async Task<List<Jugador>> ListarJugadoresEquipo(string id)
         {
-            
-            return await _jugadores.Find<Jugador>(e=>e.IdEquipo==id).ToListAsync();
+
+            return await _jugadores.Find<Jugador>(e => e.IdEquipo == id).ToListAsync();
         }
 
         public async Task<Equipo> BuscarEquipo(string id)
-        {   
-            
-            return await _equipos.Find<Equipo>(equipo => equipo.Id == id).FirstOrDefaultAsync(); 
-            //return await _equipos.Find<Equipo>(equipo => equipo.Id == id).Project(y => y.Select(y => y.direccion)).FirstOrDefaultAsync();
+        {
+
+            return await _equipos.Find<Equipo>(equipo => equipo.Id == id).FirstOrDefaultAsync();
         }
 
-  /*      public void AgregarJugadorAEquipo(string equipoId,Jugador nuevoJugador)
-{
-    var filter = Builders<Equipo>.Filter.And(
-                 Builders<Equipo>.Filter.Where(x => x.Id == equipoId), 
-                 Builders<Equipo>.Filter.Eq("jugadores.Id", nuevoJugador.Id));
-    var update = Builders<Product>.Update.Push("jugadores.$.SubCategories", newSubCategory);
-    await collection.FindOneAndUpdateAsync(filter, update);
-}
-*/
-       /*/ public async Task<Equipo> CrearEquipo(Equipo equipo,Estadio estadio)
-        {
-            await _estadios.InsertOneAsync(estadio);
-            equipo.Estadio.Id=estadio.Id;
-             await _equipos.InsertOneAsync(equipo);
-                 
-            return equipo;
-        }*/
+
         public async Task<Equipo> CrearEquipo(Equipo equipo)
         {
+            try
+            {
+                if (equipo.NombreEquipo.Length > 20)
+                    throw new Exception("El nombre del equipo debe tener 20 caracteres como máximo.");
+                await _equipos.InsertOneAsync(equipo);
 
-             await _equipos.InsertOneAsync(equipo);
-                 
-            return equipo;
+                return equipo;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public void ActualizarEquipo(string id, Equipo eq)
         {
-            _equipos.ReplaceOne(equipo => equipo.Id == id, eq);
+            try
+            {
+                if (eq.NombreEquipo.Length > 20)
+                    throw new Exception("El nombre del equipo debe tener 20 caracteres como máximo.");
+                _equipos.ReplaceOne(equipo => equipo.Id == id, eq);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public async void EliminarEquipo(string id)
         {
-            //_equipos.DeleteOne(equipo => equipo.Id == id);
             await _equipos.UpdateOneAsync(
                  ju => ju.Id.Equals(id),
                  Builders<Equipo>.Update.

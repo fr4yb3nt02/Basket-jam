@@ -14,7 +14,7 @@ public class Equipo
     
     [BsonRequired]
     [BsonElement("NombreEquipo")]
-    [StringLength(20, ErrorMessage = "El nombre debe tener 20 caracteres como máximo.")]
+    //[StringLength(20, ErrorMessage = "El nombre debe tener 20 caracteres como máximo.")]
     public string NombreEquipo { get; set; }
     
     [BsonRequired]

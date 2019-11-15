@@ -24,26 +24,26 @@ public class Usuario
 
     [BsonRequired]
     //[Required(ErrorMessage = "Por favor ingrese un nombre de usuario")]
-    [StringLength(50 , MinimumLength =5,ErrorMessage = "El nombre de usuario debe tener como mínimo 5 caracateres , y 50 como máximo.")]
+   // [StringLength(50 , MinimumLength =5,ErrorMessage = "El nombre de usuario debe tener como mínimo 5 caracateres , y 50 como máximo.")]
    // [Required(ErrorMessage = "Es necesario ingresar un nombre de usuario.")]
-    [DataType(DataType.EmailAddress,ErrorMessage ="Por favor ingrese un e-mail")]
+    //[DataType(DataType.EmailAddress,ErrorMessage ="Por favor ingrese un e-mail")]
     [BsonElement("NombreUser")]
     public string NomUser { get; set; }
     
     [BsonRequired]
     [BsonElement("Password")]
-    [StringLength(50, MinimumLength = 5, ErrorMessage = "La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.")]
-    [Required(ErrorMessage = "Es necesario ingresar una contraseña.")]
+   // [StringLength(50, MinimumLength = 5, ErrorMessage = "La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.")]
+   // [Required(ErrorMessage = "Es necesario ingresar una contraseña.")]
     public string Password { get; set; }
 
     [BsonRequired()]
     [BsonElement("Nombre")]
-    [StringLength(20, ErrorMessage = "El nombre debe tener 20 caracteres como máximo.")]
+    //[StringLength(20, ErrorMessage = "El nombre debe tener 20 caracteres como máximo.")]
     //[Required(ErrorMessage = "Es necesario ingresar un nombre.")]
     public string Nombre { get; set; }
 
     [BsonElement("Apellido")]
-    [StringLength(20, ErrorMessage = "El apellido debe tener 20 caracteres como máximo.")]
+    //[StringLength(20, ErrorMessage = "El apellido debe tener 20 caracteres como máximo.")]
    // [Required(ErrorMessage ="Es necesario ingresar un apellido.")]
     public string Apellido { get; set; }
 

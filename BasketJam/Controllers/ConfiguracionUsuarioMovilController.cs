@@ -59,8 +59,6 @@ namespace BasketJam.Controllers
         {
             try
             {
-                //  await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
-                // return Ok (new { resultado = true });
                 return Ok(new { resultado = await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(id, equipo) });
             }
             catch (Exception ex)
@@ -75,8 +73,7 @@ namespace BasketJam.Controllers
         {
             try
             {
-                //  await _configuracionUsuarioMovilService.AgregarEquiposFavoritos(idUser, equipos);
-                // return Ok (new { resultado = true });
+
                 return Ok(new { resultado = await _configuracionUsuarioMovilService.QuitarEquipooFavoritos(id, equipo) });
             }
             catch (Exception ex)

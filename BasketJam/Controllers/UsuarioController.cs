@@ -38,19 +38,9 @@ namespace BasketJam.Controllers
                 if (string.IsNullOrWhiteSpace(usuario.Password))
                     return BadRequest("Por favor ingrese una contraseña.");
 
-                //var user = _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any();
-
-                //if (user != null)
-                //    var usuarios=await _usuarioService.Get();
-                //if(_usuarioService.Get().Find(x => x.NomUser == usuario.NomUser).Any())
-                // return BadRequest("El usuario \"" + usuario.NomUser + "\" ya existe"); 
-                //                _usuarios.Find<Usuario>(x => x.NomUser == usuario.NomUser).Any())
-
-
                 return await _usuarioService.Create(usuario);
+                
 
-
-                //  return CreatedAtRoute("GetUsuario", new { id = usuario.Id.ToString() }, usuario);
             }
             catch (Exception ex)
             {
@@ -120,15 +110,15 @@ namespace BasketJam.Controllers
                    // without dashes
                    .Replace("-", string.Empty)
                    // make lowercase
-                   .ToLower();                
+                   .ToLower();
 
-                return Ok(new { result = true, user.Token, idUser = user.Id,rolUsuario=encodedd,email=user.NomUser });
+                return Ok(new { result = true, user.Token, idUser = user.Id, rolUsuario = encodedd, email = user.NomUser });
             }
             catch (Exception ex)
             {
                 return BadRequest(new
                 {
-                    Error =  ex.Message
+                    Error = ex.Message
                 });
             }
         }
@@ -145,7 +135,7 @@ namespace BasketJam.Controllers
                     return Ok($"CI {ci} is already in use.");
                 }
 
-                return Ok(new {Resultado= true });
+                return Ok(new { Resultado = true });
             }
             catch (Exception ex)
             {
@@ -155,31 +145,7 @@ namespace BasketJam.Controllers
                 });
             }
         }
-        /* old
-        [AllowAnonymous]
-        [HttpGet("ActivateAccount/{id}")]
-        public async Task<IActionResult> ActivateAccount(string id)
-        {
-            string str = "";
-            RestClient restClient = new RestClient();
-             string value = await restClient.RunAsyncGet<string, string>("usuario/VeryFiyAccount", id);
-            //string value = "sadf";
-            if (value != null)
-            {
-                str = value;
-               // return new { nombre = "potato happy" };
-            }
-            else
-            {
-                str = "¡Activación ha fallado!";
-               // return new { nombre = "potato sad" };
-            }
-            return Ok(str);
-            //ViewBag.Message = str;
-            //return View();
 
-        }
-        */
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
         [HttpGet("ActivateAccount/{id}")]
@@ -188,17 +154,14 @@ namespace BasketJam.Controllers
             string str = "";
             try
             {
-                //  str = objReg.VeryFiyAccount(id);
+
                 return await _usuarioService.VerificarCuenta(id);
-                // return new { res = "potato" };
+
             }
             catch (Exception ex)
             {
-                //throw new Exception(new{ StatusCode = HttpStatusCode.BadGateway.ToString(), Razon = ex.Message });
                 return ex.Message;
             }
-
-            // return str;
         }
 
         [AllowAnonymous]
@@ -228,13 +191,13 @@ namespace BasketJam.Controllers
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
         [HttpPost("ResetearPasswordMovil/")]
-        public IActionResult ResetearPasswordMovil(string email,string pass)
+        public IActionResult ResetearPasswordMovil(string email, string pass)
         {
             string str = "";
             try
             {
 
-                _usuarioService.SendPassResetMovil(email,pass);
+                _usuarioService.SendPassResetMovil(email, pass);
                 return Ok(new { resultado = true });
 
             }
@@ -252,12 +215,12 @@ namespace BasketJam.Controllers
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
         [HttpPut("CambiarPassowrd/")]
-        public async Task<IActionResult> CambiarPassowrd(string email, string password,string oldPassword)
+        public async Task<IActionResult> CambiarPassowrd(string email, string password, string oldPassword)
         {
             try
             {
 
-                await _usuarioService.CambiarPassword(email, password,oldPassword);
+                await _usuarioService.CambiarPassword(email, password, oldPassword);
                 return Ok(new { resultado = true });
                 //return Ok();
 
@@ -280,7 +243,7 @@ namespace BasketJam.Controllers
             try
             {
                 Usuario u = await _usuarioService.BuscarUsuarioPorUser(email);
-                await _usuarioService.CambiarPassword(email, password,u.Password);
+                await _usuarioService.CambiarPassword(email, password, u.Password);
                 return Ok(new { resultado = true });
                 //return Ok();
 
@@ -309,35 +272,28 @@ namespace BasketJam.Controllers
                 return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
         }
+
+        [HttpPut("{id:length(24)}")]
+        public IActionResult Update(string id, Usuario usu)
+        {
+            try
+            {
+                var user = _usuarioService.BuscarUsuarioPorUser(usu.NomUser);
+                
+                if (user == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el usuario." });
+                }
+
+                _usuarioService.ActualizarUsuario(id, usu);
+
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
+        }
     }
-
-
-
-
 }
-
-
-
-
-    /*[HttpGet]
-    public async Task<ActionResult> ActivateAccount(string id)
-    {
-        string str = "";
-        RestClient restClient = new RestClient();
-        string value = await restClient.RunAsyncGet<string, string>("api/UserReg/VeryFiyAccount", id);
-
-        if (value != null)
-        {
-            str = value;
-        }
-        else
-        {
-            str = "Activation falid";
-        }
-
-        ViewBag.Message = str;
-        return View();
-
-    }*/
-
 
