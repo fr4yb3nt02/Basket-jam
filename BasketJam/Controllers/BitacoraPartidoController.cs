@@ -21,7 +21,7 @@ namespace BasketJam.Controllers
             _bitacoraService = bitacoraService;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost("GenerarBitacora")]
         public async Task<ActionResult> GenerarBitacora(BitacoraPartido bp)
         {
@@ -35,7 +35,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("consultarEstadisticasPeriodo")]
         public async Task<ActionResult> consultarEstadisticasPeriodo(string idPartido, int periodo)
         {
@@ -49,7 +49,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("mejoresJugadoresPorRubro")]
         public async Task<ActionResult> mejoresJugadoresPorRubro(int rubro, string idTorneo)
         {

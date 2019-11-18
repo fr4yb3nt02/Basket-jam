@@ -233,8 +233,6 @@ namespace BasketJam.Controllers
 
         }
 
-
-
         [AllowAnonymous]
         [HttpGet("Listpart")]
         public async Task<ActionResult> visualizadorPartidos()
@@ -408,7 +406,7 @@ namespace BasketJam.Controllers
 
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("ActualizarestadoPartido/")]
         public IActionResult ActualizarEstadoPartido(string id, string tiempo)
         {
@@ -416,7 +414,7 @@ namespace BasketJam.Controllers
             {
                 _partidoService.ActualizarEstadoPartido(id, tiempo);
                 Partido p = _partidoService.BuscarPartido(id).Result;
-                return Ok(new { Resultado = true, CuartoPartido = p.cuarto });
+                return Ok(new { Resultado = true, CuartoPartido = p.cuarto, Estado=p.estado });
             }
             catch (Exception ex)
             {
@@ -445,7 +443,7 @@ namespace BasketJam.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("ListarEstadios/")]
         public async Task<List<Object>> ListarEstadios()
         {

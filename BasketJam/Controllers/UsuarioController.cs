@@ -101,8 +101,8 @@ namespace BasketJam.Controllers
             {
                 var user = await _usuarioService.Autenticar(userParam.NomUser, userParam.Password);
 
-                if (user == null)
-                    return BadRequest(new { result = false, message = "Nombre de usuario o contraseña incorrecta" });
+               /* if (user == null)
+                    return BadRequest(new { result = false, message = "Nombre de usuario o contraseña incorrecta" });*/
 
                 byte[] encodedRol = new UTF8Encoding().GetBytes(user.TipoUsuario.ToString());
                 byte[] hashRol = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedRol);
@@ -116,10 +116,11 @@ namespace BasketJam.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    Error = ex.Message
-                });
+                return BadRequest(
+                
+                    new { result = false, message = ex.Message }
+                    //result = ex.Message
+                    );
             }
         }
 
@@ -155,8 +156,8 @@ namespace BasketJam.Controllers
             try
             {
 
-                return await _usuarioService.VerificarCuenta(id);
-
+                await _usuarioService.VerificarCuenta(id);
+                return Redirect("http://www.basketjam.com");
             }
             catch (Exception ex)
             {
@@ -199,6 +200,7 @@ namespace BasketJam.Controllers
 
                 _usuarioService.SendPassResetMovil(email, pass);
                 return Ok(new { resultado = true });
+                //return Redirect("http://www.basketjam.com");
 
             }
             catch (Exception ex)
@@ -244,7 +246,8 @@ namespace BasketJam.Controllers
             {
                 Usuario u = await _usuarioService.BuscarUsuarioPorUser(email);
                 await _usuarioService.CambiarPassword(email, password, u.Password);
-                return Ok(new { resultado = true });
+                return Redirect("http://www.basketjam.com");
+                //return Ok(new { resultado = true });
                 //return Ok();
 
             }

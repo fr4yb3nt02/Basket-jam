@@ -81,8 +81,11 @@ namespace BasketJam.Services
                .ToLower();
             var usuario = await _usuarios.Find<Usuario>(x => x.NomUser.Equals(username) && x.Password.Equals(encoded)).FirstOrDefaultAsync();
 
-            if (usuario == null || usuario.EmailValidado == false)
-                return null;
+            if (usuario == null )
+            {
+                throw new Exception("Nombre de usuario o contraseña incorrecta.");
+            }
+            //return null;
 
             if (usuario.EmailValidado == false)
             {
@@ -158,15 +161,15 @@ namespace BasketJam.Services
                     throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
 
                 // Encripto la password con MD5
-                byte[] encodedPassword1 = new UTF8Encoding().GetBytes(oldPassword);
-                byte[] hash1 = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword1);
-                string encoded1 = BitConverter.ToString(hash1)
+                //byte[] encodedPassword1 = new UTF8Encoding().GetBytes(oldPassword);
+                //byte[] hash1 = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword1);
+                //string encoded1 = BitConverter.ToString(hash1)
                    // without dashes
-                   .Replace("-", string.Empty)
+                   //.Replace("-", string.Empty)
                    // make lowercase
-                   .ToLower();
+                   //.ToLower();
 
-                Usuario u = await _usuarios.Find<Usuario>(us => us.NomUser.Equals(email) && us.Password.Equals(encoded1)).FirstOrDefaultAsync();
+                Usuario u = await _usuarios.Find<Usuario>(us => us.NomUser.Equals(email) && us.Password.Equals(oldPassword)).FirstOrDefaultAsync();
                 if (u != null)
                 {
                     // Encripto la password con MD5
@@ -202,8 +205,8 @@ namespace BasketJam.Services
                 try
             {
                 /*Controles del model*/
-                if (usuario.NomUser.Length < 5 || usuario.NomUser.Length > 20)
-                    throw new Exception("El nombre de usuario debe tener como mínimo 5 caracateres , y 20 como máximo.");
+                if (usuario.NomUser.Length < 5 || usuario.NomUser.Length > 50)
+                    throw new Exception("El nombre de usuario debe tener como mínimo 5 caracateres , y 50 como máximo.");
                 if (usuario.Password.Length < 5 || usuario.Password.Length > 20)
                     throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
                 if (usuario.Nombre.Length > 20)
@@ -369,6 +372,9 @@ namespace BasketJam.Services
             string scheme = "http";
             string port = "";
 
+            if (nuevaPass.Length < 5 || nuevaPass.Length > 20)
+                throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
+
             var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, null);
 
             _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
@@ -419,6 +425,7 @@ namespace BasketJam.Services
 
 
                     str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
+                    
                     return new { result = true, mensaje = str };
                     // return usuario;
                 }
