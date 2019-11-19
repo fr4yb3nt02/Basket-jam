@@ -475,7 +475,8 @@ namespace BasketJam.Services
                                                         pa => pa.Id.Equals(id),
                                                         Builders<Partido>.Update.
                                                         Set(b => b.estado, (EstadoPartido)2)
-                                                        .Set(b => b.cuarto, cuarto));
+                                                        .Set(b => b.cuarto, cuarto)
+                                                        .Set(b=> b.Tiempo,"10:00"));
                 }
                 if (p.estado == (EstadoPartido)2 & tiempo != "00:00")
                 {

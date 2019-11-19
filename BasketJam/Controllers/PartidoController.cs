@@ -4,6 +4,7 @@ using BasketJam.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using BasketJam.Models;
 
 namespace BasketJam.Controllers
 {
@@ -406,15 +407,46 @@ namespace BasketJam.Controllers
 
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPut("ActualizarestadoPartido/")]
-        public IActionResult ActualizarEstadoPartido(string id, string tiempo)
+        public  IActionResult ActualizarEstadoPartido(string id, string tiempo)
         {
             try
             {
-                _partidoService.ActualizarEstadoPartido(id, tiempo);
+
                 Partido p = _partidoService.BuscarPartido(id).Result;
-                return Ok(new { Resultado = true, CuartoPartido = p.cuarto, Estado=p.estado });
+                int cuarto = p.cuarto;
+                string time=p.Tiempo;
+                int estado = Convert.ToInt32(p.estado);
+                _partidoService.ActualizarEstadoPartido(id, tiempo);
+                
+                if(p.estado == (EstadoPartido)0 || (p.estado == (EstadoPartido)2 & tiempo == "10:00"))
+                    {
+                    cuarto = p.cuarto;
+                    time = "10:00";
+                    estado = 1;
+                    }
+                if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto != 4)
+                {
+                    estado = 2;
+                    cuarto = p.cuarto+1;
+                    time = "10:00";
+                }
+                if (p.estado == (EstadoPartido)2 & tiempo != "00:00")
+                {
+                    estado = 1;
+                    cuarto = p.cuarto;
+                    time = p.Tiempo;
+                }
+                if (p.estado == (EstadoPartido)1 & tiempo == "00:00" & p.cuarto == 4)
+                {
+                    estado = 3;
+                    cuarto = 4;
+                    time = "00:00";
+                }
+
+                //return Ok(new { Resultado = true, CuartoPartido = p.cuarto, Estado=p.estado });
+                return Ok(new { Resultado = true, CuartoPartido = cuarto, Estado = estado });
             }
             catch (Exception ex)
             {
