@@ -297,6 +297,28 @@ namespace BasketJam.Controllers
                 return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
             }
         }
+
+        [HttpDelete("{id:length(24)}")]
+        public IActionResult Delete(string id)
+        {
+            try
+            {
+                /*var equipo = _usuarioService.BuscarEquipo(id);
+
+                if (equipo == null)
+                {
+                    return NotFound(new { Error = "No se ha encontrado el equipo." });
+                }*/
+
+                _usuarioService.EliminarUsuario(id);
+
+                return Ok(new { Resultado = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
+            }
+        }
     }
 }
 

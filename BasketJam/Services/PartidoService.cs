@@ -31,7 +31,7 @@ namespace BasketJam.Services
         Task<List<Partido>> ListarPartidos();
         Task<Partido> BuscarPartido(string id);
         Task<Partido> CrearPartido(Partido equipo);
-        Task<Boolean> AgregarJuezPartida(string id, List<Juez> jueces);
+        Task<bool> AgregarJuezPartida(string id, List<Juez> jueces);
         Task<List<Partido>> ListarPartidosPorFecha(DateTime fecha);
         Task<List<Object>> DevuelvoListPartidosAndroid();
         Task<Object> ConsultarHeaderPartido(string idPartido);
@@ -364,7 +364,19 @@ namespace BasketJam.Services
 
         public async Task<Partido> CrearPartido(Partido partido)
         {
+            List<Partido> partidosEquipo = await _partidos.Find<Partido>(pa => pa.equipos.Any(ju => ju.Id.Equals(partido.equipos[0].Id) || ju.Id.Equals(partido.equipos[1].Id))).ToListAsync();
+    
+            foreach (Equipo e in partido.equipos)
+            {
+                List<CuerpoTecnico> ct = await _cuerpoTecnico.Find<CuerpoTecnico>(c => c.IdEquipo.Equals(e.Id) && c.Activo==true).ToListAsync();
+                if(ct.Count<1)
+                    throw new Exception("El equipo " + e.NombreEquipo + " no tiene miembros de cuerpo técnico.");
+                if (partidosEquipo.Any(p => p.fecha.ToShortDateString().Equals(partido.fecha.ToShortDateString())))
+                {
+                    throw new Exception("El equipo " + e.NombreEquipo + " ya está asignado a un partido en el día ingresado.");
+                }
 
+            }
             if (partido.fecha < DateTime.Now)
             {
                 throw new Exception("No puede ingresar un partido con fecha anterior a la actual.");
@@ -657,11 +669,21 @@ namespace BasketJam.Services
 
         }
 
-        public async Task<Boolean> AgregarJuezPartida(string id, List<Juez> jueces)
+        public async Task<bool> AgregarJuezPartida(string id, List<Juez> jueces)
         {
             try
             {
+                
                 Partido p = await _partidos.Find<Partido>(pa => pa.Id == id).FirstOrDefaultAsync();
+                foreach (Juez j in jueces)
+                {
+                    List<Partido> partidosJueces = await _partidos.Find<Partido>(pa => pa.jueces.Any(ju => ju.Id.Equals(j.Id))).ToListAsync();
+
+                    if (partidosJueces.Any(pa => pa.fecha.ToShortDateString().Equals(p.fecha.ToShortDateString())))
+                        throw new Exception("El juez "+ j.Nombre+" "+j.Apellido +" ya está asignado a un partido en el día ingresado");
+                }
+                
+                
 
                 var filter = Builders<Partido>
                  .Filter.Eq(e => e.Id, id);
@@ -680,9 +702,9 @@ namespace BasketJam.Services
 
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
-                return false;
+                throw new Exception(  ex.Message);
             }
         }
 
@@ -966,7 +988,6 @@ namespace BasketJam.Services
             }
         }
 
-
         public async Task<List<Object>> ListarJugadoresEquiposPartido(string idPartido)
         {
             try
@@ -1182,8 +1203,7 @@ namespace BasketJam.Services
                 throw new Exception("Se ha producido un error: " + ex.Message);
             }
         }
-
-
+    
         public async Task<List<Partido>> ListarPartidosSinJueces()
         {
             List<Partido> parts = await _partidos.Find<Partido>(partido => partido.estado == (EstadoPartido)4).ToListAsync();

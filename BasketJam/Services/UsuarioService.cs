@@ -37,7 +37,7 @@ namespace BasketJam.Services
         void subirImagen(Imagen img);
         Task<Usuario> BuscarUsuarioPorUser(string email);
         void ActualizarUsuario(string id,Usuario usu);
-
+        void EliminarUsuario(string id);
 
 
     }
@@ -475,6 +475,14 @@ namespace BasketJam.Services
             {
                 throw new Exception(ex.Message);
             }
+        }
+       
+        public async void EliminarUsuario(string id)
+        {
+            await _usuarios.UpdateOneAsync(
+                 ju => ju.Id.Equals(id),
+                 Builders<Usuario>.Update.
+                 Set(b => b.Activo, false));
         }
     }
 }

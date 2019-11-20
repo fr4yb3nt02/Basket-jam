@@ -56,6 +56,9 @@ public class Usuario
     [BsonElement("CodigoAutenticacion")]
     public string CodigoAutenticacion { get; set; }
 
+    [BsonElement("Activo")]
+    public Boolean Activo { get; set; }
+
     public string Token { get; set; }
     
 }

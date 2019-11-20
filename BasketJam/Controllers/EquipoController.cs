@@ -93,10 +93,7 @@ namespace BasketJam.Controllers
                     return BadRequest(new { Error = "Se ha producido un error: " + ex.Message });
                 }
             }
-          
-        
-        
-
+                          
 
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, Equipo equipoIn)

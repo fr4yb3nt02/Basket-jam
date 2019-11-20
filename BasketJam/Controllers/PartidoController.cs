@@ -56,6 +56,7 @@ namespace BasketJam.Controllers
             }
         }
 
+        //[AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Partido>> Create(Partido partido)
         {
@@ -175,9 +176,9 @@ namespace BasketJam.Controllers
 
         }
 
-
+        [AllowAnonymous]
         [HttpPut("AgregarJuezAPartido/{id:length(24)}")]
-        public async Task<ActionResult<bool>> AgregarJuezAPartido(string id, [FromBody]List<Juez> jueces)
+        public async Task<ActionResult> AgregarJuezAPartido(string id, [FromBody]List<Juez> jueces)
         {
             try
             {
@@ -188,13 +189,13 @@ namespace BasketJam.Controllers
                     return NotFound(new { Error = "No se ha encontrado el partio." });
                 }
 
-                Boolean res = await _partidoService.AgregarJuezPartida(id, jueces);
+               await _partidoService.AgregarJuezPartida(id, jueces);
 
 
-                if (res)
+                //if (res)
                     return Ok(new { mensaje = "Se han agregado los jueces correctamente." });
-                else
-                    return BadRequest(new { error = "No se ha podido realizar la acción." });
+                /*else
+                    return BadRequest(new { error = "No se ha podido realizar la acción." });*/
             }
             catch (Exception ex)
             {
@@ -407,7 +408,7 @@ namespace BasketJam.Controllers
 
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPut("ActualizarestadoPartido/")]
         public  IActionResult ActualizarEstadoPartido(string id, string tiempo)
         {
