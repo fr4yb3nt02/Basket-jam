@@ -514,7 +514,7 @@ namespace BasketJam.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("DevolverEstadoActualPartido/{id:length(24)}")]
+        [HttpPut("DevolverEstadoActualPartido/{id:length(24)}")]
         public async Task<ActionResult<Object>> DevolverEstadoActualPartido(string id)
         {
             try

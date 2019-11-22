@@ -91,6 +91,10 @@ namespace BasketJam.Services
             {
                 throw new Exception("Usuario aún no ha sido activado.");
             }
+            if (usuario.Activo == false)
+            {
+                throw new Exception("Usuario está inactivo.");
+            }
 
 
 
@@ -143,7 +147,7 @@ namespace BasketJam.Services
 
         public async Task<List<Usuario>> Get()
         {
-            return await _usuarios.Find(usuario => true).ToListAsync();
+            return await _usuarios.Find(usuario => usuario.Activo==true).ToListAsync();
 
         }
 

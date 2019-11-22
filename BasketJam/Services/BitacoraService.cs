@@ -44,9 +44,6 @@ namespace BasketJam.Services
 
         private readonly IMongoCollection<EstadisticasJugadorPartido> _statsJugadorPartidos;
 
-        
-
-
         public BitacoraService(IConfiguration config, IEstadisticasJugadorPartidoService estadisticasJugadorPartido, IPartidoService partidoService,IEstadisticasEquipoPartidoService estadisticasEquipoPartido)
         {
             var client = new MongoClient(config.GetConnectionString("BasketJam"));

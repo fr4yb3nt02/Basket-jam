@@ -39,9 +39,11 @@ namespace BasketJam.Services
     public class EquipoService : IEquipoService
     {
         private readonly IMongoCollection<Equipo> _equipos;
+
         private readonly IMongoCollection<Jugador> _jugadores;
 
         private readonly IGridFSBucket _bucket;
+
         private readonly string entidadParaImagen = "Equipos";
 
         public EquipoService(IConfiguration config)
