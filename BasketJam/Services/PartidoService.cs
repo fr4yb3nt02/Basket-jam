@@ -778,7 +778,14 @@ namespace BasketJam.Services
                 {
                     //tiempo = bp.bitacoraTimeLine.Last().Tiempo;
                     List<BitacoraPartido.BitacoraTimeLine> btl = bp.bitacoraTimeLine.OrderBy(b => b.Cuarto).ToList();
+                    if(btl.Last().Cuarto!=p.cuarto)
+                    {
+                        tiempo = p.Tiempo;
+                    }
+                    else
+                    { 
                     tiempo = btl.Last().Tiempo;
+                    }
                 }
 
                 EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == p.Id && x.IdEquipo == p.equipos[0].Id).FirstOrDefaultAsync();
@@ -824,7 +831,15 @@ namespace BasketJam.Services
                 if (bp != null)
                 {
                     List<BitacoraPartido.BitacoraTimeLine> btl = bp.bitacoraTimeLine.OrderBy(b => b.Cuarto).ToList();
-                    tiempo = btl.Last().Tiempo;
+                    if (btl.Last().Cuarto != p.cuarto)
+                    {
+                        tiempo = p.Tiempo;
+                    }
+                    else
+                    {
+                        tiempo = btl.Last().Tiempo;
+                    }
+                    //tiempo = btl.Last().Tiempo;
                 }
 
                 EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == p.Id && x.IdEquipo == p.equipos[0].Id).FirstOrDefaultAsync();

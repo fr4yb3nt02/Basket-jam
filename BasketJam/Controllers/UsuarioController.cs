@@ -37,7 +37,7 @@ namespace BasketJam.Controllers
             {
                 if (string.IsNullOrWhiteSpace(usuario.Password))
                     return BadRequest("Por favor ingrese una contraseña.");
-
+                usuario.Activo = true;
                 return await _usuarioService.Create(usuario);
                 
 
@@ -239,7 +239,7 @@ namespace BasketJam.Controllers
 
         [AllowAnonymous]
         //[HttpGet("VeryFiyAccount/{id}")]
-        [HttpPut("CambiarPasswordMovil/")]
+        [HttpGet("CambiarPasswordMovil/")]
         public async Task<IActionResult> CambiarPasswordMovil(string email, string password)
         {
             try

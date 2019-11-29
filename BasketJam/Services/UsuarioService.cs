@@ -163,17 +163,15 @@ namespace BasketJam.Services
             {
                 if (password.Length < 5 || password.Length > 20)
                     throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
-
+                
                 // Encripto la password con MD5
-                //byte[] encodedPassword1 = new UTF8Encoding().GetBytes(oldPassword);
-                //byte[] hash1 = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword1);
-                //string encoded1 = BitConverter.ToString(hash1)
-                   // without dashes
-                   //.Replace("-", string.Empty)
-                   // make lowercase
-                   //.ToLower();
+                byte[] encodedPassword1 = new UTF8Encoding().GetBytes(oldPassword);
+                byte[] hash1 = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword1);
+                string encoded1 = BitConverter.ToString(hash1)
+                   .Replace("-", string.Empty)
+                   .ToLower();
 
-                Usuario u = await _usuarios.Find<Usuario>(us => us.NomUser.Equals(email) && us.Password.Equals(oldPassword)).FirstOrDefaultAsync();
+                Usuario u = await _usuarios.Find<Usuario>(us => us.NomUser.Equals(email) && (us.Password.Equals(oldPassword) || us.Password.Equals(encoded1))).FirstOrDefaultAsync();
                 if (u != null)
                 {
                     // Encripto la password con MD5
@@ -379,7 +377,10 @@ namespace BasketJam.Services
             if (nuevaPass.Length < 5 || nuevaPass.Length > 20)
                 throw new Exception("La contraseña debe tener como mínimo 5 caracateres , y 50 como máximo.");
 
-            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, null);
+            BasketJam.Models.RandomNumberGenerator generator = new BasketJam.Models.RandomNumberGenerator();
+            string pass = generator.RandomPassword();
+
+            var UpdateDefinitionBuilder = Builders<Usuario>.Update.Set(use => use.Password, pass);
 
             _usuarios.UpdateOneAsync(u => u.NomUser == emailId, UpdateDefinitionBuilder);
 
