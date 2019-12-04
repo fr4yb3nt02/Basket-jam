@@ -46,7 +46,7 @@ namespace BasketJam.Controllers
             {
                 return BadRequest(new
                 {
-                    Error = "Se ha producido un error: " + ex.Message
+                    Error =  ex.Message
                 });
             }
         }
@@ -156,8 +156,9 @@ namespace BasketJam.Controllers
             try
             {
 
-                await _usuarioService.VerificarCuenta(id);
-                return Redirect("http://www.basketjam.com");
+                dynamic obj=await _usuarioService.VerificarCuenta(id);
+                //return Redirect("http://www.basketjam.com");
+                return Redirect(obj.url);
             }
             catch (Exception ex)
             {

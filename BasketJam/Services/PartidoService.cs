@@ -384,6 +384,7 @@ namespace BasketJam.Services
 
             partido.EquipoJugador = new List<EquipoJugador>();
             partido.jueces = new List<Juez>();
+            partido.fecha = partido.fecha.ToLocalTime();
             await _partidos.InsertOneAsync(partido);
 
             VotacionPartido vp = new VotacionPartido();
@@ -412,6 +413,7 @@ namespace BasketJam.Services
             {
                 throw new Exception("No puede ingresar un partido con fecha anterior a la actual.");
             }
+            pa.fecha = pa.fecha.ToLocalTime();
             _partidos.ReplaceOne(partido => partido.Id == id, pa);
         }
 
@@ -750,11 +752,6 @@ namespace BasketJam.Services
             }
         }
 
-        public void EliminarPartido(Partido pa)
-        {
-            _partidos.DeleteOne(partido => partido.Id == pa.Id);
-        }
-
         public void EliminarPartido(string id)
         {
             _partidos.DeleteOne(partido => partido.Id == id);
@@ -888,9 +885,21 @@ namespace BasketJam.Services
                 Partido part = await _partidos.Find<Partido>(x => x.Id == idPartido).FirstOrDefaultAsync();
                 EstadisticasEquipoPartido estEqPar1 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[0].Id).FirstOrDefaultAsync();
                 EstadisticasEquipoPartido estEqPar2 = await _estadisticasEquipoPartido.Find<EstadisticasEquipoPartido>(x => x.IdPartido == idPartido && x.IdEquipo == part.equipos[1].Id).FirstOrDefaultAsync();
+                string juez1="", juez2="", juez3="";
+                int contadorJuez = 0;
+                foreach(Juez j in part.jueces)
+                {
+                    if (contadorJuez == 0)
+                        juez1 = part.jueces[0].Nombre + " " + part.jueces[0].Apellido;
+                    if (contadorJuez == 1)
+                        juez2 = part.jueces[0].Nombre + " " + part.jueces[1].Apellido;
+                    if (contadorJuez == 2)
+                        juez3 = part.jueces[0].Nombre + " " + part.jueces[2].Apellido;
+                    contadorJuez++;
+                }
 
                 int PuntosPrimerCuartoEq1, PuntosSegundoCuartoEq1, PuntosTercerCuartoEq1, PuntosCuartoCuartoEq1, PuntosOverTimeEq1 = 0;
-                int PuntosPrimerCuartoEq2, PuntosSegundoCuartoEq2, PuntosTercerCuartoEq2, PuntosCuartoCuartoEq2, PuntosOverTimeEq2;
+                int PuntosPrimerCuartoEq2, PuntosSegundoCuartoEq2, PuntosTercerCuartoEq2, PuntosCuartoCuartoEq2, PuntosOverTimeEq2 =0;
 
                 if (estEqPar1 == null)
                 {
@@ -940,9 +949,12 @@ namespace BasketJam.Services
                     ptosTercerCuartoEq2 = PuntosTercerCuartoEq2,
                     ptosCuartoCuartoEq2 = PuntosCuartoCuartoEq2,
                     ptosOverTimeEq2 = PuntosOverTimeEq2,
-                    arbitro1 = part.jueces[0].Nombre + " " + part.jueces[0].Apellido,
-                    arbitro2 = part.jueces[1].Nombre + " " + part.jueces[1].Apellido,
-                    arbitro3 = part.jueces[2].Nombre + " " + part.jueces[2].Apellido,
+                    arbitro1 = juez1,
+                    arbitro2 = juez2,
+                    arbitro3 = juez3,
+                    /* arbitro1 = part.jueces[0].Nombre + " " + part.jueces[0].Apellido,
+                     arbitro2 = part.jueces[1].Nombre + " " + part.jueces[1].Apellido,
+                     arbitro3 = part.jueces[2].Nombre + " " + part.jueces[2].Apellido,*/
                     statuspartido = ((EstadoPartido)part.estado).ToString()
                 };
 

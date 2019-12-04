@@ -206,7 +206,21 @@ namespace BasketJam.Services
 
                 try
             {
+              /*  bool IsValidEmail(string email)
+                {*/
+                    try
+                    {
+                        var addr = new System.Net.Mail.MailAddress(usuario.NomUser);
+                        Boolean esMailValido= addr.Address == usuario.NomUser;
+                    }
+                    catch
+                    {
+                    throw new Exception("No ha ingresado un Email válido.");
+                }
+               /* }*/
                 /*Controles del model*/
+               /* if(!esMailValido)
+                    throw new Exception("No ha ingresado un Email válido.");*/
                 if (usuario.NomUser.Length < 5 || usuario.NomUser.Length > 50)
                     throw new Exception("El nombre de usuario debe tener como mínimo 5 caracateres , y 50 como máximo.");
                 if (usuario.Password.Length < 5 || usuario.Password.Length > 20)
@@ -430,8 +444,14 @@ namespace BasketJam.Services
 
 
                     str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
-                    
-                    return new { result = true, mensaje = str };
+                    int tipoUsuario = Convert.ToInt32(usuario.TipoUsuario);
+                    string url;
+                    if (tipoUsuario == 2)
+                        url = "http://www.basketjam.com/activacionCuenta.html";
+                    else
+                        url= "http://www.basketjam.com";
+
+                    return new { result = true, mensaje = str ,url=url};
                     // return usuario;
                 }
                 else
