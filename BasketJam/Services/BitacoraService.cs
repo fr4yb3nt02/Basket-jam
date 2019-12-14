@@ -469,8 +469,15 @@ namespace BasketJam.Services
                 Jugador jugador;
                 foreach (BitacoraPartido.BitacoraTimeLine btl in estEqPar1.bitacoraTimeLine)
                 {
+                    if(btl.Accion!=(TipoAccion)17)
+                    { 
                     jugador = await _jugadores.Find<Jugador>(j => j.Id == btl.idJugador).FirstOrDefaultAsync();
                     equipoDeJugador = await _equipo.Find<Equipo>(e => e.Id == jugador.IdEquipo).FirstOrDefaultAsync();
+                    }
+                    else
+                    {
+                        equipoDeJugador = await _equipo.Find<Equipo>(e => e.Id == btl.idJugador).FirstOrDefaultAsync();
+                    }
                     if (equipoDeJugador.Id == part.equipos[0].Id)
                         btl1.Add(btl);
                     else

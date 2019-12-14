@@ -74,7 +74,7 @@ namespace BasketJam.Services
                 }
                 if (ejp.TresPuntosConvertidos == 0 && ejp.TresPuntosIntentados != 0)
                 {
-                    ejp.TresPuntosPorcentaje = 50;
+                    ejp.TresPuntosPorcentaje = 0;
                 }
                 if (ejp.DosPuntosConvertidos != 0 && ejp.DosPuntosIntentados != 0)
                 {
@@ -83,7 +83,7 @@ namespace BasketJam.Services
                 }
                 if (ejp.DosPuntosConvertidos == 0 && ejp.DosPuntosIntentados != 0)
                 {
-                    ejp.DosPuntosPorcentaje = 50;
+                    ejp.DosPuntosPorcentaje = 0;
                 }
                 if (ejp.TirosLibresConvertidos != 0 && ejp.TirosLibresIntentados != 0)
                 {
@@ -92,7 +92,7 @@ namespace BasketJam.Services
                 }
                 if (ejp.TirosLibresConvertidos == 0 && ejp.TirosLibresIntentados != 0)
                 {
-                    ejp.TirosLibresPorcentaje = 50;
+                    ejp.TirosLibresPorcentaje = 0;
                 }
                 if (ejp.RebotesOfensivos != 0 || ejp.RebotesDefensivos != 0)
                 {

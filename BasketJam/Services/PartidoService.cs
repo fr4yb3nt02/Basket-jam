@@ -892,9 +892,9 @@ namespace BasketJam.Services
                     if (contadorJuez == 0)
                         juez1 = part.jueces[0].Nombre + " " + part.jueces[0].Apellido;
                     if (contadorJuez == 1)
-                        juez2 = part.jueces[0].Nombre + " " + part.jueces[1].Apellido;
+                        juez2 = part.jueces[1].Nombre + " " + part.jueces[1].Apellido;
                     if (contadorJuez == 2)
-                        juez3 = part.jueces[0].Nombre + " " + part.jueces[2].Apellido;
+                        juez3 = part.jueces[2].Nombre + " " + part.jueces[2].Apellido;
                     contadorJuez++;
                 }
 
@@ -1124,7 +1124,7 @@ namespace BasketJam.Services
                             nombre = j.Nombre,
                             apellido = j.Apellido,
                             FotoJugador = j.UrlFoto,
-                            numeroCamiseta = j.NumeroCamiseta,
+                            numeroCamiseta = je.nroCamiseta,
                             puntos = ejp.Puntos,
                             tresPuntosConvertidos = ejp.TresPuntosConvertidos,
                             tresPuntosIntentados = ejp.TresPuntosIntentados,
@@ -1143,6 +1143,7 @@ namespace BasketJam.Services
                             faltasPersonales = ejp.FaltasPersonales,
                             faltasAntideportivas = ejp.FaltasAntideportivas,
                             faltasTecnicas = ejp.FaltasTecnicas,
+                            perdidas=ejp.Perdidas,
                             jugando = esTitular
                         };
                         listReturn.Add(det);
@@ -1155,7 +1156,7 @@ namespace BasketJam.Services
                             nombre = j.Nombre,
                             apellido = j.Apellido,
                             FotoJugador = j.UrlFoto,
-                            numeroCamiseta = j.NumeroCamiseta,
+                            numeroCamiseta = je.nroCamiseta,
                             puntos = 0,
                             tresPuntosConvertidos = 0,
                             tresPuntosIntentados = 0,
@@ -1174,6 +1175,7 @@ namespace BasketJam.Services
                             faltasPersonales = 0,
                             faltastAntideportivas = 0,
                             faltasTecnicas = 0,
+                            perdidas = 0,
                             jugando = esTitular
                         };
                         listReturn.Add(det);
