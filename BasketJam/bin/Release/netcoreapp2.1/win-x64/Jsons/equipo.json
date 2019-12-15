@@ -1,0 +1,110 @@
+[{
+	"NombreEquipo" : "Peñarol",
+    "FechaFundacion":"01/01/1250",
+    "ColorCaracteristico":["Amarillo","Negro"],
+    "Categoria":"Primera división",
+        "Estadio":  {
+                    "Nombre":"Palacio Peñarol",
+                    "Direccion":"Montevideo"   
+                },
+    "CuerpoTecnico":   [
+	 {
+        "cargo": 0,
+        "id": "",
+        "ci": 56980123,
+        "nombre": "Jose",
+        "apellido": "Artigas"
+    },
+    {
+        "cargo": 0,
+        "id": "",
+        "ci": 58948545,
+        "nombre": "Paparulo",
+        "apellido": "Fagundez"
+    }
+                    ],  
+    "Jugadores": [ 
+                     {
+        "capitan": false,
+        "posicion": "Central",
+        "numeroCamiseta": 10,
+        "id": "",
+        "ci": 56980123,
+        "nombre": "Emiliano",
+        "apellido": "Da Silva"
+    },
+    {
+        "capitan": false,
+        "posicion": "Delantero",
+        "numeroCamiseta": 15,
+        "id": "",
+        "ci": 1234567,
+        "nombre": "Gabriel",
+        "apellido": "Morador"
+    },
+    {
+        "capitan": true,
+        "posicion": "Defensa",
+        "numeroCamiseta": 20,
+        "id": "",
+        "ci": 32165489,
+        "nombre": "Facundo",
+        "apellido": "Naviliat"
+    }
+                 ]
+},
+{    "NombreEquipo" : "Chicabo Bulls",
+    "FechaFundacion":"01/01/1000",
+    "ColorCaracteristico":["Rojo"],
+    "Categoria":"Primera división",
+    "Estadio":  {
+                    "Nombre":"United Center",
+                    "Direccion":"USA"   
+                },
+    "Cuerpo tecnico":   [
+    {
+        "cargo": 0,
+        "id": "5ca195f72809f600c8159bec",
+        "ci": 84795236,
+        "nombre": "Patrick",
+        "apellido": "MckDonald"
+    },
+    {
+        "cargo": 1,
+        "id": "5ca195fd2809f600c8159bed",
+        "ci": 74258965,
+        "nombre": "Mister",
+        "apellido": "Second"
+    }
+                    ],  
+    "Jugadores": [ 
+                     {
+        "capitan": false,
+        "posicion": "Central",
+        "numeroCamiseta": 11,
+        "id": "5ca194b98e28e027dcc2ed96",
+        "ci": 58987456,
+        "nombre": "Francisco",
+        "apellido": "Macachufo"
+    },
+    {
+        "capitan": false,
+        "posicion": "Delantero",
+        "numeroCamiseta": 16,
+        "id": "5ca194c58e28e027dcc2ed97",
+        "ci": 98547896,
+        "nombre": "Tyler",
+        "apellido": "Aguirre"
+    },
+    {
+        "capitan": true,
+        "posicion": "Defensa",
+        "numeroCamiseta": 10,
+        "id": "5ca194ce8e28e027dcc2ed98",
+        "ci": 85478962,
+        "nombre": "Michael",
+        "apellido": "Jordan"
+    }
+                 ]
+}
+]

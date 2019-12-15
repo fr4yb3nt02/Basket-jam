@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
+    "C:\\Users\\Emiliano\\Desktop\\Proyecto final\\Basket-jam\\BasketJam\\BasketJam.csproj": {}
   },
   "projects": {
-    "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj": {
+    "C:\\Users\\Emiliano\\Desktop\\Proyecto final\\Basket-jam\\BasketJam\\BasketJam.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "projectUniqueName": "C:\\Users\\Emiliano\\Desktop\\Proyecto final\\Basket-jam\\BasketJam\\BasketJam.csproj",
         "projectName": "BasketJam",
-        "projectPath": "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\BasketJam.csproj",
-        "packagesPath": "C:\\Users\\edasilva\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\edasilva\\Desktop\\final project\\Basket-jam\\BasketJam\\obj\\publish\\win-x64\\",
+        "projectPath": "C:\\Users\\Emiliano\\Desktop\\Proyecto final\\Basket-jam\\BasketJam\\BasketJam.csproj",
+        "packagesPath": "C:\\Users\\Emiliano\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Emiliano\\Desktop\\Proyecto final\\Basket-jam\\BasketJam\\obj\\publish\\win-x64\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\edasilva\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Emiliano\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -56,7 +53,7 @@
             "Microsoft.AspNetCore.App": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.1.11, )",
+              "version": "[2.1.13, )",
               "autoReferenced": true
             },
             "Microsoft.AspNetCore.Razor.Design": {
@@ -65,8 +62,9 @@
               "version": "[2.1.2, )"
             },
             "Microsoft.NETCore.App": {
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[2.1.11, )",
+              "version": "[2.1.13, )",
               "autoReferenced": true
             },
             "MongoDB.Driver": {
@@ -91,10 +89,16 @@
             }
           },
           "imports": [
-            "net461"
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
         }
       },
       "runtimes": {

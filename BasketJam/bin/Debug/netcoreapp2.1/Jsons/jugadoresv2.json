@@ -1,0 +1,75 @@
+[
+  {
+    "_id": "",
+    "CI": "56980123",
+    "Nombre": "Emiliano",
+    "Apellido": "Da Silva",
+    "Capitan": false,
+    "Posicion": "Central",
+    "NumeroCamiseta": 10,
+    "idEquipo": ""
+  },
+  {
+    "_id": "",
+    "CI": "1234567",
+    "Nombre": "Gabriel",
+    "Apellido": "Morador",
+    "Capitan": false,
+    "Posicion": "Delantero",
+    "NumeroCamiseta": 15,
+    "idEquipo": ""
+  },
+  {
+    "_id": "",
+    "CI": "32165489",
+    "Nombre": "Facundo",
+    "Apellido": "Naviliat",
+    "Capitan": true,
+    "Posicion": "Defensa",
+    "NumeroCamiseta": 20,
+    "idEquipo": ""
+  },
+  {
+    "_id": "",
+    "CI": "58987456",
+    "Nombre": "Francisco",
+    "Apellido": "Macachufo",
+    "Capitan": false,
+    "Posicion": "Central",
+    "NumeroCamiseta": 11,
+    "idEquipo": ""
+  },
+  {
+    "_id": "",
+    "CI": "98547896",
+    "Nombre": "Tyler",
+    "Apellido": "Aguirre",
+    "Capitan": false,
+    "Posicion": "Delantero",
+    "NumeroCamiseta": 16,
+    "idEquipo": ""
+  },
+  {
+    "_id": "",
+    "CI": "85478962",
+    "Nombre": "Michael",
+    "Apellido": "Jordan",
+    "Capitan": true,
+    "Posicion": "Defensa",
+    "NumeroCamiseta": 10,
+    "idEquipo": ""
+  },
+
+  {
+    "CI": "12345678",
+    "Nombre": "Rawle",
+    "Apellido": "Atkins",
+    "FechaDeNacimiento": "05/11/1985",
+    "Altura": 1.7,
+    "Peso": 102.1,
+    "Capitan": false,
+    "Posicion": "Defensa",
+    "NumeroCamiseta": 20,
+    "idEquipo": "5ceb8e69b3f9740bf04b8ba8"
+  }
+]

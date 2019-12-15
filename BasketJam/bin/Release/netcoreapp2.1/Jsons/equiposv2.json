@@ -1,0 +1,22 @@
+[{
+	"NombreEquipo" : "Peñarol",
+    "FechaFundacion":"01/01/1250",
+    "ColorCaracteristico":["Amarillo","Negro"],
+    "Categoria":"Primera división",
+    "Estadio":  {
+                "Nombre":"Palacio Peñarol",
+                "Direccion":"Montevideo"   
+                }
+},
+{    "NombreEquipo" : "Chicabo Bulls",
+    "FechaFundacion":"01/01/1000",
+    "ColorCaracteristico":["Rojo"],
+    "Categoria":"Primera división",
+    "Estadio":  {
+                    "Nombre":"United Center",
+                    "Direccion":"USA"   
+                }
+    
+          
+}
+]

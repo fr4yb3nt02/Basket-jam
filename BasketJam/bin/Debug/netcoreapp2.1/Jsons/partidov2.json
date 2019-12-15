@@ -1,0 +1,27 @@
+{
+    "id": "5caad5e7852087336c70330f",
+    "fecha": "2019-09-05T20:00:00",
+    "estado": 3,
+    "equipos": [
+        {
+            "id": "5caad57c852087336c70330d",
+            "nombreEquipo": "Chicabo Bulls",
+            "fechaFundacion": "1000-01-01T00:00:00",
+            "colorCaracteristico": [
+                "Rojo"
+            ],
+            "categoria": "Primera división"
+        },
+        {
+            "id": "5caad5d2852087336c70330e",
+            "nombreEquipo": "Peñarol",
+            "fechaFundacion": "1250-01-01T00:00:00",
+            "colorCaracteristico": [
+                "Amarillo",
+                "Negro"
+            ],
+            "categoria": "Primera división"
+        }
+    ],
+    "estadio": "Palacio Peñarol"
+}

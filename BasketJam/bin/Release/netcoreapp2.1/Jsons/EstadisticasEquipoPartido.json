@@ -1,0 +1,20 @@
+{
+    "_id":"",
+    "IdEquipo" : "",
+    "IdPartido" : "",
+    "Puntos":60,
+    "TirosLibresExitosos":3,
+    "TotalTirosLibres":4,
+    "PorcentajeTirosLibres":75,
+    "Canasta2PuntosExitosas":4,
+    "TotalCanastas2Puntos":4,
+    "PorcentajeCanastas2Puntos":100,
+    "Canasta3PuntosExitosas":2,
+    "TotalCanastas3Puntos":4,
+    "PorcentajeCanastas3Puntos":50,
+    "RebotesDefensivos":3,
+    "RebotesOfensivos":3,
+    "Faltas":3,
+    "Perdidas":5,
+    "TiemposMuertos":1
+}

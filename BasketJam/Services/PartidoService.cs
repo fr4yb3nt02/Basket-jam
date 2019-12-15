@@ -1097,6 +1097,7 @@ namespace BasketJam.Services
                     Jugador jugador;
 
                     bool esTitular;
+                    int nroCamiseta=0;
                     jugador = await _jugadores.Find<Jugador>(ju => ju.Id == j.Id).FirstOrDefaultAsync();
                     equipoDeJugador = await _equipos.Find<Equipo>(e => e.Id == jugador.IdEquipo).FirstOrDefaultAsync();
 
@@ -1109,9 +1110,11 @@ namespace BasketJam.Services
                     if (je == null)
                     {
                         esTitular = false;
+                        nroCamiseta=j.NumeroCamiseta;
                     }
                     else
                     {
+                        nroCamiseta = je.nroCamiseta;
                         esTitular = je.esTitular;
                     }
 
@@ -1156,7 +1159,7 @@ namespace BasketJam.Services
                             nombre = j.Nombre,
                             apellido = j.Apellido,
                             FotoJugador = j.UrlFoto,
-                            numeroCamiseta = je.nroCamiseta,
+                            numeroCamiseta = nroCamiseta,
                             puntos = 0,
                             tresPuntosConvertidos = 0,
                             tresPuntosIntentados = 0,

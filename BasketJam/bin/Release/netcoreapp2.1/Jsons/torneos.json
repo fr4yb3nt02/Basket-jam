@@ -1,0 +1,15 @@
+{
+    "_id":"",
+    "Nombre" : "Super Torneo 2019",
+    "Anio":2019,
+    "Equipos":[
+        {
+            "_id":"",
+            "NombreEquipo" : "Peñarol"
+        },
+        {
+            "_id":"",
+            "NombreEquipo" : "Chicago Bulls"
+        }
+      ]
+}

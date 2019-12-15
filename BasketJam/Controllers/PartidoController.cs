@@ -506,10 +506,16 @@ namespace BasketJam.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(
+                dynamic o = new Object();
+                o.Error = "Se ha producido un error: " + ex.Message;
+                return o.Error;
+                //    throw new Exception(
+                /* return new
+                 {
 
-                    "Se ha producido un error: " + ex.Message
-                 );
+                    Error= "Se ha producido un error: " + ex.Message
+                 };*/
+                //  );
             }
         }
 
