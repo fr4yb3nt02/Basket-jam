@@ -247,7 +247,7 @@ namespace BasketJam.Controllers
             {
                 Usuario u = await _usuarioService.BuscarUsuarioPorUser(email);
                 await _usuarioService.CambiarPassword(email, password, u.Password);
-                return Redirect("http://www.basketjam.com");
+                return Redirect("http://www.basketjam.com/restaurarContrase%C3%B1a.html");
                 //return Ok(new { resultado = true });
                 //return Ok();
 

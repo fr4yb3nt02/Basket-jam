@@ -446,10 +446,10 @@ namespace BasketJam.Services
                     str = "Estimado usuario , su e-mail ha sido activado correctamente , ahora puede acceder a BasketJam con su cuenta";
                     int tipoUsuario = Convert.ToInt32(usuario.TipoUsuario);
                     string url;
-                    if (tipoUsuario == 2)
+                    //if (tipoUsuario == 2)
                         url = "http://www.basketjam.com/activacionCuenta.html";
-                    else
-                        url= "http://www.basketjam.com";
+                    /*else
+                        url= "http://www.basketjam.com";*/
 
                     return new { result = true, mensaje = str ,url=url};
                     // return usuario;

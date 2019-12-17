@@ -1107,83 +1107,79 @@ namespace BasketJam.Services
                      .SingleOrDefaultAsync();
 
                     EquipoJugador.JugadorEquipo je = part.EquipoJugador[equipoJugadorIndex].jugadorEquipo.Find(t => t.idJugador.Equals(j.Id));
-                    if (je == null)
-                    {
-                        esTitular = false;
-                        nroCamiseta=j.NumeroCamiseta;
-                    }
-                    else
+                    if (je != null)
                     {
                         nroCamiseta = je.nroCamiseta;
                         esTitular = je.esTitular;
-                    }
 
-                    EstadisticasJugadorPartido ejp = await _estadisticasJugadorPartido.Find<EstadisticasJugadorPartido>(p => p.IdPartido.Equals(idPartido) && p.IdJugador.Equals(j.Id)).FirstOrDefaultAsync();
-                    if (ejp != null)
-                    {
-                        var det = new
-                        {
-                            idJugador = j.Id,
-                            nombre = j.Nombre,
-                            apellido = j.Apellido,
-                            FotoJugador = j.UrlFoto,
-                            numeroCamiseta = je.nroCamiseta,
-                            puntos = ejp.Puntos,
-                            tresPuntosConvertidos = ejp.TresPuntosConvertidos,
-                            tresPuntosIntentados = ejp.TresPuntosIntentados,
-                            porcentaje3Puntos = ejp.TresPuntosPorcentaje,
-                            dosPuntosConvertidos = ejp.DosPuntosConvertidos,
-                            dosPuntosIntentados = ejp.DosPuntosIntentados,
-                            dosPuntosPorcentaje = ejp.DosPuntosPorcentaje,
-                            libresConvertidos = ejp.TirosLibresConvertidos,
-                            libresIntentados = ejp.TirosLibresIntentados,
-                            porcentajeLibres = ejp.TirosLibresPorcentaje,
-                            rebotesOfensivos = ejp.RebotesOfensivos,
-                            rebotesDefensivos = ejp.RebotesDefensivos,
-                            rebotesTotales = ejp.RebotesTotales,
-                            asistencias = ejp.Asistencias,
-                            recuperos = ejp.Recuperos,
-                            faltasPersonales = ejp.FaltasPersonales,
-                            faltasAntideportivas = ejp.FaltasAntideportivas,
-                            faltasTecnicas = ejp.FaltasTecnicas,
-                            perdidas=ejp.Perdidas,
-                            jugando = esTitular
-                        };
-                        listReturn.Add(det);
-                    }
-                    else
-                    {
-                        var det = new
-                        {
-                            idJugador = j.Id,
-                            nombre = j.Nombre,
-                            apellido = j.Apellido,
-                            FotoJugador = j.UrlFoto,
-                            numeroCamiseta = nroCamiseta,
-                            puntos = 0,
-                            tresPuntosConvertidos = 0,
-                            tresPuntosIntentados = 0,
-                            porcentaje3Puntos = 0,
-                            dosPuntosConvertidos = 0,
-                            dosPuntosIntentados = 0,
-                            dosPuntosPorcentaje = 0,
-                            libresConvertidos = 0,
-                            libresIntentados = 0,
-                            porcentajeLibres = 0,
-                            rebotesOfensivos = 0,
-                            rebotesDefensivos = 0,
-                            rebotesTotales = 0,
-                            asistencias = 0,
-                            recuperos = 0,
-                            faltasPersonales = 0,
-                            faltastAntideportivas = 0,
-                            faltasTecnicas = 0,
-                            perdidas = 0,
-                            jugando = esTitular
-                        };
-                        listReturn.Add(det);
-                    }
 
+
+                        EstadisticasJugadorPartido ejp = await _estadisticasJugadorPartido.Find<EstadisticasJugadorPartido>(p => p.IdPartido.Equals(idPartido) && p.IdJugador.Equals(j.Id)).FirstOrDefaultAsync();
+                        if (ejp != null)
+                        {
+                            var det = new
+                            {
+                                idJugador = j.Id,
+                                nombre = j.Nombre,
+                                apellido = j.Apellido,
+                                FotoJugador = j.UrlFoto,
+                                numeroCamiseta = je.nroCamiseta,
+                                puntos = ejp.Puntos,
+                                tresPuntosConvertidos = ejp.TresPuntosConvertidos,
+                                tresPuntosIntentados = ejp.TresPuntosIntentados,
+                                porcentaje3Puntos = ejp.TresPuntosPorcentaje,
+                                dosPuntosConvertidos = ejp.DosPuntosConvertidos,
+                                dosPuntosIntentados = ejp.DosPuntosIntentados,
+                                dosPuntosPorcentaje = ejp.DosPuntosPorcentaje,
+                                libresConvertidos = ejp.TirosLibresConvertidos,
+                                libresIntentados = ejp.TirosLibresIntentados,
+                                porcentajeLibres = ejp.TirosLibresPorcentaje,
+                                rebotesOfensivos = ejp.RebotesOfensivos,
+                                rebotesDefensivos = ejp.RebotesDefensivos,
+                                rebotesTotales = ejp.RebotesTotales,
+                                asistencias = ejp.Asistencias,
+                                recuperos = ejp.Recuperos,
+                                faltasPersonales = ejp.FaltasPersonales,
+                                faltasAntideportivas = ejp.FaltasAntideportivas,
+                                faltasTecnicas = ejp.FaltasTecnicas,
+                                perdidas = ejp.Perdidas,
+                                jugando = esTitular
+                            };
+                            listReturn.Add(det);
+                        }
+                        else
+                        {
+                            var det = new
+                            {
+                                idJugador = j.Id,
+                                nombre = j.Nombre,
+                                apellido = j.Apellido,
+                                FotoJugador = j.UrlFoto,
+                                numeroCamiseta = nroCamiseta,
+                                puntos = 0,
+                                tresPuntosConvertidos = 0,
+                                tresPuntosIntentados = 0,
+                                porcentaje3Puntos = 0,
+                                dosPuntosConvertidos = 0,
+                                dosPuntosIntentados = 0,
+                                dosPuntosPorcentaje = 0,
+                                libresConvertidos = 0,
+                                libresIntentados = 0,
+                                porcentajeLibres = 0,
+                                rebotesOfensivos = 0,
+                                rebotesDefensivos = 0,
+                                rebotesTotales = 0,
+                                asistencias = 0,
+                                recuperos = 0,
+                                faltasPersonales = 0,
+                                faltastAntideportivas = 0,
+                                faltasTecnicas = 0,
+                                perdidas = 0,
+                                jugando = esTitular
+                            };
+                            listReturn.Add(det);
+                        }
+                    }
 
                 }
 
