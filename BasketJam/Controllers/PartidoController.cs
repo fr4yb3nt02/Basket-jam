@@ -155,7 +155,7 @@ namespace BasketJam.Controllers
         {
             try
             {
-                var partido = _partidoService.BuscarPartido(id);
+                var partido = _partidoService.BuscarPartido(id).Result;
 
                 if (partido == null)
                 {
@@ -164,7 +164,7 @@ namespace BasketJam.Controllers
 
                 _partidoService.EliminarPartido(partido.Id.ToString());
 
-                return Ok(new { Resultado = true });
+                return Ok(new { mensaje = "El partido se ha eliminado exitosamente." });
             }
             catch (Exception ex)
             {
